@@ -1,0 +1,19 @@
+[package]
+name = "atlas-rs"
+version = "0.1.0"
+edition = "2018"
+authors = ["Ollivier Robert <roberto@keltia.net>"]
+repository = "https://github.com/keltia/atlas-rs"
+license = "MIT"
+readme = "README.md"
+description = "Rust library to access RIPE Atlas probes API."
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = "3.0.0-beta.4"
+home = "0.5.3"
+toml = "0.5.8"
+
+[dev-dependencies]
+rstest = "0.11.0"
