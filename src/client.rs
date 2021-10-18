@@ -214,6 +214,23 @@ impl<'cl> Client<'cl> {
         self.want_af = v;
         self
     }
+
+    /// Sets the tags to be sent with the requests
+    ///    +tag / tag  ==> tags_include
+    ///    -tag / !tag ==> tags_exclude
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::{AF,Client};
+    /// Client::new("FOO")
+    ///     .tags("ftth !cable")
+    /// # ;
+    /// ```
+    pub fn tags<S: Into<&'cl str>>(mut self, v: S) -> Self {
+        self.tags = v.into();
+        self
+    }
 }
 
 #[cfg(test)]
