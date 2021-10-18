@@ -3,7 +3,7 @@ use std::collections::HashMap;
 /// We target the v2 API
 const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum AF {
     V4,
     V6,
@@ -12,28 +12,27 @@ pub enum AF {
 
 /// Hold the client data
 #[derive(Debug)]
-pub struct Client {
+pub struct Client<'cl> {
     /// Mandatory
-    pub(crate) api_key: &'static str,
+    pub(crate) api_key: &'cl str,
 
     /// Optional
-    pub(crate) endpoint: &'static str,
+    pub(crate) endpoint: &'cl str,
     pub(crate) default_probe: u32,
-    pub(crate) area_type: &'static str,
-    pub(crate) area_value: &'static str,
+    pub(crate) area_type: &'cl str,
+    pub(crate) area_value: &'cl str,
     pub(crate) is_oneoff: bool,
     pub(crate) pool_size: usize,
     pub(crate) want_af: AF,
     pub(crate) verbose: bool,
-    pub(crate) tags: &'static str,
+    pub(crate) tags: &'cl str,
 
     /// Default options
-    pub(crate) opts: HashMap<&'static str, &'static str>,
+    pub(crate) opts: HashMap<&'cl str, &'cl str>,
 }
 
-impl Client {
-    /// Set default values
-    pub fn new() -> Self {
+impl<'cl> Default for Client<'cl> {
+    fn default() -> Self {
         Client {
             api_key: "<CHANGEME>",
             endpoint: ENDPOINT,
@@ -48,44 +47,111 @@ impl Client {
             opts: HashMap::new(),
         }
     }
+}
 
-    /// Sets the value of the required API key
+impl<'cl> Client<'cl> {
+    /// Create a new `Client` instance wit hthe specified key
     ///
     /// Examples
     ///
     /// ```no_run
     /// # use atlas_rs::client::Client;
-    /// Client::new()
-    ///     .api_key("FOO")
+    /// let c = Client::new("FOO");
+    /// ```
+    pub fn new<S: Into<&'cl str>>(key: S) -> Self {
+        Client {
+            api_key: key.into(),
+            ..Default::default()
+        }
+    }
+
+    /// Sets the API endpoint
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// Client::new("FOO")
+    ///     .endpoint("https://example.com/v1")
     /// # ;
     /// ```
-    pub fn api_key<S: Into<&'static str>>(mut self, k: S) ->  Self {
-        self.api_key = k.into();
-        self
-    }
-/*
-    pub fn endpoint(&mut self, v: &str) -> Self {
-        self.endpoint = v;
+    pub fn endpoint<S: Into<&'cl str>>(mut self, v: S) ->  Self {
+        self.endpoint = v.into();
         self
     }
 
-    pub fn default_probe(&mut self, v: u32) -> Self {
+    /// Sets the API endpoint
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// Client::new("FOO")
+    ///     .endpoint("https://example.com/v1")
+    /// # ;
+    /// ```
+    pub fn default_probe(mut self, v: u32) -> Self {
         self.default_probe = v;
         self
     }
 
-    pub fn area_type(&mut self, v: &str) -> Self {
-        self.area_type = v;
+    /// Limits the scope by specifying an area type
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// Client::new("FOO")
+    ///     .area_type("area")
+    /// # ;
+    /// ```
+    pub fn area_type<S: Into<&'cl str>>(mut self, v: S) -> Self {
+        self.area_type = v.into();
         self
     }
 
-    pub fn area_value(&mut self, v: &str) -> Self {
-        self.area_value = v;
+    /// Limits the scope to this particular area value
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// Client::new("FOO")
+    ///     .area_value("WW")
+    /// # ;
+    /// ```
+    pub fn area_value<S: Into<&'cl str>>(mut self, v: S) -> Self {
+        self.area_value = v.into();
         self
     }
-*/
-    pub fn onoff<S: Into<bool>>(mut self, v: S) -> Self {
-        self.is_oneoff = v.into();
+
+    /// Sets the one-shot flag
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// Client::new("FOO")
+    ///     .onoff(true)
+    /// # ;
+    /// ```
+    pub fn onoff(mut self, v: bool) -> Self {
+        self.is_oneoff = v;
+        self
+    }
+
+    /// Sets the inet family, either v4 or v6 or both.
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::{AF,Client};
+    /// Client::new("FOO")
+    ///     .want_af(AF::V6)
+    /// # ;
+    /// ```
+    pub fn want_af(mut self, v: AF) -> Self {
+        self.want_af = v;
         self
     }
 }
@@ -96,15 +162,17 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let c = Client::new();
+        let c = Client::new("FOO");
 
-        assert_eq!("<CHANGEME>", c.api_key);
+        assert_eq!("FOO", c.api_key);
+        assert_eq!(ENDPOINT, c.endpoint);
+        assert!(c.is_oneoff);
+        assert_eq!(AF::V46, c.want_af)
     }
 
     #[test]
     fn test_api_key() {
-        let c= Client::new()
-            .api_key("FOO")
+        let c= Client::new("FOO")
             .onoff(true);
         assert_eq!("FOO", c.api_key);
         assert_eq!(ENDPOINT, c.endpoint);
