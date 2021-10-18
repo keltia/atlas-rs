@@ -164,6 +164,36 @@ impl<'cl> Client<'cl> {
         self
     }
 
+    /// Sets the pool size
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// Client::new("FOO")
+    ///     .pool_size(20)
+    /// # ;
+    /// ```
+    pub fn pool_size(mut self, v: usize) -> Self {
+        self.pool_size = v;
+        self
+    }
+
+    /// Sets the verbose flag
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// Client::new("FOO")
+    ///     .verbose(true)
+    /// # ;
+    /// ```
+    pub fn verbose(mut self, v: bool) -> Self {
+        self.verbose = v;
+        self
+    }
+
     /// Sets the inet family, either v4 or v6 or both.
     ///
     /// Examples
