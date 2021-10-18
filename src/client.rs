@@ -1,13 +1,15 @@
 //! This is the main client struct and the different configuration methods.
 //!
 //! The way to configure it is different from the Go way and more in line
-//! current Rust practices.
+//! with current Rust practices.
 //!
 //! The only mandatory argument is the API key so it is given to `new()` and
 //! all the other methods are there for configuration everything you want to
 //! change from the default.
 //!
-//! XXX There is no api_key() method to enable changing the API key between
+//! `NOTE` none of the fields are public except within the crate
+//!
+//! `XXX` There is no `api_key()` method to enable changing the API key between
 //! calls.  Not sure it would be useful.
 //!
 //! Examples:
