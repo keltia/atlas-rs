@@ -1,3 +1,24 @@
+//! This is the main client struct and the different configuration methods.
+//!
+//! The way to configure it is different from the Go way and more in line
+//! current Rust practices.
+//!
+//! The only mandatory argument is the API key so it is given to `new()` and
+//! all the other methods are there for configuration everything you want to
+//! change from the default.
+//!
+//! Examples:
+//!
+//! ```
+//! use atlas_rs::client::{AF,Client};
+//!
+//! let c = Client::new("FOOBAR")
+//!     .onoff(true)
+//!     .default_probe(666)
+//!     .want_af(AF::V4);
+//!
+//!
+
 use std::collections::HashMap;
 
 /// We target the v2 API
@@ -31,7 +52,9 @@ pub struct Client<'cl> {
     pub(crate) opts: HashMap<&'cl str, &'cl str>,
 }
 
+/// Default values
 impl<'cl> Default for Client<'cl> {
+    /// Defines all the default values
     fn default() -> Self {
         Client {
             api_key: "<CHANGEME>",
@@ -49,6 +72,7 @@ impl<'cl> Default for Client<'cl> {
     }
 }
 
+/// All methods for`Client` for configuration
 impl<'cl> Client<'cl> {
     /// Create a new `Client` instance wit hthe specified key
     ///
