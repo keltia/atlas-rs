@@ -72,9 +72,9 @@ impl<'cl> Default for Client<'cl> {
     }
 }
 
-/// All methods for`Client` for configuration
+/// All methods for `Client` for configuration
 impl<'cl> Client<'cl> {
-    /// Create a new `Client` instance wit hthe specified key
+    /// Create a new `Client` instance with the specified key
     ///
     /// Examples
     ///
@@ -104,14 +104,14 @@ impl<'cl> Client<'cl> {
         self
     }
 
-    /// Sets the API endpoint
+    /// Sets the default probe ID
     ///
     /// Examples
     ///
     /// ```no_run
     /// # use atlas_rs::client::Client;
     /// Client::new("FOO")
-    ///     .endpoint("https://example.com/v1")
+    ///     .default_probe(666)
     /// # ;
     /// ```
     pub fn default_probe(mut self, v: u32) -> Self {
