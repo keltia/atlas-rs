@@ -7,8 +7,10 @@
 //! all the other methods are there for configuration everything you want to
 //! change from the default.
 //!
-//! Examples:
+//! XXX There is no api_key() method to enable changing the API key between
+//! calls.  Not sure it would be useful.
 //!
+//! Examples:
 //! ```
 //! use atlas_rs::client::{AF,Client};
 //!
@@ -21,13 +23,17 @@
 
 use std::collections::HashMap;
 
-/// We target the v2 API
-const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
+/// We target the v2 API (not sure if it needs to be public)
+pub(crate) const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
 
+/// Represents all possible INET Address Family values
 #[derive(Debug, PartialEq)]
 pub enum AF {
+    /// Only IPv4 target
     V4,
+    /// Only IPv6 target
     V6,
+    /// Both IPv4 & v6
     V46,
 }
 
