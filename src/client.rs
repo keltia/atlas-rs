@@ -218,10 +218,18 @@ mod tests {
     fn test_new() {
         let c = Client::new("FOO");
 
+        // Check all defaults
         assert_eq!("FOO", c.api_key);
         assert_eq!(ENDPOINT, c.endpoint);
+        assert_eq!(0, c.default_probe);
+        assert_eq!("area", c.area_type);
+        assert_eq!("WW", c.area_value);
         assert!(c.is_oneoff);
-        assert_eq!(AF::V46, c.want_af)
+        assert_eq!(10, c.pool_size);
+        assert_eq!(AF::V46, c.want_af);
+        assert!(!c.verbose);
+        assert_eq!("", c.tags);
+        assert_eq!(HashMap::new(), c.opts);
     }
 
     #[test]
