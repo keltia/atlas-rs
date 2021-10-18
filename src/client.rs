@@ -13,10 +13,10 @@
 //! use atlas_rs::client::{AF,Client};
 //!
 //! let c = Client::new("FOOBAR")
-//!     .onoff(true)
-//!     .default_probe(666)
-//!     .want_af(AF::V4);
-//!
+//!             .onoff(true)
+//!             .default_probe(666)
+//!             .want_af(AF::V4);
+//! ```
 //!
 
 use std::collections::HashMap;
