@@ -225,11 +225,10 @@ mod tests {
     }
 
     #[test]
-    fn test_api_key() {
+    fn test_onoff() {
         let c= Client::new("FOO")
             .onoff(true);
-        assert_eq!("FOO", c.api_key);
-        assert_eq!(ENDPOINT, c.endpoint);
+
         assert!(c.is_oneoff);
         println!("{:#?}", c);
     }
