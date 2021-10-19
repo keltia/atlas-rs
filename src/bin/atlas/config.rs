@@ -1,3 +1,10 @@
+//! This is the module to handle configuration for the `atlas_rs` client.
+//!
+//! It takes a [TOML] configuration file of the following format:
+//!
+//!
+//! [TOML]: https://crates.io/crates/toml
+
 use std::fs;
 
 use anyhow::{anyhow, Result};
