@@ -2,6 +2,19 @@
 //!
 //! It takes a [TOML] configuration file of the following format:
 //!
+//!  ```toml
+//! # Default configuration file
+//!
+//! api_key = "no-way-i-tell-you"
+//! default_probe = 666
+//!
+//! [probe_set]
+//!
+//! pool_size = 42
+//! type = "area"
+//! value = "WW"
+//! tags = "+ipv4"
+//! ```
 //!
 //! [TOML]: https://crates.io/crates/toml
 
@@ -26,6 +39,8 @@ pub struct ProbeSet {
 
 /// If we want to bill the queries to a specific account (i.e. different from the
 /// one behind the API key).
+///
+/// NOTE: I never used it but it is part of the API.
 #[derive(Debug, Deserialize)]
 pub struct Measurements {
     // RIPE Account ID to be billed for subsequent queries
@@ -103,9 +118,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn test_from_nok() {
-        assert!(Config::load("/dev/null").is_err())
+        let c = Config::load("/nonexistent");
+
+        assert!(c.is_err());
     }
 
 }
