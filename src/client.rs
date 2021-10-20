@@ -24,6 +24,10 @@
 //!
 
 use std::collections::HashMap;
+use std::time::Duration;
+
+use clap::crate_name;
+use ureq::{Agent, AgentBuilder};
 
 /// We target the v2 API (not sure if it needs to be public)
 pub(crate) const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
@@ -58,6 +62,9 @@ pub struct Client<'cl> {
 
     /// Default options
     pub(crate) opts: HashMap<&'cl str, &'cl str>,
+
+    /// Internal state, http client
+    pub(crate) agent: Option<ureq::Agent>,
 }
 
 /// Default values
@@ -76,6 +83,7 @@ impl<'cl> Default for Client<'cl> {
             verbose: false,
             tags: "",
             opts: HashMap::new(),
+            agent: None,
         }
     }
 }
@@ -95,6 +103,7 @@ impl<'cl> Client<'cl> {
             api_key: key.into(),
             ..Default::default()
         }
+        .httpclient()
     }
 
     /// Sets the API endpoint
@@ -107,7 +116,7 @@ impl<'cl> Client<'cl> {
     ///     .endpoint("https://example.com/v1")
     /// # ;
     /// ```
-    pub fn endpoint<S: Into<&'cl str>>(mut self, v: S) ->  Self {
+    pub fn endpoint<S: Into<&'cl str>>(mut self, v: S) -> Self {
         self.endpoint = v.into();
         self
     }
@@ -233,6 +242,40 @@ impl<'cl> Client<'cl> {
         self.tags = v.into();
         self
     }
+
+    /// Create an instance of the HTTP client and attach it there
+    ///
+    /// Examples
+    /// ```no_run
+    /// # use atlas_rs::client::{AF,Client};
+    /// Client::new("FOO")
+    ///     .httpclient()
+    /// # ;
+    /// ```
+    pub fn httpclient(mut self) -> Self {
+        let ps = std::env::var("all_proxy");
+        let ps = match ps {
+            Ok(p) => p,
+            Err(e) => match std::env::var("https_proxy") {
+                Ok(p) => p,
+                Err(e) => match std::env::var("http_proxy") {
+                    Ok(p) => p,
+                    Err(e) => "",
+                },
+            },
+        };
+
+        let ag = format!("{}/{}", crate_name!(), crate_version!());
+        let proxy = ureq::Proxy::new((ps)).unwrap();
+        let agent = ureq::AgentBuilder::new()
+            .timeout_read(Duration::from_secs(5))
+            .timeout_write(Duration::from_secs(5))
+            .proxy(proxy)
+            .user_agent(&ag)
+            .build();
+        self.agent = Some(agent);
+        self
+    }
 }
 
 #[cfg(test)]
@@ -259,8 +302,7 @@ mod tests {
 
     #[test]
     fn test_onoff() {
-        let c= Client::new("FOO")
-            .onoff(true);
+        let c = Client::new("FOO").onoff(true);
 
         assert!(c.is_oneoff);
         println!("{:#?}", c);
