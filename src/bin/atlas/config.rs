@@ -20,9 +20,7 @@
 
 use std::fs;
 
-use anyhow::{anyhow, Result};
 use serde::Deserialize;
-use toml::from_str;
 
 /// Default set of probes to be used for queries
 #[derive(Debug, Deserialize)]

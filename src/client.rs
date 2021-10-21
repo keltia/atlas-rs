@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::time::Duration;
 
 use clap::{crate_name,crate_version};
-use ureq::{Agent, AgentBuilder};
 
 /// We target the v2 API (not sure if it needs to be public)
 pub(crate) const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
@@ -254,11 +253,11 @@ impl<'cl> Client<'cl> {
         let ps = std::env::var("all_proxy");
         let ps = match ps {
             Ok(p) => p,
-            Err(e) => match std::env::var("https_proxy") {
+            Err(_e) => match std::env::var("https_proxy") {
                 Ok(p) => p,
-                Err(e) => match std::env::var("http_proxy") {
+                Err(_e) => match std::env::var("http_proxy") {
                     Ok(p) => p,
-                    Err(e) => "".to_string(),
+                    Err(e) => e.to_string(),
                 },
             },
         };
