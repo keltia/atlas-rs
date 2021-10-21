@@ -1,32 +1,7 @@
-//! This is the main client struct and the different configuration methods.
-//!
-//! The way to configure it is different from the Go way and more in line
-//! with current Rust practices.
-//!
-//! The only mandatory argument is the API key so it is given to `new()` and
-//! all the other methods are there for configuration everything you want to
-//! change from the default.
-//!
-//! `NOTE` none of the fields are public except within the crate
-//!
-//! `XXX` There is no `api_key()` method to enable changing the API key between
-//! calls.  Not sure it would be useful.
-//!
-//! Examples:
-//! ```
-//! use atlas_rs::client::{AF,Client};
-//!
-//! let c = Client::new("FOOBAR")
-//!             .onoff(true)
-//!             .default_probe(666)
-//!             .want_af(AF::V4);
-//! ```
-//!
-
 use std::collections::HashMap;
 use std::time::Duration;
 
-use clap::crate_name;
+use clap::{crate_name,crate_version};
 use ureq::{Agent, AgentBuilder};
 
 /// We target the v2 API (not sure if it needs to be public)
@@ -43,7 +18,30 @@ pub enum AF {
     V46,
 }
 
-/// Hold the client data
+/// This is the main client struct and the different configuration methods.
+///
+/// The way to configure it is different from the Go way and more in line
+/// with current Rust practices.
+///
+/// The only mandatory argument is the API key so it is given to `new()` and
+/// all the other methods are there for configuration everything you want to
+/// change from the default.
+///
+/// `NOTE` none of the fields are public except within the crate
+///
+/// `XXX` There is no `api_key()` method to enable changing the API key between
+/// calls.  Not sure it would be useful.
+///
+/// Examples:
+/// ```
+/// use atlas_rs::client::{AF,Client};
+///
+/// let c = Client::new("FOOBAR")
+///             .onoff(true)
+///             .default_probe(666)
+///             .want_af(AF::V4);
+/// ```
+///
 #[derive(Debug)]
 pub struct Client<'cl> {
     /// Mandatory
@@ -260,14 +258,15 @@ impl<'cl> Client<'cl> {
                 Ok(p) => p,
                 Err(e) => match std::env::var("http_proxy") {
                     Ok(p) => p,
-                    Err(e) => "",
+                    Err(e) => "".to_string(),
                 },
             },
         };
 
         let ag = format!("{}/{}", crate_name!(), crate_version!());
-        let proxy = ureq::Proxy::new((ps)).unwrap();
+        let proxy = ureq::Proxy::new(ps).unwrap();
         let agent = ureq::AgentBuilder::new()
+            .timeout_connect(Duration::from_secs(10))
             .timeout_read(Duration::from_secs(5))
             .timeout_write(Duration::from_secs(5))
             .proxy(proxy)
@@ -298,6 +297,7 @@ mod tests {
         assert!(!c.verbose);
         assert_eq!("", c.tags);
         assert_eq!(HashMap::new(), c.opts);
+        assert!(c.agent.is_some());
     }
 
     #[test]
@@ -305,6 +305,5 @@ mod tests {
         let c = Client::new("FOO").onoff(true);
 
         assert!(c.is_oneoff);
-        println!("{:#?}", c);
     }
 }
