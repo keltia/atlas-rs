@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::time::Duration;
 
-use clap::{crate_name,crate_version};
+use clap::{crate_name, crate_version};
 
 /// We target the v2 API (not sure if it needs to be public)
 pub(crate) const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";

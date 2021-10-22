@@ -121,5 +121,4 @@ mod tests {
 
         assert!(c.is_err());
     }
-
 }
