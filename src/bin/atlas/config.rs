@@ -48,13 +48,13 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct ProbeSet {
     // How many probes do we want
-    pool_size: Option<usize>,
+    pub pool_size: Option<usize>,
     // Probe type
-    ptype: Option<String>,
+    pub ptype: Option<String>,
     // Value for probe type
-    value: Option<String>,
+    pub value: Option<String>,
     // Include/exclude specific tags
-    tags: Option<String>,
+    pub tags: Option<String>,
 }
 
 /// If we want to bill the queries to a specific account (i.e. different from the
@@ -64,20 +64,20 @@ pub struct ProbeSet {
 #[derive(Debug, Deserialize)]
 pub struct Measurements {
     /// RIPE Account ID to be billed for subsequent queries
-    bill_to: String,
+    pub bill_to: String,
 }
 
 /// `Config` struct with one mandatory argument and optional ones.
 #[derive(Debug, Deserialize)]
 pub struct Config {
     /// API key
-    api_key: String,
+    pub api_key: String,
     /// Default probe ID
-    default_probe: Option<u32>,
+    pub default_probe: Option<u32>,
     /// Default set of probes
-    probe_set: Option<ProbeSet>,
+    pub probe_set: Option<ProbeSet>,
     /// Stuff about billing to a specific account
-    measurements: Option<Measurements>,
+    pub measurements: Option<Measurements>,
 }
 
 impl Default for Config {
