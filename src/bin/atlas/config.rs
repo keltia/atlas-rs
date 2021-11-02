@@ -2,7 +2,7 @@
 //!
 //! It takes a [TOML] configuration file of the following format:
 //!
-//!  ```toml
+//! ```toml
 //! # Default configuration file
 //!
 //! api_key = "no-way-i-tell-you"
@@ -14,6 +14,28 @@
 //! type = "area"
 //! value = "WW"
 //! tags = "+ipv4"
+//! ```
+//!
+//! We can share the configuration file with the Go `ripe-atlas` of course
+//! and this is the default.
+//!
+//! Examples:
+//! ```rs
+//! use crate::config::Config;
+//!
+//! let cfg = Config::new();  // will contain the defaults values from here.
+//!
+//! println!("Default key is {}", cfg.api_key);
+//! ```
+//!
+//! or
+//!
+//! ```rs
+//!  use atlas_rs::config::Config;
+//!
+//!  let cfg = Config::load("./atlas.toml").unwrap();
+//!
+//!  println!("Default key is {}", cfg.api_key);
 //! ```
 //!
 //! [TOML]: https://crates.io/crates/toml
@@ -29,7 +51,7 @@ pub struct ProbeSet {
     pool_size: Option<usize>,
     // Probe type
     ptype: Option<String>,
-    // Value
+    // Value for probe type
     value: Option<String>,
     // Include/exclude specific tags
     tags: Option<String>,
@@ -41,28 +63,25 @@ pub struct ProbeSet {
 /// NOTE: I never used it but it is part of the API.
 #[derive(Debug, Deserialize)]
 pub struct Measurements {
-    // RIPE Account ID to be billed for subsequent queries
+    /// RIPE Account ID to be billed for subsequent queries
     bill_to: String,
 }
 
 /// `Config` struct with one mandatory argument and optional ones.
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    // API key
+    /// API key
     api_key: String,
-
-    // Default probe ID
+    /// Default probe ID
     default_probe: Option<u32>,
-
-    // Default set of probes
+    /// Default set of probes
     probe_set: Option<ProbeSet>,
-
-    // Stuff about billing to a specific account
+    /// Stuff about billing to a specific account
     measurements: Option<Measurements>,
 }
 
-/// Fills in the default values
 impl Default for Config {
+    /// Fills in the default values
     fn default() -> Self {
         Config {
             api_key: "<CHANGEME>".to_string(),
@@ -87,7 +106,15 @@ impl Config {
         }
     }
 
-    /// Loads the configuration from the named file.
+    /// Loads the configuration from the named file.  Creates a new `Config` object.
+    ///
+    /// Example:
+    ///
+    /// ```no_run
+    ///
+    ///   let cfg = Config::load("./atlas.conf");
+    /// ```
+    ///
     pub fn load(fname: &str) -> anyhow::Result<Self> {
         let content = fs::read_to_string(fname)?;
         println!("{:?}", content);
