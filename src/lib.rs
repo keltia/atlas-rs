@@ -3,6 +3,7 @@ use clap::{crate_name, crate_version};
 pub mod client;
 pub mod common;
 pub mod probes;
+pub mod errors;
 
 /// Basic version string
 ///
