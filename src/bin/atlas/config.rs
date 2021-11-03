@@ -1,4 +1,4 @@
-//! This is the module to handle configuration for the `atlas_rs` client.
+//! This is the module to handle configuration for the `atlas` client.
 //!
 //! It takes a [TOML] configuration file of the following format:
 //!
