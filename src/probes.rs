@@ -1,8 +1,11 @@
 //! Struct and methods to deal with probes
 //!
-use serde::{Serialize, Deserialize};
-use ureq::{Error, Response};
 
+/// External crates
+use serde::{Serialize, Deserialize};
+use ureq::Error;
+
+/// Our crates
 use crate::client::Client;
 use crate::common::add_opts;
 use crate::errors::*;
@@ -12,14 +15,18 @@ use crate::errors::*;
 pub struct Geometry {
     #[serde(rename = "type")]
     pub gtype: String,
+    /// GPS coordinates
     pub coordinates: Vec<f64>,
 }
 
 /// Describes the current status of the probe
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Status {
+    /// Date
     pub since: String,
+    /// Probe ID
     pub id: u32,
+    /// Status: connected, etc.
     pub name: String,
 }
 
@@ -33,22 +40,39 @@ pub struct Tags {
 /// All information about a given probe
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Probe {
+    /// IPv4 address
     pub address_v4: String,
+    /// IPv6 address
     pub address_v6: String,
+    /// IPv4 Autonomous System ID
     pub asn_v4: u32,
+    /// IPv6 Autonomous System ID
     pub asn_v6: u32,
+    /// ISO 3166 Country Code
     pub country_code: String,
+    /// Free text description
     pub description: String,
+    /// Approx Position
     pub geometry: Geometry,
+    /// Probe ID
     pub id: u32,
+    /// Is it an Anchor?
     pub is_anchor: bool,
+    /// Is it public?
     pub is_public: bool,
+    /// POSIX time since last connect
     pub last_connected: u32,
+    /// IPv4 Network Prefix
     pub prefix_v4: String,
+    /// IPv6 Network Prefix
     pub prefix_v6: String,
+    /// Probe Status
     pub status: Status,
+    /// ASCII time
     pub status_since: String,
+    /// System and User tags
     pub tags: Vec<Tags>,
+    /// Probe Type
     #[serde(rename = "type")]
     pub ptype: String,
 }
@@ -56,9 +80,13 @@ pub struct Probe {
 /// When asking for a list of probes, this struct is used for pagination
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ProbeList {
+    /// How many results in this block
     pub count: u32,
+    /// URL to fetch the next block
     pub next: String,
+    /// URL to fetch previous block
     pub previous: String,
+    /// Current Probe Block
     pub probes: Vec<Probe>,
 }
 
