@@ -45,7 +45,7 @@ impl APIError {
     /// ```no_run
     /// use atlas_rs::errors::APIError;
     ///
-    /// let e = APIError::new(501, "NotFound", error, "get_probe");
+    /// let e = APIError::new(501, "NotFound", "some error", "get_probe");
     /// ```
     ///
     pub fn new(code: u32, title: &str, descr: &str, loc: &str) -> Self {
