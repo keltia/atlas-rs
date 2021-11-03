@@ -42,23 +42,32 @@ struct Opts {
 fn main() {
     let opts: Opts = Opts::parse();
 
-    let cfg = Config::load("src/bin/atlas/config.toml").unwrap();
-    let c = Client::new(&*cfg.api_key)
-        .verbose(opts.verbose);
-
+    // Do not forget to set NoAutoVersion otherwise this is ignored
     if opts.version {
         let v = atlas_rs::version();
-        println!("Running {}\n{:#?}", v, c);
-    } else {
-        let pn = opts.probe.unwrap();
-        let p = c.get_probe(pn);
 
-        match p {
-            Ok(p) => println!("Probe {} is:\n{:?}", pn, p),
-            Err(e) => {
-                println!("Err: {}", e);
-            }
-        };
-
+        println!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
+        std::process::exit(0);
     }
+
+    // Handle configuration loading & defaults
+    let cfg = match opts.config {
+        Some(fname) => Config::load(&fname).unwrap_or_else(|e| {
+            println!("No config file, using defaults: {}", e);
+            Config::new()
+        }),
+        None => Config::load("src/bin/atlas/config.toml").unwrap_or(Config::new()),
+    };
+
+    let c = Client::new(&*cfg.api_key).verbose(opts.verbose);
+
+    let pn = opts.probe.unwrap_or(cfg.default_probe.unwrap());
+    let p = c.get_probe(pn);
+
+    match p {
+        Ok(p) => println!("Probe {} is:\n{:?}", pn, p),
+        Err(e) => {
+            println!("Err: {}", e);
+        }
+    };
 }
