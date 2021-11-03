@@ -45,7 +45,7 @@ use std::fs;
 use serde::Deserialize;
 
 /// Default set of probes to be used for queries
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct ProbeSet {
     /// How many probes do we want
     pub pool_size: Option<usize>,
@@ -61,7 +61,7 @@ pub struct ProbeSet {
 /// one behind the API key).
 ///
 /// NOTE: I never used it but it is part of the API.
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct Measurements {
     /// RIPE Account ID to be billed for subsequent queries
     pub bill_to: String,
@@ -120,6 +120,41 @@ impl Config {
         println!("{:?}", content);
         Ok(toml::from_str(&content).unwrap())
     }
+
+    /// Reloads the configuration from the named file.
+    ///
+    /// Example:
+    ///
+    /// ```no_run
+    ///
+    ///   let cfg = Config::load("./atlas.conf");
+    ///  #...
+    ///   let n = cfg.reload("./new.toml").unwrap();
+    /// ```
+    ///
+    pub fn reload(&mut self, fname: &str) -> anyhow::Result<&mut Self> {
+        let content = fs::read_to_string(fname)?;
+        let val: Config = toml::from_str(&content).unwrap();
+
+        // copy non-null values
+        if val.api_key != "".to_string() {
+            self.api_key = val.api_key;
+        }
+
+        if val.default_probe != None {
+            self.default_probe = val.default_probe;
+        }
+
+        if val.probe_set != None {
+            self.probe_set = val.probe_set.clone();
+        }
+
+        if val.measurements != None {
+            self.probe_set = val.probe_set.clone();
+        }
+
+        Ok(self)
+    }
 }
 
 #[cfg(test)]
@@ -135,7 +170,7 @@ mod tests {
     }
 
     #[test]
-    fn test_from_ok() {
+    fn test_load_ok() {
         let c = Config::load("src/bin/atlas/config.toml").unwrap();
 
         assert_eq!("no-way-i-tell-you", c.api_key);
@@ -143,9 +178,29 @@ mod tests {
     }
 
     #[test]
-    fn test_from_nok() {
+    fn test_load_nok() {
         let c = Config::load("/nonexistent");
 
         assert!(c.is_err());
+    }
+
+    #[test]
+    fn test_reload_ok() {
+        let mut c = Config::new();
+
+        assert_eq!(Some(0), c.default_probe);
+
+        let d = c.reload("src/bin/atlas/config.toml").unwrap();
+        assert_eq!(Some(666), d.default_probe);
+    }
+
+    #[test]
+    fn test_reload_nok() {
+        let mut c = Config::new();
+
+        assert_eq!(Some(0), c.default_probe);
+
+        let d = c.reload("/nonexistent");
+        assert!(d.is_err());
     }
 }
