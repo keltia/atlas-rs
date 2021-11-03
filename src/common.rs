@@ -6,7 +6,6 @@ use std::collections::HashMap;
 
 /// Our crates
 use crate::client::Client;
-use crate::errors::APIError;
 
 impl<'cl> Client<'cl> {}
 
