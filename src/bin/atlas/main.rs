@@ -1,14 +1,26 @@
-use clap::{Parser, crate_version};
+//! This is the main binary shipped with the library.
+//!
+//! It is a way to both demonstrate the use of the API and a testing tool.
+//!
+
+/// External crates
+use clap::{crate_version, crate_authors, Parser, AppSettings};
 
 use atlas_rs::client::Client;
 use config::Config;
+
+/// Binary name
+pub(crate) const NAME: &str = "atlas";
+/// Binary version, different from the API itself represented the crate.
+pub(crate) const VERSION: &str = "0.1.1";
 
 mod config;
 
 /// Help message
 #[derive(Debug, Parser)]
-#[clap(name = "atlas", about = "Rust CLI for RIPE Atlas.")]
-#[clap(version = crate_version!())]
+#[clap(name = NAME, about = "Rust CLI for RIPE Atlas.")]
+#[clap(version = VERSION, author = crate_authors!())]
+#[clap(setting = AppSettings::NoAutoVersion)]
 struct Opts {
     /// configuration file
     #[clap(short = 'c', long)]
@@ -22,7 +34,7 @@ struct Opts {
     /// Display version and exit
     #[clap(short = 'V', long = "version")]
     version: bool,
-    /// Search for workstation
+    /// Get info on probe
     #[clap(short, long = "probe")]
     probe: Option<u32>,
 }
