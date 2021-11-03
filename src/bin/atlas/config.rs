@@ -116,6 +116,14 @@ impl Default for Config {
 /// Methods for Config
 impl Config {
     /// Create a `Config` struct with default values.
+    ///
+    /// Example:
+    /// ```rs
+    ///  # use atlas_rs::config::Config;
+    ///
+    ///  let cfg = Config::new();
+    /// ```
+    ///
     pub fn new() -> Config {
         Config {
             ..Default::default()
