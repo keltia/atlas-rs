@@ -157,8 +157,7 @@ impl Config {
     /// ```
     ///
     pub fn reload(&mut self, fname: &str) -> anyhow::Result<&mut Self> {
-        let content = fs::read_to_string(fname)?;
-        let val: Config = toml::from_str(&content).unwrap();
+        let val= Config::load(fname)?;
 
         // copy non-null values
         if val.api_key != "".to_string() {
