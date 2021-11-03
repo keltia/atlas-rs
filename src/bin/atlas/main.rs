@@ -4,7 +4,7 @@
 //!
 
 /// External crates
-use clap::{crate_version, crate_authors, Parser, AppSettings};
+use clap::{crate_authors, crate_version, AppSettings, Parser};
 
 use atlas_rs::client::Client;
 use config::Config;

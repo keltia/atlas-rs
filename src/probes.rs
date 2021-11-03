@@ -2,7 +2,7 @@
 //!
 
 /// External crates
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use ureq::Error;
 
 /// Our crates
@@ -119,15 +119,12 @@ impl<'cl> Client<'cl> {
             Err(Error::Status(_code, resp)) => {
                 let er = resp.into_string()?;
                 let a = decode_error(&er).unwrap();
-                return Err(a)
-            },
+                return Err(a);
+            }
             _ => {
-                let err= APIError::new(500,
-                                        "Bad",
-                                        "unknown error",
-                                        "get_probe");
-                return Err(err)
-            },
+                let err = APIError::new(500, "Bad", "unknown error", "get_probe");
+                return Err(err);
+            }
         };
         let resp = resp.into_string().unwrap();
         let p: Probe = serde_json::from_str(&resp)?;
@@ -144,7 +141,5 @@ impl<'cl> Client<'cl> {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_get_probe() {
-
-    }
+    fn test_get_probe() {}
 }

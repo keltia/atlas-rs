@@ -6,7 +6,7 @@ use std::fmt;
 use std::io;
 
 /// External crates
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// `APIError` is used to report API errors but we use it for ourselves
 #[derive(Deserialize, Serialize, Debug)]
@@ -49,20 +49,18 @@ impl APIError {
     /// ```
     ///
     pub fn new(code: u32, title: &str, descr: &str, loc: &str) -> Self {
-        APIError{
+        APIError {
             err: AErr {
                 status: code,
                 code: code,
                 detail: descr.to_string(),
                 title: title.to_string(),
-                errors: vec!(
-                    AError {
-                        detail: descr.to_string(),
-                        source: Source {
-                            pointer: loc.to_string(),
-                        },
+                errors: vec![AError {
+                    detail: descr.to_string(),
+                    source: Source {
+                        pointer: loc.to_string(),
                     },
-                ),
+                }],
             },
         }
     }

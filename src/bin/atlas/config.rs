@@ -157,7 +157,7 @@ impl Config {
     /// ```
     ///
     pub fn reload(&mut self, fname: &str) -> anyhow::Result<&mut Self> {
-        let val= Config::load(fname)?;
+        let val = Config::load(fname)?;
 
         // copy non-null values
         if val.api_key != "".to_string() {
