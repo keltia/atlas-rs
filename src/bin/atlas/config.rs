@@ -38,10 +38,26 @@
 //!  println!("Default key is {}", cfg.api_key);
 //! ```
 //!
+//! There is also a `reload()` method to override an existing configuration.
+//!
+//! Example:
+//!
+//! ```rs
+//!  use atlas_rs::config::Config;
+//!
+//!  let cfg = Config::load("./atlas.toml").unwrap();
+//!
+//!  let cfg = cfg.reload("new.toml").unwrap();
+//!
+//!  println!("Key is now {}", cfg.api_key);
+//! ```
+//!
 //! [TOML]: https://crates.io/crates/toml
 
+// Standard library
 use std::fs;
 
+// External crates
 use serde::Deserialize;
 
 /// Default set of probes to be used for queries
