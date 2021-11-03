@@ -47,13 +47,13 @@ use serde::Deserialize;
 /// Default set of probes to be used for queries
 #[derive(Debug, Deserialize)]
 pub struct ProbeSet {
-    // How many probes do we want
+    /// How many probes do we want
     pub pool_size: Option<usize>,
-    // Probe type
+    /// Probe type
     pub ptype: Option<String>,
-    // Value for probe type
+    /// Value for probe type
     pub value: Option<String>,
-    // Include/exclude specific tags
+    /// Include/exclude specific tags
     pub tags: Option<String>,
 }
 
