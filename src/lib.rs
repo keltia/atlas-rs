@@ -1,5 +1,8 @@
+//! Root crate for the API library
+//!
 use clap::{crate_name, crate_version};
 
+/// Our own crates
 pub mod client;
 pub mod common;
 pub mod probes;
