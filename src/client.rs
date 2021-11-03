@@ -1,6 +1,11 @@
+//! Code to create `Client` instance which is the main container for the API
+//!
+
+/// Standard library
 use std::collections::HashMap;
 use std::time::Duration;
 
+/// External crates
 use clap::{crate_name, crate_version};
 
 /// We target the v2 API (not sure if it needs to be public)
@@ -95,6 +100,7 @@ impl<'cl> Client<'cl> {
     /// # use atlas_rs::client::Client;
     /// let c = Client::new("FOO");
     /// ```
+    ///
     pub fn new<S: Into<&'cl str>>(key: S) -> Self {
         Client {
             api_key: key.into(),
@@ -113,6 +119,7 @@ impl<'cl> Client<'cl> {
     ///     .endpoint("https://example.com/v1")
     /// # ;
     /// ```
+    ///
     pub fn endpoint<S: Into<&'cl str>>(mut self, v: S) -> Self {
         self.endpoint = v.into();
         self
@@ -128,6 +135,7 @@ impl<'cl> Client<'cl> {
     ///     .default_probe(666)
     /// # ;
     /// ```
+    ///
     pub fn default_probe(mut self, v: u32) -> Self {
         self.default_probe = v;
         self
@@ -143,6 +151,7 @@ impl<'cl> Client<'cl> {
     ///     .area_type("area")
     /// # ;
     /// ```
+    ///
     pub fn area_type<S: Into<&'cl str>>(mut self, v: S) -> Self {
         self.area_type = v.into();
         self
@@ -158,6 +167,7 @@ impl<'cl> Client<'cl> {
     ///     .area_value("WW")
     /// # ;
     /// ```
+    ///
     pub fn area_value<S: Into<&'cl str>>(mut self, v: S) -> Self {
         self.area_value = v.into();
         self
@@ -173,6 +183,7 @@ impl<'cl> Client<'cl> {
     ///     .onoff(true)
     /// # ;
     /// ```
+    ///
     pub fn onoff(mut self, v: bool) -> Self {
         self.is_oneoff = v;
         self
@@ -188,6 +199,7 @@ impl<'cl> Client<'cl> {
     ///     .pool_size(20)
     /// # ;
     /// ```
+    ///
     pub fn pool_size(mut self, v: usize) -> Self {
         self.pool_size = v;
         self
@@ -203,6 +215,7 @@ impl<'cl> Client<'cl> {
     ///     .verbose(true)
     /// # ;
     /// ```
+    ///
     pub fn verbose(mut self, v: bool) -> Self {
         self.verbose = v;
         self
@@ -218,6 +231,7 @@ impl<'cl> Client<'cl> {
     ///     .want_af(AF::V6)
     /// # ;
     /// ```
+    ///
     pub fn want_af(mut self, v: AF) -> Self {
         self.want_af = v;
         self
@@ -235,6 +249,7 @@ impl<'cl> Client<'cl> {
     ///     .tags("ftth !cable")
     /// # ;
     /// ```
+    ///
     pub fn tags<S: Into<&'cl str>>(mut self, v: S) -> Self {
         self.tags = v.into();
         self
@@ -249,6 +264,7 @@ impl<'cl> Client<'cl> {
     ///     .httpclient()
     /// # ;
     /// ```
+    ///
     pub fn httpclient(mut self) -> Self {
         let ps = std::env::var("all_proxy");
         let ps = match ps {
