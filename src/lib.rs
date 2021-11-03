@@ -7,10 +7,12 @@ pub mod common;
 pub mod errors;
 pub mod probes;
 
-/// Basic version string
+/// Basic version string for the API.
 ///
 /// Examples:
-/// ```
+/// ```rs
+/// use atlas_rs::version;
+///
 /// println!("{}", atlas_rs::version());
 /// ```
 ///
