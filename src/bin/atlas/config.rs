@@ -84,7 +84,7 @@ pub struct Measurements {
 }
 
 /// `Config` struct with one mandatory argument and optional ones.
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct Config {
     /// API key
     pub api_key: String,
