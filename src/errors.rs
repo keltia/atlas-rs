@@ -1,80 +1,91 @@
 //! Definitions and traits about `APIError`
 //!
+
+/// Standard library
 use std::fmt;
 use std::io;
 
+/// External crates
 use serde::{Serialize, Deserialize};
 
-#[derive(Deserialize, Serialize, Debug)]
-pub struct AErr {
-    status: u32,
-    code: u32,
-    detail: String,
-    title: String,
-    errors: Vec<AError>,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
-pub struct Source {
-    pointer: String,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
-pub struct AError {
-    source: Source,
-    detail: String,
-}
-
+/// `APIError` is used to report API errors but we use it for ourselves
 #[derive(Deserialize, Serialize, Debug)]
 pub struct APIError {
-    err: AErr,
+    pub err: AErr,
 }
 
+/// Container for errors
+#[derive(Deserialize, Serialize, Debug)]
+pub struct AErr {
+    pub status: u32,
+    pub code: u32,
+    pub detail: String,
+    pub title: String,
+    pub errors: Vec<AError>,
+}
+
+/// We can have several more specialized messages
+#[derive(Deserialize, Serialize, Debug)]
+pub struct AError {
+    pub source: Source,
+    pub detail: String,
+}
+
+/// We used it to say where the `APIError` is generated
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Source {
+    pub pointer: String,
+}
+
+/// A few helpers for `APIError`
+impl APIError {
+    /// Generate a properly formatted `APIError`
+    ///
+    /// Examples:
+    /// ```no_run
+    /// use atlas_rs::errors::APIError;
+    ///
+    /// let e = APIError::new(501, "NotFound", error, "get_probe");
+    /// ```
+    ///
+    pub fn new(code: u32, title: &str, descr: &str, loc: &str) -> Self {
+        APIError{
+            err: AErr {
+                status: code,
+                code: code,
+                detail: descr.to_string(),
+                title: title.to_string(),
+                errors: vec!(
+                    AError {
+                        detail: descr.to_string(),
+                        source: Source {
+                            pointer: loc.to_string(),
+                        },
+                    },
+                ),
+            },
+        }
+    }
+}
+
+/// Used to display a text version of the error (for `println!` and co)
 impl fmt::Display for APIError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "({:?})", self.err.title)
     }
 }
 
+/// Convert a regular `std::io::error` into `APIError`
 impl From<io::Error> for APIError {
     fn from(error: io::Error) -> Self {
-        APIError{
-            err: AErr {
-                status: 500,
-                code: 500,
-                detail: error.to_string(),
-                title: "APIError/std::io".to_string(),
-                errors: vec!(
-                    AError {
-                        detail: error.to_string(),
-                        source: Source {
-                            pointer: "".to_string(),
-                        },
-                    },
-                ),
-            },
-        }
+        APIError::new(500, "I/O error", &error.to_string(), "std::io::error")
     }
 }
 
+/// Convert a deserialize error from `serde`
 impl From<serde_json::Error> for APIError {
     fn from(error: serde_json::Error) -> Self {
-        APIError{
-            err: AErr {
-                status: 500,
-                code: 500,
-                detail: error.to_string(),
-                title: "APIError/serde".to_string(),
-                errors: vec!(
-                    AError {
-                        detail: error.to_string(),
-                        source: Source {
-                            pointer: "".to_string(),
-                        },
-                    },
-                ),
-            },
-        }
+        APIError::new(500, "json/decode", &error.to_string(), "serde")
     }
 }
 
