@@ -35,7 +35,7 @@ struct Opts {
     #[clap(short = 'V', long = "version")]
     version: bool,
     /// Get info on probe
-    #[clap(short, long = "probe")]
+    #[clap(short = 'p', long = "probe")]
     probe: Option<u32>,
 }
 

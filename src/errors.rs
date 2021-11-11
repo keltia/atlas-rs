@@ -11,14 +11,14 @@ use serde::{Deserialize, Serialize};
 /// `APIError` is used to report API errors but we use it for ourselves
 #[derive(Deserialize, Serialize, Debug)]
 pub struct APIError {
-    pub err: AErr,
+    pub error: AErr,
 }
 
 /// Container for errors
 #[derive(Deserialize, Serialize, Debug)]
 pub struct AErr {
-    pub status: u32,
-    pub code: u32,
+    pub status: u16,
+    pub code: u16,
     pub detail: String,
     pub title: String,
     pub errors: Vec<AError>,
@@ -48,9 +48,9 @@ impl APIError {
     /// let e = APIError::new(501, "NotFound", "some error", "get_probe");
     /// ```
     ///
-    pub fn new(code: u32, title: &str, descr: &str, loc: &str) -> Self {
+    pub fn new(code: u16, title: &str, descr: &str, loc: &str) -> Self {
         APIError {
-            err: AErr {
+            error: AErr {
                 status: code,
                 code: code,
                 detail: descr.to_string(),
@@ -69,7 +69,7 @@ impl APIError {
 /// Used to display a text version of the error (for `println!` and co)
 impl fmt::Display for APIError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({:?})", self.err.title)
+        write!(f, "({:?})", self.error.title)
     }
 }
 
@@ -88,7 +88,7 @@ impl From<serde_json::Error> for APIError {
 }
 
 /// Decode the body returned by the API into a proper `APIError`
-pub fn decode_error(body: &str) -> Result<APIError, String> {
+pub fn decode_as_error(body: &str) -> Result<APIError, String> {
     let e: Result<APIError, String> = serde_json::from_str(&body).unwrap();
     match e {
         Ok(ae) => Ok(ae),

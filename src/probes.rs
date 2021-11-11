@@ -3,7 +3,7 @@
 
 /// External crates
 use serde::{Deserialize, Serialize};
-use ureq::Error;
+use reqwest::{Error, StatusCode};
 
 /// Our crates
 use crate::client::Client;
@@ -114,21 +114,29 @@ impl<'cl> Client<'cl> {
 
         let url = add_opts(&url, opts);
 
-        let resp: ureq::Response = match self.agent.as_ref().unwrap().get(&url).call() {
+        let resp = self.agent.as_ref().unwrap().get(&url).send();
+
+        let resp = match resp {
             Ok(resp) => resp,
-            Err(Error::Status(_code, resp)) => {
-                let er = resp.into_string()?;
-                let a = decode_error(&er).unwrap();
-                return Err(a);
-            }
-            _ => {
-                let err = APIError::new(500, "Bad", "unknown error", "get_probe");
-                return Err(err);
+            Err(e) => {
+                let aerr = APIError::new(e.status().unwrap().as_u16(),
+                                        "Bad",
+                                        "unknown error",
+                                        "get_probe");
+                return Err(aerr)
             }
         };
-        let resp = resp.into_string().unwrap();
-        let p: Probe = serde_json::from_str(&resp)?;
-        Ok(p)
+
+        let body = resp.text().unwrap();
+
+        // Try to see if we got an error
+        match decode_as_error(&body) {
+            Ok(aerr) => Err(aerr),
+            Err(_) => {
+                let p: Probe = serde_json::from_str(&body)?;
+                Ok(p)
+            }
+        }
     }
 
     /// Get information about a set of probes according to parameters

@@ -7,6 +7,7 @@ use std::time::Duration;
 
 /// External crates
 use clap::{crate_name, crate_version};
+use reqwest::blocking::ClientBuilder;
 
 /// We target the v2 API (not sure if it needs to be public)
 pub(crate) const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
@@ -66,7 +67,7 @@ pub struct Client<'cl> {
     pub(crate) opts: HashMap<&'cl str, &'cl str>,
 
     /// Internal state, http client
-    pub(crate) agent: Option<ureq::Agent>,
+    pub(crate) agent: Option<reqwest::blocking::Client>,
 }
 
 /// Default values
@@ -266,27 +267,13 @@ impl<'cl> Client<'cl> {
     /// ```
     ///
     pub fn httpclient(mut self) -> Self {
-        let ps = std::env::var("all_proxy");
-        let ps = match ps {
-            Ok(p) => p,
-            Err(_e) => match std::env::var("https_proxy") {
-                Ok(p) => p,
-                Err(_e) => match std::env::var("http_proxy") {
-                    Ok(p) => p,
-                    Err(e) => e.to_string(),
-                },
-            },
-        };
-
         let ag = format!("{}/{}", crate_name!(), crate_version!());
-        let proxy = ureq::Proxy::new(ps).unwrap();
-        let agent = ureq::AgentBuilder::new()
-            .timeout_connect(Duration::from_secs(10))
-            .timeout_read(Duration::from_secs(5))
-            .timeout_write(Duration::from_secs(5))
-            .proxy(proxy)
+        let agent = ClientBuilder::new()
+            .connect_timeout(Duration::from_secs(10))
+            .timeout(Duration::from_secs(5))
             .user_agent(&ag)
-            .build();
+            .build()
+            .unwrap();
         self.agent = Some(agent);
         self
     }

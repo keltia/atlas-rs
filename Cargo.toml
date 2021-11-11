@@ -17,7 +17,7 @@ home = "0.5.3"
 itertools = "0.10.1"
 toml = "0.5.8"
 serde = { version = "1.0", features = ["derive"] }
-ureq = { version = "2", features = ["socks-proxy"] }
+reqwest = { version = "0", features = ["socks", "blocking", "gzip", "json"] }
 serde_json = "1.0"
 
 [dev-dependencies]
