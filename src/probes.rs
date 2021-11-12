@@ -70,7 +70,7 @@ pub struct Probe {
     /// Probe Status
     pub status: Status,
     /// ASCII time
-    pub status_since: String,
+    pub status_since: u32,
     /// System and User tags
     pub tags: Vec<Tags>,
     /// Probe Type
