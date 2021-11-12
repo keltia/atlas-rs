@@ -110,21 +110,5 @@ impl From<reqwest::Error> for APIError {
     }
 }
 
-/// Decode the body returned by the API into a proper `APIError`
-///
-/// Example:
-///  ```rs
-///  # use crate::error::APIError;
-///
-///  let resp = cl.get_probe(n).unwrap()
-///
-///  let aerr = decode_as_error(resp.text());
-///  ```
-///
-pub fn decode_as_error(body: Response) -> Result<APIError> {
-    let ae:APIError = body.json()?;
-    Ok(ae)
-}
-
 #[cfg(test)]
 mod tests {}
