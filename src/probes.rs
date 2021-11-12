@@ -2,6 +2,7 @@
 //!
 
 /// External crates
+use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
 use reqwest::{Error, StatusCode};
 
@@ -127,14 +128,15 @@ impl<'cl> Client<'cl> {
             }
         };
 
-        let body = resp.text().unwrap();
-
         // Try to see if we got an error
-        match decode_as_error(&body) {
-            Ok(aerr) => Err(aerr),
-            Err(_) => {
-                let p: Probe = serde_json::from_str(&body)?;
+        match resp.status().as_u16() {
+            200 => {
+                let p: Probe = resp.json()?;
                 Ok(p)
+            },
+            p => {
+                let aerr = decode_as_error(resp)?;
+                Err(aerr)
             }
         }
     }

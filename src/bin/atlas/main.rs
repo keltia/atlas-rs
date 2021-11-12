@@ -67,7 +67,7 @@ fn main() {
     match p {
         Ok(p) => println!("Probe {} is:\n{:?}", pn, p),
         Err(e) => {
-            println!("Err: {}", e);
+            println!("Err: {:?}", e);
         }
     };
 }

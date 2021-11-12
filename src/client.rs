@@ -47,6 +47,15 @@ pub enum AF {
 ///             .want_af(AF::V4);
 /// ```
 ///
+/// Errors are handled in two steps:
+/// 1. if there is a Transport error (Unknown Host, Unreachable, etc.) call() will return an error
+/// 2. if the API returns an error, we attempt to decode as an APIError. If not, everything is good.
+///
+/// We use [reqwest] as HTTP client.  It has support for everything we need incl. proxy.  We choose
+/// to use the blocking client as most of the time this ought to be enough and it is easier.
+///
+/// [reqwest]: https://crates.io/reqwest/
+///
 #[derive(Debug)]
 pub struct Client<'cl> {
     /// Mandatory

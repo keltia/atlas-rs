@@ -6,6 +6,8 @@ use std::fmt;
 use std::io;
 
 /// External crates
+use anyhow::{bail, Result};
+use reqwest::blocking::Response;
 use serde::{Deserialize, Serialize};
 
 /// `APIError` is used to report API errors but we use it for ourselves
@@ -21,7 +23,7 @@ pub struct AErr {
     pub code: u16,
     pub detail: String,
     pub title: String,
-    pub errors: Vec<AError>,
+    pub errors: Option<Vec<AError>>,
 }
 
 /// We can have several more specialized messages
@@ -35,6 +37,13 @@ pub struct AError {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Source {
     pub pointer: String,
+}
+
+/// Just in case, define our default
+impl Default for APIError {
+    fn default() -> Self {
+        APIError::new(500, "Default", "def", "default")
+    }
 }
 
 /// A few helpers for `APIError`
@@ -55,12 +64,12 @@ impl APIError {
                 code: code,
                 detail: descr.to_string(),
                 title: title.to_string(),
-                errors: vec![AError {
+                errors: Some(vec![AError {
                     detail: descr.to_string(),
                     source: Source {
                         pointer: loc.to_string(),
                     },
-                }],
+                }]),
             },
         }
     }
@@ -87,32 +96,35 @@ impl From<serde_json::Error> for APIError {
     }
 }
 
-/// Decode the body returned by the API into a proper `APIError`
-pub fn decode_as_error(body: &str) -> Result<APIError, String> {
-    let e: Result<APIError, String> = serde_json::from_str(&body).unwrap();
-    match e {
-        Ok(ae) => Ok(ae),
-        Err(e) => {
-            let s = format!("Error decoding {}", e);
-            Err(s)
-        }
+/// Convert a deserialize error from `serde`
+impl From<anyhow::Error> for APIError {
+    fn from(error: anyhow::Error) -> Self {
+        APIError::new(500, "json/decode", &error.to_string(), "serde")
     }
+}
+
+/// Convert a deserialize error from `reqwest`
+impl From<reqwest::Error> for APIError {
+    fn from(error: reqwest::Error) -> Self {
+        APIError::new(500, "json/decode", &error.to_string(), "reqwest")
+    }
+}
+
+/// Decode the body returned by the API into a proper `APIError`
+///
+/// Example:
+///  ```rs
+///  # use crate::error::APIError;
+///
+///  let resp = cl.get_probe(n).unwrap()
+///
+///  let aerr = decode_as_error(resp.text());
+///  ```
+///
+pub fn decode_as_error(body: Response) -> Result<APIError> {
+    let ae:APIError = body.json()?;
+    Ok(ae)
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    #[should_panic]
-    fn test_decode_error_null() {
-        let raw = "";
-        assert!(decode_error(raw).is_err());
-    }
-    #[test]
-    #[should_panic]
-    fn test_decode_error_bad() {
-        let raw = "error";
-        assert!(decode_error(raw).is_err());
-    }
-}
+mod tests {}

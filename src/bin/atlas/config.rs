@@ -56,9 +56,22 @@
 
 // Standard library
 use std::fs;
+use std::path::PathBuf;
 
 // External crates
+use anyhow::Result;
+use clap::crate_name;
 use serde::Deserialize;
+
+#[cfg(unix)]
+use home::home_dir;
+
+/// Default configuration filename
+const CONFIG: &str = "config.toml";
+
+/// Use the standard location `$HOME/.config`
+#[cfg(unix)]
+const BASEDIR: &str = ".config";
 
 /// Default set of probes to be used for queries
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -180,6 +193,37 @@ impl Config {
     }
 }
 
+/// Returns the path of the default config file. On Unix systems we use the standard `$HOME/.config`
+/// base directory.
+#[cfg(unix)]
+pub fn default_file() -> Result<PathBuf> {
+    let homedir = home_dir().unwrap();
+
+    let def: PathBuf = [
+        homedir,
+        PathBuf::from(BASEDIR),
+        PathBuf::from(crate_name!()),
+        PathBuf::from(CONFIG),
+    ]   .iter()
+        .collect();
+    Ok(def)
+}
+
+/// Returns the path of the default config file.  Here we use the standard %LOCALAPPDATA%
+/// variable to base our directory into.
+#[cfg(windows)]
+pub fn default_file() -> Result<PathBuf> {
+    let basedir = std::env::var("LOCALAPPDATA")?;
+
+    let def: PathBuf = [
+        PathBuf::from(basedir),
+        PathBuf::from(crate_name!()),
+        PathBuf::from(CONFIG),
+    ]   .iter()
+        .collect();
+    Ok(def)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -225,5 +269,30 @@ mod tests {
 
         let d = c.reload("/nonexistent");
         assert!(d.is_err());
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn test_default_file() -> Result<()>{
+        let h = std::env::var("HOME")?;
+        let h = h + "/.config/atlas-rs/config.toml";
+        let h = PathBuf::from(h);
+
+        assert_eq!(h, default_file().unwrap());
+        Ok(())
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn test_default_file() -> Result<()>{
+        let h = std::env::var("LOCALAPPDATA")?;
+        let h: PathBuf = [
+            PathBuf::from(h),
+            PathBuf::from("atlas-rs"),
+            PathBuf::from(CONFIG),
+        ].iter().collect();
+
+        assert_eq!(h, default_file().unwrap());
+        Ok(())
     }
 }
