@@ -13,8 +13,8 @@ use itertools::Itertools;
 impl<'cl> Client<'cl> {}
 
 /// Take an url and a set of options to add to the parameters
-pub fn add_opts<'cl>(url: &String, opts: HashMap<&'cl str, &'cl str>) -> String {
-    let full = url.clone() + "?";
+pub fn add_opts<'cl>(url: &str, opts: HashMap<&'cl str, &'cl str>) -> String {
+    let full = url.to_owned() + "?";
     let mut v = Vec::<String>::new();
 
     for name in opts.keys().sorted() {
