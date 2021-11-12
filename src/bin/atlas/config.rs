@@ -152,10 +152,10 @@ impl Config {
     ///   let cfg = Config::load("./atlas.conf");
     /// ```
     ///
-    pub fn load(fname: &str) -> anyhow::Result<Self> {
+    pub fn load(fname: &str) -> Result<Self> {
         let content = fs::read_to_string(fname)?;
         println!("{:?}", content);
-        Ok(toml::from_str(&content).unwrap())
+        Ok(toml::from_str(&content)?)
     }
 
     /// Reloads the configuration from the named file.
@@ -169,7 +169,7 @@ impl Config {
     ///   let n = cfg.reload("./new.toml").unwrap();
     /// ```
     ///
-    pub fn reload(&mut self, fname: &str) -> anyhow::Result<&mut Self> {
+    pub fn reload(&mut self, fname: &str) -> Result<&mut Self> {
         let val = Config::load(fname)?;
 
         // copy non-null values
