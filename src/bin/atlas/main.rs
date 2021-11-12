@@ -7,9 +7,9 @@
 use anyhow::Result;
 use clap::{crate_authors, AppSettings, Parser};
 
+use crate::config::default_file;
 use atlas_rs::client::Client;
 use config::Config;
-use crate::config::default_file;
 
 /// Binary name
 pub(crate) const NAME: &str = "atlas";

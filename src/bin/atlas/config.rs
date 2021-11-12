@@ -205,8 +205,9 @@ pub fn default_file() -> Result<PathBuf> {
         PathBuf::from(BASEDIR),
         PathBuf::from(crate_name!()),
         PathBuf::from(CONFIG),
-    ]   .iter()
-        .collect();
+    ]
+    .iter()
+    .collect();
     Ok(def)
 }
 
@@ -220,8 +221,9 @@ pub fn default_file() -> Result<String> {
         PathBuf::from(basedir),
         PathBuf::from(crate_name!()),
         PathBuf::from(CONFIG),
-    ]   .iter()
-        .collect();
+    ]
+    .iter()
+    .collect();
     let def = def.to_str().unwrap().to_string();
     Ok(def)
 }
@@ -275,7 +277,7 @@ mod tests {
 
     #[test]
     #[cfg(unix)]
-    fn test_default_file() -> Result<()>{
+    fn test_default_file() -> Result<()> {
         let h = env::var("HOME")?;
         let h = h + "/.config/atlas-rs/config.toml";
         let h = PathBuf::from(h);
@@ -288,13 +290,15 @@ mod tests {
 
     #[test]
     #[cfg(windows)]
-    fn test_default_file() -> Result<()>{
+    fn test_default_file() -> Result<()> {
         let h = env::var("LOCALAPPDATA")?;
         let h: PathBuf = [
             PathBuf::from(h),
             PathBuf::from("atlas-rs"),
             PathBuf::from(CONFIG),
-        ].iter().collect();
+        ]
+        .iter()
+        .collect();
 
         let sh = h.to_str().unwrap().to_string();
 

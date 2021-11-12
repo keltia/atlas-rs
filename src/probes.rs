@@ -1,9 +1,9 @@
 //! Struct and methods to deal with probes
 //!
 
+use reqwest::StatusCode;
 /// External crates
 use serde::{Deserialize, Serialize};
-use reqwest::StatusCode;
 
 /// Our crates
 use crate::client::Client;
@@ -119,11 +119,13 @@ impl<'cl> Client<'cl> {
         let resp = match resp {
             Ok(resp) => resp,
             Err(e) => {
-                let aerr = APIError::new(e.status().unwrap().as_u16(),
-                                        "Bad",
-                                        "unknown error",
-                                        "get_probe");
-                return Err(aerr)
+                let aerr = APIError::new(
+                    e.status().unwrap().as_u16(),
+                    "Bad",
+                    "unknown error",
+                    "get_probe",
+                );
+                return Err(aerr);
             }
         };
 
@@ -134,7 +136,7 @@ impl<'cl> Client<'cl> {
                 let r = resp.text()?;
                 let p: Probe = serde_json::from_str(&r)?;
                 Ok(p)
-            },
+            }
             _ => {
                 let aerr = resp.json::<APIError>()?;
                 Err(aerr)
