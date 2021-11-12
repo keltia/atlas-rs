@@ -1,0 +1,10 @@
+# Default configuration file
+
+api_key = "no-way-i-tell-you"
+default_probe = 666
+
+[probe_set]
+
+pool_size = 10
+type = "area"
+value = "WW"
