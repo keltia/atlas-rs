@@ -2,9 +2,8 @@
 //!
 
 /// External crates
-use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
-use reqwest::{Error, StatusCode};
+use reqwest::StatusCode;
 
 /// Our crates
 use crate::client::Client;
@@ -108,7 +107,7 @@ impl<'cl> Client<'cl> {
     ///  ```
     ///
     pub fn get_probe(&self, id: u32) -> Result<Probe, APIError> {
-        let url = format!("{}/probe/{}", self.endpoint, id);
+        let url = format!("{}/probes/{}/", self.endpoint, id);
 
         let mut opts = self.opts.clone();
         opts.insert("key", self.api_key);
@@ -129,13 +128,15 @@ impl<'cl> Client<'cl> {
         };
 
         // Try to see if we got an error
-        match resp.status().as_u16() {
-            200 => {
-                let p: Probe = resp.json()?;
+        match resp.status() {
+            StatusCode::OK => {
+                // We could use Response::json() here but it consumes the body.
+                let r = resp.text()?;
+                let p: Probe = serde_json::from_str(&r)?;
                 Ok(p)
             },
-            p => {
-                let aerr = decode_as_error(resp)?;
+            _ => {
+                let aerr = resp.json::<APIError>()?;
                 Err(aerr)
             }
         }
