@@ -1,5 +1,10 @@
 # Atlas-rs
 
+[![CircleCI](https://circleci.com/gh/keltia/atlas-rs/tree/main.svg?style=shield)](https://circleci.com/gh/keltia/atlas-rs/tree/main)
+[![dependency status](https://deps.rs/repo/github/keltia/atlas-rs/status.svg)](https://deps.rs/repo/github/keltia/atlas-rs)
+[![](https://img.shields.io/crates/v/atlas-rs.svg)](https://crates.io/crates/atlas-rs)
+[![Docs](https://docs.rs/atlas-rs/badge.svg)](https://docs.rs/atlas-rs)
+
 [![SemVer](http://img.shields.io/SemVer/2.0.0.png)](https://semver.org/spec/v2.0.0.html)
 [![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/keltia/ripe-atlas/master/LICENSE)
 
