@@ -55,6 +55,7 @@
 //! [TOML]: https://crates.io/crates/toml
 
 // Standard library
+use std::env;
 use std::fs;
 use std::path::PathBuf;
 
@@ -212,8 +213,8 @@ pub fn default_file() -> Result<PathBuf> {
 /// Returns the path of the default config file.  Here we use the standard %LOCALAPPDATA%
 /// variable to base our directory into.
 #[cfg(windows)]
-pub fn default_file() -> Result<PathBuf> {
-    let basedir = std::env::var("LOCALAPPDATA")?;
+pub fn default_file() -> Result<String> {
+    let basedir = env::var("LOCALAPPDATA")?;
 
     let def: PathBuf = [
         PathBuf::from(basedir),
@@ -221,6 +222,7 @@ pub fn default_file() -> Result<PathBuf> {
         PathBuf::from(CONFIG),
     ]   .iter()
         .collect();
+    let def = def.to_str().unwrap().to_string();
     Ok(def)
 }
 
@@ -274,25 +276,29 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn test_default_file() -> Result<()>{
-        let h = std::env::var("HOME")?;
+        let h = env::var("HOME")?;
         let h = h + "/.config/atlas-rs/config.toml";
         let h = PathBuf::from(h);
 
-        assert_eq!(h, default_file().unwrap());
+        let sh = h.to_str().unwrap().to_string();
+
+        assert_eq!(sh, default_file());
         Ok(())
     }
 
     #[test]
     #[cfg(windows)]
     fn test_default_file() -> Result<()>{
-        let h = std::env::var("LOCALAPPDATA")?;
+        let h = env::var("LOCALAPPDATA")?;
         let h: PathBuf = [
             PathBuf::from(h),
             PathBuf::from("atlas-rs"),
             PathBuf::from(CONFIG),
         ].iter().collect();
 
-        assert_eq!(h, default_file().unwrap());
+        let sh = h.to_str().unwrap().to_string();
+
+        assert_eq!(sh, default_file().unwrap());
         Ok(())
     }
 }
