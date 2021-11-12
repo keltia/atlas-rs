@@ -14,7 +14,7 @@ use crate::config::default_file;
 /// Binary name
 pub(crate) const NAME: &str = "atlas";
 /// Binary version, different from the API itself represented the crate.
-pub(crate) const VERSION: &str = "0.1.1";
+pub(crate) const VERSION: &str = "0.2.0";
 
 mod config;
 
