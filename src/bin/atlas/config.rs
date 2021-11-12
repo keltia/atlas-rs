@@ -174,7 +174,7 @@ impl Config {
         let val = Config::load(fname)?;
 
         // copy non-null values
-        if val.api_key != "".to_string() {
+        if val.api_key != *"" {
             self.api_key = val.api_key;
         }
 
@@ -183,11 +183,11 @@ impl Config {
         }
 
         if val.probe_set != None {
-            self.probe_set = val.probe_set.clone();
+            self.probe_set = val.probe_set;
         }
 
         if val.measurements != None {
-            self.probe_set = val.probe_set.clone();
+            self.measurements = val.measurements;
         }
 
         Ok(self)

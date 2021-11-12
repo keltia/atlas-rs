@@ -6,8 +6,6 @@ use std::fmt;
 use std::io;
 
 /// External crates
-use anyhow::{bail, Result};
-use reqwest::blocking::Response;
 use serde::{Deserialize, Serialize};
 
 /// `APIError` is used to report API errors but we use it for ourselves
@@ -61,7 +59,7 @@ impl APIError {
         APIError {
             error: AErr {
                 status: code,
-                code: code,
+                code,
                 detail: descr.to_string(),
                 title: title.to_string(),
                 errors: Some(vec![AError {

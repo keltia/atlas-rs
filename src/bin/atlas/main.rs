@@ -63,7 +63,7 @@ fn main() -> Result<()> {
 
     let c = Client::new(&*cfg.api_key).verbose(opts.verbose);
 
-    let pn = opts.probe.unwrap_or(cfg.default_probe.unwrap());
+    let pn = opts.probe.unwrap_or_else(|| cfg.default_probe.unwrap());
     let p = c.get_probe(pn);
 
     match p {
