@@ -4,10 +4,12 @@
 //!
 
 /// External crates
+use anyhow::Result;
 use clap::{crate_authors, crate_version, AppSettings, Parser};
 
 use atlas_rs::client::Client;
 use config::Config;
+use crate::config::default_file;
 
 /// Binary name
 pub(crate) const NAME: &str = "atlas";
@@ -39,7 +41,7 @@ struct Opts {
     probe: Option<u32>,
 }
 
-fn main() {
+fn main() -> Result<()> {
     let opts: Opts = Opts::parse();
 
     // Do not forget to set NoAutoVersion otherwise this is ignored
@@ -56,7 +58,7 @@ fn main() {
             println!("No config file, using defaults: {}", e);
             Config::new()
         }),
-        None => Config::load("src/bin/atlas/config.toml").unwrap_or(Config::new()),
+        None => Config::load(&default_file().unwrap()).unwrap_or_default(),
     };
 
     let c = Client::new(&*cfg.api_key).verbose(opts.verbose);
@@ -70,4 +72,5 @@ fn main() {
             println!("Err: {:?}", e);
         }
     };
+    Ok(())
 }
