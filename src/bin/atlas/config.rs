@@ -98,6 +98,9 @@ pub struct Measurements {
 }
 
 /// `Config` struct with one mandatory argument and optional ones.
+///
+/// Most API calls need an API key.
+///
 #[derive(Clone, Debug, Deserialize)]
 pub struct Config {
     /// API key
