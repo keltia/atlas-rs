@@ -126,7 +126,7 @@ impl<'cl> Client<'cl> {
                 let aerr = APIError::new(
                     e.status().unwrap().as_u16(),
                     "Bad",
-                    "unknown error",
+                    e.to_string().as_str(),
                     "get_probe",
                 );
                 return Err(aerr);
