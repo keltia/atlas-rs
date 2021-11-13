@@ -197,7 +197,7 @@ impl Config {
 /// Returns the path of the default config file. On Unix systems we use the standard `$HOME/.config`
 /// base directory.
 #[cfg(unix)]
-pub fn default_file() -> Result<PathBuf> {
+pub fn default_file() -> Result<String> {
     let homedir = home_dir().unwrap();
 
     let def: PathBuf = [
@@ -208,7 +208,7 @@ pub fn default_file() -> Result<PathBuf> {
     ]
     .iter()
     .collect();
-    Ok(def)
+    Ok(def.to_str().unwrap().to_string())
 }
 
 /// Returns the path of the default config file.  Here we use the standard %LOCALAPPDATA%
