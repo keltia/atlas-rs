@@ -24,7 +24,7 @@ pub struct Geometry {
 pub struct Status {
     /// Date
     pub since: String,
-    /// Probe ID
+    /// Status ID
     pub id: u32,
     /// Status: connected, etc.
     pub name: String,
