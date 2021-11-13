@@ -284,7 +284,7 @@ mod tests {
 
         let sh = h.to_str().unwrap().to_string();
 
-        assert_eq!(sh, default_file());
+        assert_eq!(sh, default_file().unwrap());
         Ok(())
     }
 
