@@ -97,14 +97,14 @@ impl From<serde_json::Error> for APIError {
 /// Convert a deserialize error from `serde`
 impl From<anyhow::Error> for APIError {
     fn from(error: anyhow::Error) -> Self {
-        APIError::new(500, "json/decode", &error.to_string(), "serde")
+        APIError::new(500, "json/decode", &error.to_string(), "anyhow")
     }
 }
 
 /// Convert a deserialize error from `reqwest`
 impl From<reqwest::Error> for APIError {
     fn from(error: reqwest::Error) -> Self {
-        APIError::new(500, "json/decode", &error.to_string(), "reqwest")
+        APIError::new(500, "reqwest", &error.to_string(), "reqwest")
     }
 }
 
