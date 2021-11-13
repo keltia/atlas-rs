@@ -265,6 +265,28 @@ impl<'cl> Client<'cl> {
         self
     }
 
+    /// Add options
+    ///
+    /// Examples
+    ///
+    /// ```no_run
+    /// # use std::collections::HashMap;
+    /// use atlas_rs::client::{AF,Client};
+    ///
+    /// Client::new("FOO")
+    ///     .opts(&HashMap::from([
+    ///                        ("is_anchor", "true")
+    ///                    ]))
+    /// # ;
+    /// ```
+    ///
+    pub fn opts(mut self, opts: &HashMap<&'cl str, &'cl str>) -> Self {
+        for (k, v) in opts.iter() {
+            self.opts.insert(k, v);
+        }
+        self
+    }
+
     /// Create an instance of the HTTP client and attach it there
     ///
     /// Examples
@@ -309,6 +331,13 @@ mod tests {
         assert_eq!("", c.tags);
         assert_eq!(HashMap::new(), c.opts);
         assert!(c.agent.is_some());
+    }
+
+    #[test]
+    fn test_opts() {
+        let h = HashMap::from([("foo", "a"), ("bar", "b")]);
+        let c = Client::new("FOO").opts(&h);
+        assert_eq!(h, c.opts);
     }
 
     #[test]
