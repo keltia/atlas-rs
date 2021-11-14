@@ -112,11 +112,13 @@ impl<'cl> Client<'cl> {
     /// ```
     ///
     pub fn new<S: Into<&'cl str>>(key: S) -> Self {
-        Client {
+        let mut c = Client {
             api_key: key.into(),
             ..Default::default()
         }
-        .httpclient()
+        .httpclient();
+        c.opts.insert("key", c.api_key);
+        c
     }
 
     /// Sets the API endpoint
@@ -329,13 +331,13 @@ mod tests {
         assert_eq!(AF::V46, c.want_af);
         assert!(!c.verbose);
         assert_eq!("", c.tags);
-        assert_eq!(HashMap::new(), c.opts);
+        assert!(c.opts.contains_key("key"));
         assert!(c.agent.is_some());
     }
 
     #[test]
     fn test_opts() {
-        let h = HashMap::from([("foo", "a"), ("bar", "b")]);
+        let h = HashMap::from([("foo", "a"), ("bar", "b"),("key", "FOO")]);
         let c = Client::new("FOO").opts(&h);
         assert_eq!(h, c.opts);
     }
