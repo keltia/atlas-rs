@@ -5,6 +5,7 @@ use clap::{crate_name, crate_version};
 pub mod client;
 pub mod common;
 pub mod errors;
+pub mod keys;
 pub mod probes;
 
 /// Basic version string for the API.
