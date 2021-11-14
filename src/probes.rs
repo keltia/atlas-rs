@@ -70,7 +70,7 @@ pub struct Probe {
     pub prefix_v6: Option<String>,
     /// Probe Status
     pub status: Status,
-    /// ASCII time
+    /// Integer time
     pub status_since: u32,
     /// System and User tags
     pub tags: Vec<Tag>,
