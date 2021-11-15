@@ -26,7 +26,15 @@ let p = cl.get_probe(666)
             .call();       
 ```
 
-## New possible way
+## Another way
+
+```rs
+let p = Probe::get(cl, pn)
+```
+
+## New possible way (or both?)
+
+TL;DR: probably too complicated as it required the `Value` implementation to be working.
 
 ```rs
 let cl = ClientBuilder::new()
