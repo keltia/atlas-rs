@@ -98,7 +98,18 @@ pub fn get_page_num(url: &str) -> usize {
 }
 
 /// Take an url and a set of options to add to the parameters
-pub fn add_opts<'cl>(url: &str, opts: HashMap<&'cl str, &'cl str>) -> String {
+///
+/// Example!
+/// ```no_run
+/// # use std::collections::HashMap;
+/// use atlas_rs::common::add_opts;
+///
+/// let url = "https://example.com/";
+/// let opts = HashMap::from([("foo", "bar")]);
+/// let url = add_opts(&url, &opts);
+/// ```
+///
+pub fn add_opts<'cl>(url: &str, opts: &HashMap<&'cl str, &'cl str>) -> String {
     let full = url.to_owned() + "?";
     let mut v = Vec::<String>::new();
 
