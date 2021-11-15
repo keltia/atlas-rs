@@ -115,7 +115,7 @@ impl<'cl> Client<'cl> {
     pub fn get_probe(&self, id: u32) -> Result<Probe, APIError> {
         let opts = &self.opts.clone();
         let url = format!("{}/probes/{}/", self.endpoint, id);
-        let url = add_opts(&url, &self.opts);
+        let url = add_opts(&url, opts);
 
         let resp = self.agent.as_ref().unwrap().get(&url).send();
 
