@@ -13,8 +13,8 @@ use anyhow::Result;
 use itertools::Itertools;
 use lazy_regex::regex;
 use reqwest::StatusCode;
-use serde::{Serialize, Deserialize};
 use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize};
 
 impl<'cl> Client<'cl> {}
 
@@ -32,7 +32,11 @@ pub struct List<S> {
 }
 
 impl<'cl> Client<'cl> {
-    pub fn fetch_one_page<S: DeserializeOwned>(&self, url: &'cl str, page: usize) -> Result<List<S>, APIError> {
+    pub fn fetch_one_page<S: DeserializeOwned>(
+        &self,
+        url: &'cl str,
+        page: usize,
+    ) -> Result<List<S>, APIError> {
         let url = format!("{}&page={}", url, page);
 
         let resp = self.agent.as_ref().unwrap().get(&url).send();
@@ -91,10 +95,8 @@ pub fn get_page_num(url: &str) -> usize {
     // If None, return 0
     return match re.captures(url) {
         None => 0,
-        Some(m) => {
-            m.get(1).unwrap().as_str().parse::<usize>().unwrap()
-        },
-    }
+        Some(m) => m.get(1).unwrap().as_str().parse::<usize>().unwrap(),
+    };
 }
 
 /// Take an url and a set of options to add to the parameters
@@ -123,8 +125,8 @@ pub fn add_opts<'cl>(url: &str, opts: &HashMap<&'cl str, &'cl str>) -> String {
 #[cfg(test)]
 mod tests {
     use crate::common::{add_opts, get_page_num};
-    use std::collections::HashMap;
     use rstest::rstest;
+    use std::collections::HashMap;
 
     #[test]
     fn test_add_opts() {

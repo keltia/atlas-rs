@@ -167,7 +167,6 @@ impl<'cl> Client<'cl> {
 
         if res.next != "" {
             // We have pagination
-
         }
         Ok(res)
     }

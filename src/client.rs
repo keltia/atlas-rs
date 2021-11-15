@@ -337,7 +337,7 @@ mod tests {
 
     #[test]
     fn test_opts() {
-        let h = HashMap::from([("foo", "a"), ("bar", "b"),("key", "FOO")]);
+        let h = HashMap::from([("foo", "a"), ("bar", "b"), ("key", "FOO")]);
         let c = Client::new("FOO").opts(&h);
         assert_eq!(h, c.opts);
     }
