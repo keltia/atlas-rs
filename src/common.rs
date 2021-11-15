@@ -131,7 +131,7 @@ mod tests {
         let url = "/hello".to_string();
         let o = HashMap::from([("name", "foo"), ("bar", "baz")]);
 
-        let url = add_opts(&url, o);
+        let url = add_opts(&url, &o);
         assert_eq!("/hello?bar=baz&name=foo", url);
     }
 
