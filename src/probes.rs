@@ -1,13 +1,15 @@
 //! Struct and methods to deal with probes
 //!
 
-use reqwest::StatusCode;
+use std::collections::HashMap;
+
 /// External crates
+use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
 /// Our crates
 use crate::client::Client;
-use crate::common::add_opts;
+use crate::common::{add_opts, List};
 use crate::errors::*;
 
 /// Geolocation as reported by the probe
