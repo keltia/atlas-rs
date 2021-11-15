@@ -107,7 +107,7 @@ impl<'cl> Client<'cl> {
     ///  # use atlas_rs::probes::Probe;
     ///
     ///     let cl = Client::new("foo").verbose(true);
-    ///     let pi = cl.get_probe(666).unwrap();
+    ///     let pi = cl.get_probe(666)?;
     ///
     ///     println!("Probe ID {}: {}", 666, pi.description);
     ///  ```
