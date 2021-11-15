@@ -59,7 +59,7 @@ pub struct KeyList {
     pub next: String,
     /// URL to fetch previous block
     pub previous: String,
-    /// Current Probe Block
+    /// Current key block
     pub keys: Vec<Key>,
 }
 
