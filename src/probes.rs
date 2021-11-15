@@ -150,8 +150,26 @@ impl<'cl> Client<'cl> {
 
     /// Get information about a set of probes according to parameters
     ///
-    pub fn get_probes() -> Result<ProbeList, APIError> {
-        unimplemented!()
+    pub fn get_probes(&self, opts: &HashMap<&str, &str>) -> Result<List<Probe>, APIError> {
+        let gopts = &self.opts.clone();
+        let url = format!("{}/probes/", &self.endpoint);
+
+        // Add global options
+        let url = add_opts(&url, gopts);
+        // Add our specific ones, like page=NN
+        let url = add_opts(&url, opts);
+
+        let res: List<Probe> = self.fetch_one_page(&url, 1)?;
+
+        if res.count == 0 {
+            return Err(APIError::new(500, "Empty list", "nothing", "get_probes"));
+        }
+
+        if res.next != "" {
+            // We have pagination
+
+        }
+        Ok(res)
     }
 }
 
