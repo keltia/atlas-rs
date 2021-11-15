@@ -4,6 +4,7 @@
 use std::collections::HashMap;
 
 /// External crates
+use anyhow::Result;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
@@ -94,6 +95,27 @@ pub struct ProbeList {
     pub previous: String,
     /// Current Probe Block
     pub probes: Vec<Probe>,
+}
+
+/// Alternate API for probes
+///
+/// Example:
+/// ```no_run
+/// # use atlas_rs::probes::Probe;
+/// # use atlas_rs::client::Client;
+///
+/// let c = Client::new("the-key")?;
+/// let p = Probe::get(cl, 666)?;
+/// ```
+///
+impl Probe {
+    pub fn get(cl: &Client, pn: u32) -> Result<Self, APIError> {
+        Ok(cl.get_probe(pn)?)
+    }
+
+    pub fn list(cl: &Client, opts: &HashMap<&str, &str>) -> Result<List<Self>, APIError> {
+        Ok(cl.get_probes(opts)?)
+    }
 }
 
 /// Main API methods for `Probe` type
