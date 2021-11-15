@@ -1,4 +1,4 @@
-//! Struct and methods to deal with probes
+//! Struct and methods to deal with keys
 //!
 
 use reqwest::StatusCode;
@@ -61,4 +61,69 @@ pub struct KeyList {
     pub previous: String,
     /// Current Probe Block
     pub keys: Vec<Key>,
+}
+
+/// Main API methods for `key` type
+impl<'cl> Client<'cl> {
+    /// Get information on a specific key by ID
+    ///
+    /// Examples:
+    ///
+    /// ```no_run
+    ///  # use atlas_rs::client::Client;
+    ///  # use atlas_rs::keys::Key;
+    ///
+    ///     let cl = Client::new("foo").verbose(true);
+    ///     let pi = cl.get_key("key-id").unwrap();
+    ///
+    ///     println!("key ID {}: {}", pi.uuid, pi.label);
+    ///  ```
+    ///
+    pub fn get_key(&self, uuid: &str) -> Result<Key, APIError> {
+        let opts = &self.opts.clone();
+        let url = format!("{}/keys/{}/", self.endpoint, uuid);
+        let url = add_opts(&url, opts);
+
+        let resp = self.agent.as_ref().unwrap().get(&url).send();
+
+        let resp = match resp {
+            Ok(resp) => resp,
+            Err(e) => {
+                let aerr = APIError::new(
+                    e.status().unwrap().as_u16(),
+                    "Bad",
+                    e.to_string().as_str(),
+                    "get_key",
+                );
+                return Err(aerr);
+            }
+        };
+
+        // Try to see if we got an error
+        match resp.status() {
+            StatusCode::OK => {
+                // We could use Response::json() here but it consumes the body.
+                let r = resp.text()?;
+                println!("p={}", r);
+                let p: Key = serde_json::from_str(&r)?;
+                Ok(p)
+            }
+            _ => {
+                let aerr = resp.json::<APIError>()?;
+                Err(aerr)
+            }
+        }
+    }
+
+    /// Get information about a set of keys according to parameters
+    ///
+    pub fn get_keys() -> Result<KeyList, APIError> {
+        unimplemented!()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_get_key() {}
 }
