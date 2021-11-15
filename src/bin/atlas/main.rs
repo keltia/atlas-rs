@@ -5,40 +5,29 @@
 
 /// External crates
 use anyhow::Result;
-use clap::{crate_authors, AppSettings, Parser};
+use clap::Parser;
 
-use crate::config::default_file;
 use atlas_rs::client::Client;
-use config::Config;
 
-/// Binary name
-pub(crate) const NAME: &str = "atlas";
-/// Binary version, different from the API itself represented the crate.
-pub(crate) const VERSION: &str = "0.2.0";
-
+mod cli;
 mod config;
+mod data;
+mod util;
 
-/// Help message
-#[derive(Debug, Parser)]
-#[clap(name = NAME, about = "Rust CLI for RIPE Atlas.")]
-#[clap(version = VERSION, author = crate_authors!())]
-#[clap(setting = AppSettings::NoAutoVersion)]
-struct Opts {
-    /// configuration file
-    #[clap(short = 'c', long)]
-    config: Option<String>,
-    /// debug mode
-    #[clap(short = 'D', long = "debug")]
-    debug: bool,
-    /// Verbose mode
-    #[clap(short = 'v', long)]
-    verbose: bool,
-    /// Display version and exit
-    #[clap(short = 'V', long = "version")]
-    version: bool,
-    /// Get info on probe
-    #[clap(short = 'p', long = "probe")]
-    probe: Option<u32>,
+use config::{Config, default_file};
+use cli::{Opts, SubCommand, NAME, VERSION};
+use data::ProbeSubCommand;
+
+/// Wrapper to load configuration
+fn load_config(opts: &Opts) -> Config {
+    // Handle configuration loading & defaults
+    return match &opts.config {
+        Some(fname) => Config::load(&fname).unwrap_or_else(|e| {
+            println!("No config file, using defaults: {}", e);
+            Config::new()
+        }),
+        None => Config::load(&default_file().unwrap()).unwrap_or_default(),
+    }
 }
 
 fn main() -> Result<()> {
@@ -53,24 +42,40 @@ fn main() -> Result<()> {
     }
 
     // Handle configuration loading & defaults
-    let cfg = match opts.config {
-        Some(fname) => Config::load(&fname).unwrap_or_else(|e| {
-            println!("No config file, using defaults: {}", e);
-            Config::new()
-        }),
-        None => Config::load(&default_file().unwrap()).unwrap_or_default(),
-    };
+    let cfg = load_config(&opts);
 
     let c = Client::new(&*cfg.api_key).verbose(opts.verbose);
 
-    let pn = opts.probe.unwrap_or_else(|| cfg.default_probe.unwrap());
-    let p = c.get_probe(pn);
+    match opts.subcmd {
+        // data related commands
+        SubCommand::Probe(opts) => {
+            match opts.subcmd {
+                ProbeSubCommand::Info(opts) => {
+                    let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
+                    let p = c.get_probe(pn);
 
-    match p {
-        Ok(p) => println!("Probe {} is:\n{:?}", pn, p),
-        Err(e) => {
-            println!("Err: {:?}", e);
-        }
-    };
+                    match p {
+                        Ok(p) => println!("Probe {} is:\n{:?}", pn, p),
+                        Err(e) => {
+                            println!("Err: {:?}", e);
+                        }
+                    };
+                },
+                ProbeSubCommand::List(_opts) => (),
+            }
+        },
+        SubCommand::Key(_opts) => (),
+        SubCommand::Credits(_opts) => (),
+        SubCommand::Measurement(_opts) => (),
+        // protocols-related commands
+        SubCommand::Dns(_opts) => (),
+        SubCommand::Http(_opts) => (),
+        SubCommand::Ntp(_opts) => (),
+        SubCommand::Ping(_opts) => (),
+        SubCommand::TlsCert(_opts) => (),
+        SubCommand::Traceroute(_opts) => (),
+        // extra utility command
+        SubCommand::Ip(_opts) => (),
+    }
     Ok(())
 }
