@@ -32,9 +32,27 @@ let p = cl.get_probe(666)
 let p = Probe::get(cl, pn)
 ```
 
+## Yet another one (like reqwest)
+
+```rs
+let c = Client::new("FOO");      // defaults
+
+let c = ClientBuilder::new().key("FOO")
+            .verbose()
+            .default_probe(666)
+            .build();
+
+let p = c.probe().info(666).call();
+
+let pl = c.probe().list(opts).call();
+
+// there c.<category>() returns a RequestBuilder and .call() returns a Response.
+```
+
+
 ## New possible way (or both?)
 
-TL;DR: probably too complicated as it required the `Value` implementation to be working.
+TL;DR: probably too complicated as it required the `Value` stuff to be implemented.
 
 ```rs
 let cl = ClientBuilder::new()
