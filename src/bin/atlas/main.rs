@@ -79,7 +79,23 @@ fn main() -> Result<()> {
         SubCommand::TlsCert(_opts) => (),
         SubCommand::Traceroute(_opts) => (),
         // extra utility command
-        SubCommand::Ip(_opts) => (),
+        SubCommand::Ip(opts) => {
+            let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
+            let p = c.get_probe(pn);
+
+            match p {
+                Ok(p) => {
+                    let ip4 = p.address_v4.unwrap_or("None".to_string());
+                    let ip6 = p.address_v6.unwrap_or("None".to_string());
+
+                    let ip = format!("IPv4: {} IPv6: {}", ip4, ip6);
+                    println!("Probe {} has the following IP:\n{}", pn, ip)
+                },
+                Err(e) => {
+                    println!("Err: {:?}", e);
+                }
+            };
+        },
     }
     Ok(())
 }
