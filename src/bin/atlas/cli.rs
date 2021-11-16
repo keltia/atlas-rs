@@ -10,7 +10,6 @@ use crate::data::{CredOpts, KeyOpts, MeasurementOpts, ProbeOpts};
 use crate::proto::{DnsOpts, HttpOpts, NtpOpts, PingOpts, TlsOpts, TrrOpts};
 use crate::util::IpOpts;
 
-
 /// Help message
 #[derive(Parser)]
 #[clap(name = NAME, about = "Rust CLI for RIPE Atlas.")]
@@ -54,4 +53,3 @@ pub(crate) enum SubCommand {
     /// Useful shortcut (see util.rs)
     Ip(IpOpts),
 }
-

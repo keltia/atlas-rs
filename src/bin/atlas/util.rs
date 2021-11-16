@@ -8,5 +8,3 @@ pub(crate) struct IpOpts {
     /// Probe ID
     pub(crate) id: Option<u32>,
 }
-
-

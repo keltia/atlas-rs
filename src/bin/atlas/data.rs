@@ -1,6 +1,5 @@
 use clap::Parser;
 
-
 /// Probe subcommands
 #[derive(Parser)]
 pub(crate) struct ProbeOpts {

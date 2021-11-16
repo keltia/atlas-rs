@@ -15,8 +15,8 @@ mod data;
 mod proto;
 mod util;
 
-use config::{Config, default_file};
 use cli::{Opts, SubCommand, NAME, VERSION};
+use config::{default_file, Config};
 use data::ProbeSubCommand;
 
 /// Wrapper to load configuration
@@ -28,7 +28,7 @@ fn load_config(opts: &Opts) -> Config {
             Config::new()
         }),
         None => Config::load(&default_file().unwrap()).unwrap_or_default(),
-    }
+    };
 }
 
 fn main() -> Result<()> {
@@ -52,21 +52,19 @@ fn main() -> Result<()> {
 
     match opts.subcmd {
         // data related commands
-        SubCommand::Probe(opts) => {
-            match opts.subcmd {
-                ProbeSubCommand::Info(opts) => {
-                    let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
-                    let p = c.get_probe(pn);
+        SubCommand::Probe(opts) => match opts.subcmd {
+            ProbeSubCommand::Info(opts) => {
+                let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
+                let p = c.get_probe(pn);
 
-                    match p {
-                        Ok(p) => println!("Probe {} is:\n{:?}", pn, p),
-                        Err(e) => {
-                            println!("Err: {:?}", e);
-                        }
-                    };
-                },
-                ProbeSubCommand::List(_opts) => (),
+                match p {
+                    Ok(p) => println!("Probe {} is:\n{:?}", pn, p),
+                    Err(e) => {
+                        println!("Err: {:?}", e);
+                    }
+                };
             }
+            ProbeSubCommand::List(_opts) => (),
         },
         SubCommand::Key(_opts) => (),
         SubCommand::Credits(_opts) => (),
@@ -90,12 +88,12 @@ fn main() -> Result<()> {
 
                     let ip = format!("IPv4: {} IPv6: {}", ip4, ip6);
                     println!("Probe {} has the following IP:\n{}", pn, ip)
-                },
+                }
                 Err(e) => {
                     println!("Err: {:?}", e);
                 }
             };
-        },
+        }
     }
     Ok(())
 }

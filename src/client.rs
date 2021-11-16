@@ -145,7 +145,7 @@ pub struct Client<'cl> {
 }
 
 /// Default values for Client
-/// 
+///
 impl<'cl> Default for Client<'cl> {
     /// Defines all the default values
     fn default() -> Self {
@@ -154,11 +154,11 @@ impl<'cl> Default for Client<'cl> {
 }
 
 /// All methods for `Client` for configuration
-/// 
+///
 impl<'cl> Client<'cl> {
     // ---------------------------------------------------------------------
     // Public API
-    
+
     /// Creates a bare client with defaults except for the API key which limits to certain
     /// RIPE Atlas calls.
     ///
@@ -184,7 +184,8 @@ impl<'cl> Client<'cl> {
             tags: "",
             opts: HashMap::new(),
             agent: None,
-        }.httpclient()
+        }
+        .httpclient()
     }
 
     /// Create a ClientBuilder struct and returns it for chained calls
@@ -203,7 +204,7 @@ impl<'cl> Client<'cl> {
 
     // ---------------------------------------------------------------------
     // Entities
-    
+
     pub fn credits(&self) -> RequestBuilder {
         unimplemented!()
     }
@@ -293,7 +294,7 @@ impl<'cl> Default for ClientBuilder<'cl> {
 impl<'cl> ClientBuilder<'cl> {
     // ---------------------------------------------------------------------
     // Public API
-    
+
     /// Create a new `ClientBuilder` instance
     ///
     /// Example:
@@ -312,9 +313,7 @@ impl<'cl> ClientBuilder<'cl> {
     pub fn build(self) -> Result<Client<'cl>> {
         match self.cl.api_key {
             None => Err(anyhow!("You must change the default key")),
-            Some(_k) => {
-                Ok(self.cl)
-            },
+            Some(_k) => Ok(self.cl),
         }
     }
 
@@ -540,7 +539,7 @@ mod tests {
         let cb = ClientBuilder::new().api_key("key").build();
 
         assert!(cb.is_ok());
-        
+
         let c = c.unwrap();
         // Check all defaults
         assert_eq!("key", c.cl.api_key);

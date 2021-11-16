@@ -6,4 +6,3 @@ pub struct RequestBuilder<'rq> {
     pub c: Client<'rq>,
     pub r: Request,
 }
-

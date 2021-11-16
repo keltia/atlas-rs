@@ -7,7 +7,6 @@ pub(crate) struct DnsOpts {
     pub(crate) debug: bool,
 }
 
-
 #[derive(Parser)]
 pub(crate) struct HttpOpts {
     /// Print debug info
@@ -42,4 +41,3 @@ pub(crate) struct TrrOpts {
     #[clap(short)]
     pub(crate) debug: bool,
 }
-
