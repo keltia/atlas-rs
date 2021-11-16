@@ -7,6 +7,7 @@ pub mod common;
 pub mod errors;
 pub mod keys;
 pub mod probes;
+pub mod request;
 
 /// Basic version string for the API.
 ///
