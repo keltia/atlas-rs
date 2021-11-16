@@ -7,7 +7,7 @@
 use anyhow::Result;
 use clap::Parser;
 
-use atlas_rs::client::Client;
+use atlas_rs::client::ClientBuilder;
 
 mod cli;
 mod config;
@@ -44,7 +44,10 @@ fn main() -> Result<()> {
     // Handle configuration loading & defaults
     let cfg = load_config(&opts);
 
-    let c = Client::new(&*cfg.api_key).verbose(opts.verbose);
+    let c = ClientBuilder::new()
+        .api_key(&*cfg.api_key)
+        .verbose(opts.verbose)
+        .build()?;
 
     match opts.subcmd {
         // data related commands
