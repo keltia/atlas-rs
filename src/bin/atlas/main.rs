@@ -12,6 +12,7 @@ use atlas_rs::client::ClientBuilder;
 mod cli;
 mod config;
 mod data;
+mod proto;
 mod util;
 
 use config::{Config, default_file};
