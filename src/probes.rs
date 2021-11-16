@@ -3,12 +3,12 @@
 
 use std::collections::HashMap;
 
-/// External crates
+// External crates
 use anyhow::Result;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
-/// Our crates
+// Our crates
 use crate::client::Client;
 use crate::common::{add_opts, List};
 use crate::errors::*;
@@ -102,9 +102,9 @@ pub struct ProbeList {
 /// Example:
 /// ```no_run
 /// # use atlas_rs::probes::Probe;
-/// # use atlas_rs::client::Client;
+/// # use atlas_rs::client::ClientBuilder;
 ///
-/// let c = Client::new("the-key")?;
+/// let c = ClientBuilder::new().api_key("the-key")?;
 /// let p = Probe::get(cl, 666)?;
 /// ```
 ///
@@ -125,10 +125,10 @@ impl<'cl> Client<'cl> {
     /// Examples:
     ///
     /// ```no_run
-    ///  # use atlas_rs::client::Client;
+    ///  # use atlas_rs::client::ClientBuilder;
     ///  # use atlas_rs::probes::Probe;
     ///
-    ///     let cl = Client::new("foo").verbose(true);
+    ///     let cl = ClientBuilder::new().api_key("foo").verbose(true);
     ///     let pi = cl.get_probe(666)?;
     ///
     ///     println!("Probe ID {}: {}", 666, pi.description);
