@@ -187,7 +187,7 @@ impl<'cl> Client<'cl> {
             return Err(APIError::new(500, "Empty list", "nothing", "get_probes"));
         }
 
-        if res.next != "" {
+        if res.next.is_empty() {
             // We have pagination
         }
         Ok(res)
