@@ -5,7 +5,9 @@ pub(crate) const NAME: &str = "atlas";
 /// Binary version, different from the API itself represented the crate.
 pub(crate) const VERSION: &str = "0.2.0";
 
-use crate::data::{CredOpts, KeyOpts, ProbeOpts};
+// Import our various data structures & enums
+use crate::data::{CredOpts, KeyOpts, MeasurementOpts, ProbeOpts};
+use crate::proto::{DnsOpts, HttpOpts, NtpOpts, PingOpts, TlsOpts, TrrOpts};
 use crate::util::IpOpts;
 
 
@@ -40,7 +42,7 @@ pub(crate) enum SubCommand {
     /// Data-specific commands (see data.rs)
     Credits(CredOpts),
     Key(KeyOpts),
-    Measurement(MeasureOpts),
+    Measurement(MeasurementOpts),
     Probe(ProbeOpts),
     /// Protocol-specific commands (see protocols.rs)
     Dns(DnsOpts),
