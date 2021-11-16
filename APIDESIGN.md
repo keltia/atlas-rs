@@ -2,15 +2,14 @@
 
 ## Usual way
 
+This way has the inconvenient of "polluting" client as everything done through methods
+on the `Client`struct (like we do in Go.)
+
 ```rs
-let cl = Client::new();
+let cl = Client::new(Config{});
 
-...
+various parameter are set from the `Config` struct
 
-let cl = ClientBuilder::new()
-            .verbose(true)
-            .pool_size(20);
-            .build();
 ...
 
 let p = cl.get_probe(666);
@@ -24,12 +23,6 @@ let m = cl.NTP(host);
 let p = cl.get_probe(666)
             .with(opts)
             .call();       
-```
-
-## Another way
-
-```rs
-let p = Probe::get(cl, pn)
 ```
 
 ## Yet another one (like reqwest)
@@ -49,27 +42,15 @@ let pl = c.probe().list(opts).call();
 // there c.<category>() returns a RequestBuilder and .call() returns a Response.
 ```
 
+We will have
 
-## New possible way (or both?)
+Client::new() -> Client (with reasonable defaults)
+Client::builder() -> ClientBuilder
 
-TL;DR: probably too complicated as it required the `Value` stuff to be implemented.
+ClientBuilder::new() -> ClientBuilder
+(all methods)
+.foo(...) -> ClientBuilder
 
-```rs
-let cl = ClientBuilder::new()
-            .verbose(true)
-            .pool_size(20)
-            .build();
-...
+except
 
-let p = Atlas::GetProbe(cl, 666)
-            .with(opts)             # with(opts) or with(opt, val) ?
-            .call();
-
-...
-
-let m = Atlas::NTP(cl, host).
-            .with(opts)
-            .call();
-            
-
-```
+.build() -> Client
