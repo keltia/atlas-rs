@@ -52,6 +52,23 @@ pub(crate) enum KeySubCommand {
     List(ListOpts),
 }
 
+/// Measurement sub-commands
+#[derive(Parser)]
+pub(crate) struct MeasurementOpts {
+    /// Print debug info
+    #[clap(short)]
+    pub(crate) debug: bool,
+    /// Sub-commands
+    #[clap(subcommand)]
+    pub(crate) subcmd: MeasurementSubCommand,
+}
+
+#[derive(Parser)]
+pub(crate) enum MeasurementSubCommand {
+    Info(InfoOpts),
+    List(ListOpts),
+}
+
 /// Credit sub-commands
 #[derive(Parser)]
 pub(crate) struct CredOpts {
