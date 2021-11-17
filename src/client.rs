@@ -218,7 +218,11 @@ impl<'cl> Client<'cl> {
     }
 
     pub fn probe(&self) -> RequestBuilder {
-        unimplemented!()
+        let url = self.endpoint.to_owned() + "/probes/";
+        let r = reqwest::blocking::Request::new(
+            reqwest::Method::GET, url.into()
+        );
+        RequestBuilder {ctx: "/probes/", c: &self, r: Ok(r)}
     }
 
     // ---------------------------------------------------------------------
