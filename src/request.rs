@@ -19,10 +19,8 @@ impl<'rq> RequestBuilder<'rq> {
             Err(e) => bail!("e"),
         };
         let resp = r.get(r.method()).send();
-        resp
+        Ok(resp)
     }
 }
 
-pub struct Request {
-}
 
