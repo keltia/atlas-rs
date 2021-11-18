@@ -54,3 +54,64 @@ ClientBuilder::new() -> ClientBuilder
 except
 
 .build() -> Client
+
+then
+
+Client.probe()      -> RequestBuilder
+      .measurement()
+...
+
+RequestBuilder() -> RequestBuilder
+
+except
+
+.call() -> reqwest::Response
+
+
+Atlas API
+
+/api/v2
+
+          ----- /anchor-measurement     ----- /list  ----- List<AM>
+                                        ----- /get   ----- AM
+
+          ----- /anchors                ----- /list  ----- List<A>
+                                        ----- /get   ----- A
+
+          ----- /credits                ----- /get
+                                        ----- /get   ----- /incomes
+                                                           /expenses
+                                                           /transfers
+                                                           /transactions
+                                                           /members
+                                                           /members      ----- /claim
+
+          ----- /keys                   ----- /permissions
+                                        ----- /permissions ----- P     ---- /targets
+                                        ----- /get
+                                        ----- /set
+                                        ----- /delete
+                                        ----- /list
+                                        ----- /create
+
+          ----- /measurements           ----- /list
+                                        ----- /create
+                                        ----- /get
+                                        ----- /update
+                                        ----- /delete
+
+          ----- /participation-requests ----- /list
+
+          ----- /probes                 ----- /get
+                                        ----- list
+                                        ----- /set
+                                        ----- /update
+                                        ----- P             ----- /measurements
+                                        ----- /archive
+                                        ----- /rankings
+                                        ----- /tags
+                                        ----- /tags         ----- /slugs
+
+
+
+
