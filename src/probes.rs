@@ -1,6 +1,18 @@
 //! Struct and methods to deal with probes
 //!
 
+// We have the following call tree:
+//
+//           ----- /probes                 ----- /get
+//                                         ----- list
+//                                         ----- /set
+//                                         ----- /update
+//                                         ----- P             ----- /measurements
+//                                         ----- /archive
+//                                         ----- /rankings
+//                                         ----- /tags
+//                                         ----- /tags         ----- /slugs
+
 use std::collections::HashMap;
 
 // External crates

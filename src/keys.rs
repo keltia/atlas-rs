@@ -1,6 +1,16 @@
 //! Struct and methods to deal with keys
 //!
 
+// We have the following call-tree:
+//
+//           ----- /keys                   ----- /permissions
+//                                         ----- /permissions  ----- P     ---- /targets
+//                                         ----- /get
+//                                         ----- /set
+//                                         ----- /delete
+//                                         ----- /list
+//                                         ----- /create
+
 use reqwest::StatusCode;
 /// External crates
 use serde::{Deserialize, Serialize};
