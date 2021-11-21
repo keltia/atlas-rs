@@ -87,6 +87,7 @@ use std::time::Duration;
 // External crates
 use anyhow::{anyhow, Result};
 use clap::{crate_name, crate_version};
+use crate::probes::BASE_PROBES;
 
 // Internal crates
 use crate::request::RequestBuilder;
@@ -218,11 +219,12 @@ impl<'cl> Client<'cl> {
     }
 
     pub fn probe(&self) -> RequestBuilder {
-        let url = self.endpoint.to_owned() + "/probes/";
+        let url = reqwest::Url::parse(self.endpoint).unwrap();
         let r = reqwest::blocking::Request::new(
-            reqwest::Method::GET, url.into()
+            reqwest::Method::GET,
+            url,
         );
-        RequestBuilder {ctx: "/probes/", c: &self, r: Ok(r)}
+        RequestBuilder {ctx: BASE_PROBES, c: &self, r: Ok(r)}
     }
 
     // ---------------------------------------------------------------------
