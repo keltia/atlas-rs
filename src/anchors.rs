@@ -5,3 +5,20 @@
 //
 //           ----- /anchors                ----- /list  ----- List<A>
 //                                         ----- /get  ----- A
+
+/// All operations available
+#[derive(Debug)]
+enum Ops {
+    Get,
+    List,
+}
+
+/// Generate the proper URL for the service we want in the given category
+fn set_url(ops: Ops, uuid: String) -> String {
+    match ops {
+        Ops::Get => format!("/anchors/{}/", uuid),                         // /get
+        Ops::List => format!("/anchors/"),                                 // /list
+        _ => "unsupported",
+    }
+}
+

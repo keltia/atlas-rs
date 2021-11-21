@@ -20,6 +20,32 @@ use crate::client::Client;
 use crate::common::add_opts;
 use crate::errors::*;
 
+/// All operations available
+#[derive(Debug)]
+enum Ops {
+    Permissions = 1,
+    Targets,
+    Get,
+    Set,
+    Delete,
+    List,
+    Create,
+}
+
+/// Generate the proper URL for the service we want in the given category
+fn set_url(ops: Ops, uuid: String) -> String {
+    match ops {
+        Ops::Permissions => format!("/keys/permissions/"),              // /permissions
+        Ops::Targets => format!("/keys/permissions/{}/targets/", uuid), // /get targets
+        Ops::Get => format!("/keys/{}/", uuid),                         // /get
+        Ops::Set => format!("/keys/{}/", uuid),                         // /set
+        Ops::Delete => format!("/keys/{}/", uuid),                      // /delete
+        Ops::List => format!("/keys/"),                                 // /list
+        Ops::Create => format!("/keys/"),                               // /create
+        _ => "unsupported",
+    }
+}
+
 /// This is the structure describing an API key with its validity, entitlements, etc.
 ///
 #[derive(Serialize, Deserialize, Debug)]

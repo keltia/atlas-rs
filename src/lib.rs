@@ -10,6 +10,7 @@ pub mod common;
 pub mod credits;
 pub mod errors;
 pub mod keys;
+pub mod ops;
 pub mod probes;
 pub mod request;
 

@@ -3,8 +3,8 @@
 
 // We have the following call tree:
 //
-//           ----- /probes                 ----- /get
-//                                         ----- list
+//           ----- /probes                 ----- /get/ID
+//                                         ----- /list
 //                                         ----- /set
 //                                         ----- /update
 //                                         ----- P             ----- /measurements
@@ -24,6 +24,38 @@ use serde::{Deserialize, Serialize};
 use crate::client::Client;
 use crate::common::{add_opts, List};
 use crate::errors::*;
+
+pub const BASE_PROBES: &str = "/probes/";
+
+/// All operations available
+#[derive(Debug)]
+enum Ops {
+    List = 1,
+    Get,
+    Set,
+    Update,
+    Measurement,
+    Archive,
+    Rankings,
+    Tags,
+    Slugs,
+}
+
+/// Generate the proper URL for the service we want in the given category
+fn set_url(ops: Ops, p: u32) -> String {
+    match ops {
+        Ops::List => format!("/probes/"),                           // /list
+        Ops::Get => format!("/probes/{}/", p),                      // /get
+        Ops::Set => format!("/probes/{}/", p),                      // /set
+        Ops::Update => format!("/probes/{}/", p),                   // /update
+        Ops::Measurement => format!("/probes/{}/measurements/", p), // P/measurements
+        Ops::Archive => format!("/probes/archive/"),                // /archive
+        Ops::Rankings => format!("/probes/rankings/"),                // rankings
+        Ops::Tags => format!("/probes/tags/"),                      // /tags/
+        Ops::Slugs => format!("/probes/tags/{}/slugs", p),          // /tags/T/slugs/
+        _ => "unsupported",
+    }
+}
 
 /// Geolocation as reported by the probe
 #[derive(Serialize, Deserialize, Debug)]
