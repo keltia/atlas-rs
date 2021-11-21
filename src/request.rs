@@ -13,12 +13,13 @@ impl<'rq> RequestBuilder<'rq> {
         RequestBuilder {ctx, c, r}
     }
 
-    pub fn call(self) -> Result<reqwest::Response> {
+    pub fn call(self) -> Result<reqwest::blocking::Response> {
         let r = match self.r {
             Ok(r) => r,
             Err(e) => bail!("e"),
         };
-        let resp = r.get(r.method()).send();
+        let resp = self.c.agent.as_ref().unwrap().clone()
+            .get(r.url().as_str()).send()?;
         Ok(resp)
     }
 }
