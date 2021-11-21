@@ -153,7 +153,7 @@ impl<'cl> Client<'cl> {
 
     /// Get information about a set of keys according to parameters
     ///
-    pub fn get_keys() -> Result<KeyList, APIError> {
+    pub fn get_keys() -> Result<Vec<Key>, APIError> {
         unimplemented!()
     }
 }
