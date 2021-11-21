@@ -13,6 +13,7 @@
 //                                         ----- /tags
 //                                         ----- /tags         ----- /slugs
 
+// std library
 use std::collections::HashMap;
 
 // External crates
@@ -232,7 +233,7 @@ impl<'cl> Client<'cl> {
         }
 
         if res.next.is_empty() {
-            // We have pagination
+            // We have no pagination
         }
         Ok(res)
     }
