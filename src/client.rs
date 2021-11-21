@@ -205,6 +205,7 @@ impl<'cl> Client<'cl> {
 
     // ---------------------------------------------------------------------
     // Entities
+    pub fn anchors(&self) -> RequestBuilder { unimplemented!() }
 
     pub fn credits(&self) -> RequestBuilder {
         unimplemented!()
