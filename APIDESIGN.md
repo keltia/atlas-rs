@@ -103,7 +103,7 @@ Atlas API
           ----- /participation-requests ----- /list
 
           ----- /probes                 ----- /get
-                                        ----- list
+                                        ----- /list
                                         ----- /set
                                         ----- /update
                                         ----- P             ----- /measurements
