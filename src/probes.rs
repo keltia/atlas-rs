@@ -30,7 +30,7 @@ pub const BASE_PROBES: &str = "/probes/";
 
 /// All operations available
 #[derive(Debug)]
-enum Ops {
+pub enum Ops {
     List = 1,
     Get,
     Set,
