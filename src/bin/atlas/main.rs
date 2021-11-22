@@ -9,6 +9,7 @@ use clap::Parser;
 
 use atlas_rs::client::ClientBuilder;
 use atlas_rs::request::Param;
+use atlas_rs::probes::Probe;
 
 mod cli;
 mod config;
@@ -56,15 +57,9 @@ fn main() -> Result<()> {
         SubCommand::Probe(opts) => match opts.subcmd {
             ProbeSubCommand::Info(opts) => {
                 let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
-                //let p = c.get_probe(pn);
 
-                let p = c.probe().get(Param::I(pn)).call();
-                match p {
-                    Ok(p) => println!("Probe {} is:\n{:?}", pn, p),
-                    Err(e) => {
-                        println!("Err: {:?}", e);
-                    }
-                };
+                let p: Probe = c.probe().get(pn).call()?;
+                println!("Probe {} is:\n{:?}", pn, p);
             }
             ProbeSubCommand::List(_opts) => (),
         },
