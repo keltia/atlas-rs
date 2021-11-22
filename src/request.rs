@@ -67,12 +67,14 @@ impl<'rq> RequestBuilder<'rq> {
         RequestBuilder {ctx, c, r}
     }
 
-    pub fn get(self, data: Param<'rq>) -> Self
+    /// Establish the final URL before call()
+    ///
+    pub fn get<S: Into<Param<'rq>>>(self, data: S) -> Self
     {
         // Main routing
         match self.ctx {
             Cmd::Probes => {
-                return Probe::dispatch(self, probes::Ops::Get, data);
+                return Probe::dispatch(self, probes::Ops::Get, data.into());
             },
             Cmd::Measurements => unimplemented!(),
             Cmd::AnchorMeasurements => unimplemented!(),
