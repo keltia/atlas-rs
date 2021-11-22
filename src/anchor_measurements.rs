@@ -17,7 +17,7 @@ enum Ops {
 fn set_url(ops: Ops, uuid: String) -> String {
     match ops {
         Ops::Get => format!("/anchor-measurements/{}/", uuid),                         // /get
-        Ops::List => format!("/anchor-measurements/"),                                 // /list
+        Ops::List => "/anchor-measurements/".to_string(),                                 // /list
     }
 }
 

@@ -35,13 +35,13 @@ enum Ops {
 /// Generate the proper URL for the service we want in the given category
 fn set_url(ops: Ops, uuid: String) -> String {
     match ops {
-        Ops::Permissions => format!("/keys/permissions/"),              // /permissions
+        Ops::Permissions => "/keys/permissions/".to_string(), // /permissions
         Ops::Targets => format!("/keys/permissions/{}/targets/", uuid), // /get targets
-        Ops::Get => format!("/keys/{}/", uuid),                         // /get
-        Ops::Set => format!("/keys/{}/", uuid),                         // /set
-        Ops::Delete => format!("/keys/{}/", uuid),                      // /delete
-        Ops::List => format!("/keys/"),                                 // /list
-        Ops::Create => format!("/keys/"),                               // /create
+        Ops::Get => format!("/keys/{}/", uuid),               // /get
+        Ops::Set => format!("/keys/{}/", uuid),               // /set
+        Ops::Delete => format!("/keys/{}/", uuid),            // /delete
+        Ops::List => "/keys/".to_string(),                    // /list
+        Ops::Create => "/keys/".to_string(),                  // /create
     }
 }
 

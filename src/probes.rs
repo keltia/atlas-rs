@@ -46,15 +46,15 @@ pub enum Ops {
 /// Generate the proper URL for the service we want in the given category
 fn set_url(ops: Ops, p: u32) -> String {
     match ops {
-        Ops::List => format!("/probes/"),                           // /list
-        Ops::Get => format!("/probes/{}/", p),                      // /get
-        Ops::Set => format!("/probes/{}/", p),                      // /set
-        Ops::Update => format!("/probes/{}/", p),                   // /update
+        Ops::List => "/probes/".to_string(),      // /list
+        Ops::Get => format!("/probes/{}/", p),    // /get
+        Ops::Set => format!("/probes/{}/", p),    // /set
+        Ops::Update => format!("/probes/{}/", p), // /update
         Ops::Measurement => format!("/probes/{}/measurements/", p), // P/measurements
-        Ops::Archive => format!("/probes/archive/"),                // /archive
-        Ops::Rankings => format!("/probes/rankings/"),                // rankings
-        Ops::Tags => format!("/probes/tags/"),                      // /tags/
-        Ops::Slugs => format!("/probes/tags/{}/slugs", p),          // /tags/T/slugs/
+        Ops::Archive => "/probes/archive/".to_string(), // /archive
+        Ops::Rankings => "/probes/rankings/".to_string(), // rankings
+        Ops::Tags => "/probes/tags/".to_string(), // /tags/
+        Ops::Slugs => format!("/probes/tags/{}/slugs", p), // /tags/T/slugs/
     }
 }
 
@@ -154,13 +154,15 @@ pub struct ProbeList {
 /// ```
 ///
 impl Probe {
-    pub fn dispatch<'a>(mut r: RequestBuilder<'a>, ops: Ops, data: Param<'a>) -> RequestBuilder<'a> {
+    pub fn dispatch<'a>(
+        mut r: RequestBuilder<'a>,
+        ops: Ops,
+        data: Param<'a>,
+    ) -> RequestBuilder<'a> {
         let add = set_url(ops, data.into());
 
-        let url = reqwest::Url::parse(
-            format!("{}/{}", r.r.url().as_str(), add).as_str()
-        ).unwrap();
-        r.r =  reqwest::blocking::Request::new(r.r.method().clone(), url);
+        let url = reqwest::Url::parse(format!("{}/{}", r.r.url().as_str(), add).as_str()).unwrap();
+        r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
         r
     }
 

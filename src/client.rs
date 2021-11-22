@@ -236,7 +236,7 @@ impl<'cl> Client<'cl> {
             reqwest::Method::GET,
             url,
         );
-        RequestBuilder {ctx: Cmd::Probes, c: self, r: r}
+        RequestBuilder {ctx: Cmd::Probes, c: self, r}
     }
 
     // ---------------------------------------------------------------------

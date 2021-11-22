@@ -8,7 +8,6 @@ use anyhow::Result;
 use clap::Parser;
 
 use atlas_rs::client::ClientBuilder;
-use atlas_rs::request::Param;
 use atlas_rs::probes::Probe;
 
 mod cli;
@@ -24,13 +23,13 @@ use data::ProbeSubCommand;
 /// Wrapper to load configuration
 fn load_config(opts: &Opts) -> Config {
     // Handle configuration loading & defaults
-    return match &opts.config {
-        Some(fname) => Config::load(&fname).unwrap_or_else(|e| {
+    match &opts.config {
+        Some(fname) => Config::load(fname).unwrap_or_else(|e| {
             println!("No config file, using defaults: {}", e);
             Config::new()
         }),
         None => Config::load(&default_file().unwrap()).unwrap_or_default(),
-    };
+    }
 }
 
 fn main() -> Result<()> {
@@ -80,8 +79,8 @@ fn main() -> Result<()> {
 
             match p {
                 Ok(p) => {
-                    let ip4 = p.address_v4.unwrap_or("None".to_string());
-                    let ip6 = p.address_v6.unwrap_or("None".to_string());
+                    let ip4 = p.address_v4.unwrap_or_else(|| "None".to_string());
+                    let ip6 = p.address_v6.unwrap_or_else(|| "None".to_string());
 
                     let ip = format!("IPv4: {} IPv6: {}", ip4, ip6);
                     println!("Probe {} has the following IP:\n{}", pn, ip)

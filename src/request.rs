@@ -26,7 +26,7 @@ impl<'a> From<&'a str> for Param<'a> {
 /// From Param to &str
 impl<'a> From<Param<'a>> for &'a str {
     fn from(p: Param<'a>) -> Self {
-        return match p {
+        match p {
             Param::S(s) => s,
             _ => "",
         }
@@ -43,7 +43,7 @@ impl<'a> From<u32> for Param<'a> {
 /// From Param to u32
 impl<'a> From<Param<'a>> for u32 {
     fn from(p: Param<'a>) -> Self {
-        return match p {
+        match p {
             Param::I(v) => v,
             _ => 0,
         }
@@ -74,7 +74,7 @@ impl<'rq> RequestBuilder<'rq> {
         // Main routing
         match self.ctx {
             Cmd::Probes => {
-                return Probe::dispatch(self, probes::Ops::Get, data.into());
+                Probe::dispatch(self, probes::Ops::Get, data.into())
             },
             Cmd::Measurements => unimplemented!(),
             Cmd::AnchorMeasurements => unimplemented!(),

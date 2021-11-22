@@ -27,13 +27,12 @@ enum Ops {
 /// Generate the proper URL for the service we want in the given category
 fn set_url(ops: Ops) -> String {
     match ops {
-        Ops::Get => format!("/credits/"),                         // /get
-        Ops::Incomes => format!("/credits/incomes/"),                         // /set
-        Ops::Expenses => format!("/credits/expenses/"),                      // /delete
-        Ops::Transfers => format!("/credits/transfers/"),         // /list
-        Ops::Transactions => format!("/credits/transactions/"),   // /list
-        Ops::Members => format!("/credits/members/"),                               // /create
-        Ops::Claim => format!("/credits/members/claim/"),                               // /create
+        Ops::Get => "/credits/".to_string(),                 // /get
+        Ops::Incomes => "/credits/incomes/".to_string(),     // /set
+        Ops::Expenses => "/credits/expenses/".to_string(),   // /delete
+        Ops::Transfers => "/credits/transfers/".to_string(), // /list
+        Ops::Transactions => "/credits/transactions/".to_string(), // /list
+        Ops::Members => "/credits/members/".to_string(),     // /create
+        Ops::Claim => "/credits/members/claim/".to_string(), // /create
     }
 }
-
