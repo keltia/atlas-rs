@@ -18,15 +18,18 @@ pub enum Param<'a> {
 
 /// From &str to Param
 impl<'a> From<&'a str> for Param<'a> {
-    fn from(p: &'a str) -> Self {
-        Param::S(p)
+    fn from(s: &'a str) -> Self {
+        Param::S(s)
     }
 }
 
 /// From Param to &str
 impl<'a> From<Param<'a>> for &'a str {
     fn from(p: Param<'a>) -> Self {
-        p.into()
+        return match p {
+            Param::S(s) => s,
+            _ => "",
+        }
     }
 }
 
@@ -40,7 +43,10 @@ impl<'a> From<u32> for Param<'a> {
 /// From Param to u32
 impl<'a> From<Param<'a>> for u32 {
     fn from(p: Param<'a>) -> Self {
-        p.into()
+        return match p {
+            Param::I(v) => v,
+            _ => 0,
+        }
     }
 }
 
