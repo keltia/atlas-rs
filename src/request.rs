@@ -6,35 +6,46 @@ use crate::probes::Probe;
 use serde::de;
 use crate::errors::APIError;
 
+// ------------------------------------------------------------
+
 #[derive(Clone, Copy, Debug)]
 pub enum Param<'a> {
     I(u32),
     S(&'a str),
 }
 
+// Implement From: for our enum
+
+/// From &str to Param
 impl<'a> From<&'a str> for Param<'a> {
     fn from(p: &'a str) -> Self {
         Param::S(p)
     }
 }
 
+/// From Param to &str
 impl<'a> From<Param<'a>> for &'a str {
     fn from(p: Param<'a>) -> Self {
         p.into()
     }
 }
 
+/// From u32 to Param
 impl<'a> From<u32> for Param<'a> {
     fn from(p: u32) -> Self {
         Param::I(p)
     }
 }
 
+/// From Param to u32
 impl<'a> From<Param<'a>> for u32 {
     fn from(p: Param<'a>) -> Self {
         p.into()
     }
 }
+
+// ------------------------------------------------------------
+// RequestBuilder itself
 
 #[derive(Debug)]
 pub struct RequestBuilder<'rq> {
@@ -44,8 +55,9 @@ pub struct RequestBuilder<'rq> {
     pub r: Result<reqwest::blocking::Request>,
 }
 
+/// Add methods for chaining and keeping state
 impl<'rq> RequestBuilder<'rq> {
-    pub fn new(ctx: Cmd, c: &'rq Client<'rq>, r: Result<reqwest::blocking::Request>) -> Self {
+    pub fn new(ctx: Cmd, c: Client<'rq>, r: reqwest::blocking::Request) -> Self {
         RequestBuilder {ctx, c, r}
     }
 
@@ -65,6 +77,8 @@ impl<'rq> RequestBuilder<'rq> {
         }
     }
 
+    /// Finalize the chain and call the real API
+    ///
     pub fn call<T>(self) -> Result<T, APIError>
         where T: de::Deserialize<'rq>
     {
