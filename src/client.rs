@@ -216,7 +216,9 @@ impl<'cl> Client<'cl> {
 
     // ---------------------------------------------------------------------
     // Entities
-    pub fn anchors(&self) -> RequestBuilder { unimplemented!() }
+    pub fn anchors(&self) -> RequestBuilder {
+        unimplemented!()
+    }
 
     pub fn credits(&self) -> RequestBuilder {
         unimplemented!()
@@ -232,11 +234,12 @@ impl<'cl> Client<'cl> {
 
     pub fn probe(self) -> RequestBuilder<'cl> {
         let url = reqwest::Url::parse(self.endpoint).unwrap();
-        let r = reqwest::blocking::Request::new(
-            reqwest::Method::GET,
-            url,
-        );
-        RequestBuilder {ctx: Cmd::Probes, c: self, r}
+        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
+        RequestBuilder {
+            ctx: Cmd::Probes,
+            c: self,
+            r,
+        }
     }
 
     // ---------------------------------------------------------------------

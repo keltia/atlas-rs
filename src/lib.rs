@@ -3,8 +3,8 @@
 use clap::{crate_name, crate_version};
 
 // main modules
-pub mod anchors;
 pub mod anchor_measurements;
+pub mod anchors;
 pub mod client;
 pub mod common;
 pub mod credits;

@@ -1,10 +1,10 @@
-use anyhow::Result;
 use crate::client::{Client, Cmd};
 use crate::probes;
 use crate::probes::Probe;
+use anyhow::Result;
 
-use serde::de;
 use crate::errors::APIError;
+use serde::de;
 
 // ------------------------------------------------------------
 
@@ -64,18 +64,15 @@ pub struct RequestBuilder<'rq> {
 /// Add methods for chaining and keeping state
 impl<'rq> RequestBuilder<'rq> {
     pub fn new(ctx: Cmd, c: Client<'rq>, r: reqwest::blocking::Request) -> Self {
-        RequestBuilder {ctx, c, r}
+        RequestBuilder { ctx, c, r }
     }
 
     /// Establish the final URL before call()
     ///
-    pub fn get<S: Into<Param<'rq>>>(self, data: S) -> Self
-    {
+    pub fn get<S: Into<Param<'rq>>>(self, data: S) -> Self {
         // Main routing
         match self.ctx {
-            Cmd::Probes => {
-                Probe::dispatch(self, probes::Ops::Get, data.into())
-            },
+            Cmd::Probes => Probe::dispatch(self, probes::Ops::Get, data.into()),
             Cmd::Measurements => unimplemented!(),
             Cmd::AnchorMeasurements => unimplemented!(),
             Cmd::Credits => unimplemented!(),
@@ -88,11 +85,17 @@ impl<'rq> RequestBuilder<'rq> {
     /// Finalize the chain and call the real API
     ///
     pub fn call<T>(self) -> Result<T, APIError>
-        where T: de::DeserializeOwned
+    where
+        T: de::DeserializeOwned,
     {
         println!("in call");
-        let resp = self.c.agent.as_ref().unwrap()
-            .get(self.r.url().as_str()).send()?;
+        let resp = self
+            .c
+            .agent
+            .as_ref()
+            .unwrap()
+            .get(self.r.url().as_str())
+            .send()?;
 
         let txt = resp.text()?;
 
@@ -100,5 +103,3 @@ impl<'rq> RequestBuilder<'rq> {
         Ok(r)
     }
 }
-
-

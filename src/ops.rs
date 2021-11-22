@@ -1,4 +1,1 @@
-
-pub struct Ops {
-
-}
+pub struct Ops {}
