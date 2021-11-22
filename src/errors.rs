@@ -94,7 +94,7 @@ impl From<serde_json::Error> for APIError {
     }
 }
 
-/// Convert a deserialize error from `serde`
+/// Convert a deserialize error from `anyhow`
 impl From<anyhow::Error> for APIError {
     fn from(error: anyhow::Error) -> Self {
         APIError::new(500, "json/decode", &error.to_string(), "anyhow")
