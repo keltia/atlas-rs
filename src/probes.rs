@@ -25,6 +25,7 @@ use serde::{Deserialize, Serialize};
 use crate::client::Client;
 use crate::common::{add_opts, List};
 use crate::errors::*;
+use crate::request::{Param, RequestBuilder};
 
 pub const BASE_PROBES: &str = "/probes/";
 
@@ -153,6 +154,14 @@ pub struct ProbeList {
 /// ```
 ///
 impl Probe {
+    pub fn dispatch<'a>(mut r: RequestBuilder<'a>, ops: Ops, data: Param<'a>) -> RequestBuilder<'a> {
+        let url = reqwest::Url::parse(format!("{}{}",
+                                          r.r.as_ref().unwrap().url().as_str(),
+                                          set_url(ops, data.into())).as_str()
+        ).unwrap();
+        r.r =  Ok(reqwest::blocking::Request::new(r.r.as_ref().unwrap().method().clone(), url));
+        r
+    }
     pub fn get(cl: &Client, pn: u32) -> Result<Self, APIError> {
         Ok(cl.get_probe(pn)?)
     }
