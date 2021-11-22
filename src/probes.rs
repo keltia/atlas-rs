@@ -249,6 +249,13 @@ impl<'cl> Client<'cl> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
+    #[test]
+    fn test_set_url() {
+        assert_eq!("/probes/666/measurements/", set_url(Ops::Measurement, 666));
+    }
+
     #[test]
     fn test_get_probe() {}
 }
