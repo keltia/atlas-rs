@@ -87,7 +87,6 @@ use std::time::Duration;
 // External crates
 use anyhow::{anyhow, Result};
 use clap::{crate_name, crate_version};
-use crate::probes::BASE_PROBES;
 
 // Internal crates
 use crate::request::RequestBuilder;
@@ -108,6 +107,18 @@ pub enum AF {
     V6,
     /// Both IPv4 & v6
     V46,
+}
+
+/// Represents the different categories aka first level of requests (probes, credits, etc.
+#[derive(Debug)]
+pub enum Cmd {
+    Anchors,
+    AnchorMeasurements,
+    Credits,
+    Keys,
+    Measurements,
+    ParticipationRequests,
+    Probes,
 }
 
 // ---------------------------------------------------------------------------
@@ -225,7 +236,7 @@ impl<'cl> Client<'cl> {
             reqwest::Method::GET,
             url,
         );
-        RequestBuilder {ctx: BASE_PROBES, c: &self, r: Ok(r)}
+        RequestBuilder {ctx: Cmd::Probes, c: &self, r: Ok(r)}
     }
 
     // ---------------------------------------------------------------------
