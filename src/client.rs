@@ -535,10 +535,10 @@ mod tests {
 
     #[test]
     fn test_client_new() {
-        let c = Client::new("FOO");
+        let c = Client::new();
 
         // Check all defaults
-        assert_eq!("FOO", c.api_key);
+        assert_eq!("CHANGEME", c.api_key.unwrap());
         assert_eq!(ENDPOINT, c.endpoint);
         assert_eq!(0, c.default_probe);
         assert_eq!("area", c.area_type);
@@ -558,20 +558,20 @@ mod tests {
 
         assert!(cb.is_ok());
 
-        let c = c.unwrap();
+        let cb = cb.unwrap();
         // Check all defaults
-        assert_eq!("key", c.cl.api_key);
-        assert_eq!(ENDPOINT, c.cl.endpoint);
-        assert_eq!(0, c.cl.default_probe);
-        assert_eq!("area", c.cl.area_type);
-        assert_eq!("WW", c.cl.area_value);
-        assert!(c.cl.is_oneoff);
-        assert_eq!(10, c.cl.pool_size);
-        assert_eq!(AF::V46, c.cl.want_af);
-        assert!(!c.cl.verbose);
-        assert_eq!("", c.cl.tags);
-        assert!(c.cl.opts.contains_key("key"));
-        assert!(c.cl.agent.is_some());
+        assert_eq!("key", cb.api_key.unwrap());
+        assert_eq!(ENDPOINT, cb.endpoint);
+        assert_eq!(0, cb.default_probe);
+        assert_eq!("area", cb.area_type);
+        assert_eq!("WW", cb.area_value);
+        assert!(cb.is_oneoff);
+        assert_eq!(10, cb.pool_size);
+        assert_eq!(AF::V46, cb.want_af);
+        assert!(!cb.verbose);
+        assert_eq!("", cb.tags);
+        assert!(cb.opts.contains_key("key"));
+        assert!(cb.agent.is_some());
     }
 
     #[test]
@@ -585,6 +585,6 @@ mod tests {
     fn test_onoff() {
         let c = ClientBuilder::new().onoff(true).build();
 
-        assert!(c.is_oneoff);
+        assert!(c.unwrap().is_oneoff);
     }
 }
