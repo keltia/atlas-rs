@@ -88,28 +88,15 @@ impl<'rq> RequestBuilder<'rq> {
     /// Finalize the chain and call the real API
     ///
     pub fn call<T>(self) -> Result<T, APIError>
-        where T: de::Deserialize<'rq>
+        where T: de::DeserializeOwned
     {
-        let r = match self.r {
-            Ok(r) => r,
-            Err(e) => return Err(APIError::new(500,
-                                               "bad request",
-                                               e.to_string().as_ref(),
-                                               "")),
-        };
-
+        println!("in call");
         let resp = self.c.agent.as_ref().unwrap()
-            .get(r.url().as_str()).send()?;
+            .get(self.r.url().as_str()).send()?;
 
-        let txt = match resp.text() {
-            Ok(t) => t,
-            Err(e) => return Err(APIError::new(500,
-                                               "no body",
-                                               e.to_string().as_ref(),
-                                               ""))
-        }.as_str();
+        let txt = resp.text()?;
 
-        let r: T = serde_json::from_str(txt)?;
+        let r: T = serde_json::from_str(&txt)?;
         Ok(r)
     }
 }
