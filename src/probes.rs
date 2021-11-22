@@ -54,7 +54,6 @@ fn set_url(ops: Ops, p: u32) -> String {
         Ops::Rankings => format!("/probes/rankings/"),                // rankings
         Ops::Tags => format!("/probes/tags/"),                      // /tags/
         Ops::Slugs => format!("/probes/tags/{}/slugs", p),          // /tags/T/slugs/
-        _ => "unsupported",
     }
 }
 

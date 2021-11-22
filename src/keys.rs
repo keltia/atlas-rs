@@ -42,7 +42,6 @@ fn set_url(ops: Ops, uuid: String) -> String {
         Ops::Delete => format!("/keys/{}/", uuid),                      // /delete
         Ops::List => format!("/keys/"),                                 // /list
         Ops::Create => format!("/keys/"),                               // /create
-        _ => "unsupported",
     }
 }
 

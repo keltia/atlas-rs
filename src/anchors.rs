@@ -18,7 +18,6 @@ fn set_url(ops: Ops, uuid: String) -> String {
     match ops {
         Ops::Get => format!("/anchors/{}/", uuid),                         // /get
         Ops::List => format!("/anchors/"),                                 // /list
-        _ => "unsupported",
     }
 }
 
