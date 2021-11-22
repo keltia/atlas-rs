@@ -57,8 +57,8 @@ impl<'a> From<Param<'a>> for u32 {
 pub struct RequestBuilder<'rq> {
     /// Context is which part of the API we are targetting (`/probe/`, etc.)
     pub ctx: Cmd,
-    pub c: &'rq Client<'rq>,
-    pub r: Result<reqwest::blocking::Request>,
+    pub c: Client<'rq>,
+    pub r: reqwest::blocking::Request,
 }
 
 /// Add methods for chaining and keeping state
