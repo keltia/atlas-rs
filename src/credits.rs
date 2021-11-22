@@ -34,7 +34,6 @@ fn set_url(ops: Ops) -> String {
         Ops::Transactions => format!("/credits/transactions/"),   // /list
         Ops::Members => format!("/credits/members/"),                               // /create
         Ops::Claim => format!("/credits/members/claim/"),                               // /create
-        _ => "unsupported",
     }
 }
 
