@@ -6,6 +6,7 @@ use std::fmt;
 use std::io;
 
 /// External crates
+use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
 
 /// `APIError` is used to report API errors but we use it for ourselves
@@ -105,6 +106,13 @@ impl From<anyhow::Error> for APIError {
 impl From<reqwest::Error> for APIError {
     fn from(error: reqwest::Error) -> Self {
         APIError::new(500, "reqwest", &error.to_string(), "reqwest")
+    }
+}
+
+/// Convert our APIError into an anyhow one
+impl From<APIError> for anyhow::Error {
+    fn from(aerr: APIError) -> Self {
+        anyhow!(aerr)
     }
 }
 
