@@ -1,6 +1,42 @@
-use anyhow::{bail, Result};
-use crate::client::Client;
+use anyhow::Result;
+use crate::client::{Client, Cmd};
+use crate::probes;
+use crate::probes::Probe;
 
+use serde::de;
+use crate::errors::APIError;
+
+#[derive(Clone, Copy, Debug)]
+pub enum Param<'a> {
+    I(u32),
+    S(&'a str),
+}
+
+impl<'a> From<&'a str> for Param<'a> {
+    fn from(p: &'a str) -> Self {
+        Param::S(p)
+    }
+}
+
+impl<'a> From<Param<'a>> for &'a str {
+    fn from(p: Param<'a>) -> Self {
+        p.into()
+    }
+}
+
+impl<'a> From<u32> for Param<'a> {
+    fn from(p: u32) -> Self {
+        Param::I(p)
+    }
+}
+
+impl<'a> From<Param<'a>> for u32 {
+    fn from(p: Param<'a>) -> Self {
+        p.into()
+    }
+}
+
+#[derive(Debug)]
 pub struct RequestBuilder<'rq> {
     /// Context is which part of the API we are targetting (`/probe/`, etc.)
     pub ctx: &'rq str,
