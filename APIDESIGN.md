@@ -112,6 +112,18 @@ Atlas API
                                         ----- /tags
                                         ----- /tags         ----- /slugs
 
+Per context/cmd:
 
+    RequestBuilder
+            list        anchor-measurements/anchors/keys/measurements/participation-requests/probes
+            get         anchor-measurements/anchors/credits/keys/measurements/probes
+            set         keys/probes
+            permissions keys
+            delete      keys/measurements            
+            create      keys/measurements
+            update      measurements/probes
+            archive     probes
+            rankings    probes
+            tags        probes
 
 
