@@ -104,6 +104,7 @@ It is not currently completely usable, only a few parts have been implemented (n
 - Complete the various implementations for the "core" features like `Measurements` and `Probes`.
 - add many many more tests
 - refactor to get as much idiomatic Rust as possible
+- cleanup the information displayed by `atlas`, right now a mix of json & deserialized stuff.
 
 ## Contributing
 
