@@ -82,18 +82,27 @@ impl<'a> From<Param<'a>> for u32 {
 pub struct RequestBuilder<'rq> {
     /// Context is which part of the API we are targetting (`/probe/`, etc.)
     pub ctx: Cmd,
+    /// Client for API calls
     pub c: Client<'rq>,
+    /// Build our request here
     pub r: reqwest::blocking::Request,
 }
 
-/// Add methods for chaining and keeping state
+/// Add methods for chaining and keeping state.
+///
+/// These are the main "routers" and why we have the `Cmd` enum.
+///
 impl<'rq> RequestBuilder<'rq> {
+    /// Create an empty struct RequestBuilder
+    ///
     pub fn new(ctx: Cmd, c: Client<'rq>, r: reqwest::blocking::Request) -> Self {
         RequestBuilder { ctx, c, r }
     }
 
     /// Establish the final URL before call()
     ///
+    /// This method expect to be called by one of the main "categories" methods like
+    /// `probes()` or `keys()`.  That way, context is established
     pub fn get<S: Into<Param<'rq>>>(self, data: S) -> Self {
         // Main routing
         match self.ctx {
