@@ -1,3 +1,16 @@
+//! This is the main set of type and methods implementing the main routing and dispatching
+//! involved in method chaining to setup and run an HTTP request through `reqwest`.
+//!
+//! There is the ` Request` struct and its builder counterpart `RequestBuilder`.
+//! See `APIDESIGN.md` for the details list of calls and the contex/category on
+//! each of them.
+//!
+//! The process is always creating a `Client` instance either with `new()` or through
+//! the `ClientBuilder` chain.  Requests are then initiated by calling one of the categories
+//! methods (like `probes()` and `keys()`) followed by the keyword of the action itself (like
+//! `get()` or `list()` to five parameters) with `call()`to finish and do the actual API call.
+//!
+//!
 use crate::client::{Client, Cmd};
 use crate::keys;
 use crate::keys::Key;
