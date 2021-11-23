@@ -120,7 +120,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///
     pub fn call<T>(self) -> Result<T, APIError>
     where
-        T: de::DeserializeOwned,
+        T: de::DeserializeOwned + std::fmt::Display,
     {
         println!("in call");
         let resp = self
@@ -135,6 +135,7 @@ impl<'rq> RequestBuilder<'rq> {
         println!("after text={}", txt);
 
         let r: T = serde_json::from_str(&txt)?;
+        println!("after r={}", r);
         Ok(r)
     }
 }
