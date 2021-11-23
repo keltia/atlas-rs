@@ -132,6 +132,8 @@ impl<'rq> RequestBuilder<'rq> {
             .get(self.r.url().as_str())
             .send()?;
 
+        println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
+
         let txt = resp.text()?;
         println!("after text={}", txt);
 
