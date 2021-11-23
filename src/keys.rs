@@ -99,6 +99,14 @@ impl Key {
     }
 }
 
+impl fmt::Display for Key {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", serde_json::to_string(self).unwrap())
+    }
+}
+
+// -------------------------------------------------------------------------
+
 /// Each permission is for a given target
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Target {
