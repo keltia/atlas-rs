@@ -62,9 +62,9 @@ pub struct Key {
     /// Main ID is an uuid
     pub uuid: String,
     /// Key validity from...
-    pub valid_from: String,
+    pub valid_from: Option<String>,
     /// Key validity to
-    pub valid_to: String,
+    pub valid_to: Option<String>,
     /// Is this an usable key?
     pub enabled: bool,
     ///  Is it an active one?
@@ -111,7 +111,7 @@ pub struct Target {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Grant {
     pub permission: String,
-    pub target: Target,
+    pub target: Option<Target>,
 }
 
 // -------------------------------------------------------------------------
