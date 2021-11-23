@@ -54,9 +54,20 @@ pub(crate) struct KeyOpts {
 
 #[derive(Parser)]
 pub(crate) enum KeySubCommand {
-    Info(InfoOpts),
+    Info(KInfoOpts),
     List(ListOpts),
 }
+
+#[derive(Parser)]
+pub(crate) struct KInfoOpts {
+    /// Print debug info
+    #[clap(short)]
+    pub(crate) debug: bool,
+    /// Probe ID
+    pub(crate) uuid: Option<String>,
+}
+
+// ------------------------------------------------------------
 
 /// Measurement sub-commands
 ///
