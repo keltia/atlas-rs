@@ -99,6 +99,8 @@ impl Key {
     }
 }
 
+/// Implement the Display trait.
+///
 impl fmt::Display for Key {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
