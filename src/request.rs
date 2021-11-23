@@ -1,4 +1,6 @@
 use crate::client::{Client, Cmd};
+use crate::keys;
+use crate::keys::Key;
 use crate::probes;
 use crate::probes::Probe;
 use anyhow::Result;
@@ -29,6 +31,16 @@ impl<'a> From<Param<'a>> for &'a str {
         match p {
             Param::S(s) => s,
             _ => "",
+        }
+    }
+}
+
+/// From Param to &str
+impl<'a> From<Param<'a>> for String {
+    fn from(p: Param<'a>) -> Self {
+        match p {
+            Param::S(s) => s.to_string(),
+            _ => "".to_string(),
         }
     }
 }
@@ -77,7 +89,7 @@ impl<'rq> RequestBuilder<'rq> {
             Cmd::AnchorMeasurements => unimplemented!(),
             Cmd::Credits => unimplemented!(),
             Cmd::Anchors => unimplemented!(),
-            Cmd::Keys => unimplemented!(),
+            Cmd::Keys => Key::dispatch(self, keys::Ops::Get, data.into()),
             Cmd::ParticipationRequests => unimplemented!(),
         }
     }
@@ -98,6 +110,7 @@ impl<'rq> RequestBuilder<'rq> {
             .send()?;
 
         let txt = resp.text()?;
+        println!("after text={}", txt);
 
         let r: T = serde_json::from_str(&txt)?;
         Ok(r)

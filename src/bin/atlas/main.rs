@@ -8,6 +8,7 @@ use anyhow::Result;
 use clap::Parser;
 
 use atlas_rs::client::ClientBuilder;
+use atlas_rs::keys::Key;
 use atlas_rs::probes::Probe;
 
 mod cli;
@@ -18,7 +19,7 @@ mod util;
 
 use cli::{Opts, SubCommand, NAME, VERSION};
 use config::{default_file, Config};
-use data::ProbeSubCommand;
+use data::{ProbeSubCommand,KeySubCommand};
 
 /// Wrapper to load configuration
 fn load_config(opts: &Opts) -> Config {
@@ -59,10 +60,18 @@ fn main() -> Result<()> {
 
                 let p: Probe = c.probe().get(pn).call()?;
                 println!("Probe {} is:\n{:?}", pn, p);
-            }
+            },
             ProbeSubCommand::List(_opts) => (),
         },
-        SubCommand::Key(_opts) => (),
+        SubCommand::Key(opts) => match opts.subcmd {
+            KeySubCommand::Info(opts) => {
+                let uuid = opts.uuid.unwrap_or_else(|| cfg.api_key.clone());
+
+                let k: Key = c.keys().get(uuid.as_str()).call()?;
+                println!("Key {} is:\n{:?}", uuid, k);
+            },
+            KeySubCommand::List(_opts) => (),
+        },
         SubCommand::Credits(_opts) => (),
         SubCommand::Measurement(_opts) => (),
         // protocols-related commands

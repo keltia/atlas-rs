@@ -11,18 +11,19 @@
 //                                         ----- /list
 //                                         ----- /create
 
-use reqwest::StatusCode;
 /// External crates
+use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
 /// Our crates
 use crate::client::Client;
 use crate::common::add_opts;
 use crate::errors::*;
+use crate::request::{Param, RequestBuilder};
 
 /// All operations available
 #[derive(Debug)]
-enum Ops {
+pub enum Ops {
     Permissions = 1,
     Targets,
     Get,
@@ -70,6 +71,20 @@ pub struct Key {
     pub ktype: String,
 }
 
+impl Key {
+    pub fn dispatch<'a>(
+        mut r: RequestBuilder<'a>,
+        ops: Ops,
+        data: Param<'a>,
+    ) -> RequestBuilder<'a> {
+        let add = set_url(ops, data.into());
+
+        let url = reqwest::Url::parse(format!("{}/{}", r.r.url().as_str(), add).as_str()).unwrap();
+        r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
+        r
+    }
+}
+
 /// Each permission is for a given target
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Target {
@@ -108,7 +123,7 @@ impl<'cl> Client<'cl> {
     ///  # use atlas_rs::client::Client;
     ///  # use atlas_rs::keys::Key;
     ///
-    ///     let cl = Client::new("foo").verbose(true);
+    ///     let cl = Client::new().verbose(true);
     ///     let pi = cl.get_key("key-id").unwrap();
     ///
     ///     println!("key ID {}: {}", pi.uuid, pi.label);

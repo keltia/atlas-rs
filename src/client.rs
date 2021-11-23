@@ -224,8 +224,14 @@ impl<'cl> Client<'cl> {
         unimplemented!()
     }
 
-    pub fn keys(&self) -> RequestBuilder {
-        unimplemented!()
+    pub fn keys(self) -> RequestBuilder<'cl> {
+        let url = reqwest::Url::parse(self.endpoint).unwrap();
+        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
+        RequestBuilder {
+            ctx: Cmd::Keys,
+            c: self,
+            r,
+        }
     }
 
     pub fn measurement(&self) -> RequestBuilder {
