@@ -11,15 +11,22 @@
 //                                         ----- /list
 //                                         ----- /create
 
-/// External crates
+// -------------------------------------------------------------------------
+// Standard library
+use std::fmt;
+use std::fmt::Formatter;
+
+// External crates
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
-/// Our crates
+// Our crates
 use crate::client::Client;
 use crate::common::add_opts;
 use crate::errors::*;
 use crate::request::{Param, RequestBuilder};
+
+// -------------------------------------------------------------------------
 
 /// All operations available
 #[derive(Debug)]
@@ -45,6 +52,8 @@ fn set_url(ops: Ops, uuid: String) -> String {
         Ops::Create => "/keys/".to_string(),                  // /create
     }
 }
+
+// -------------------------------------------------------------------------
 
 /// This is the structure describing an API key with its validity, entitlements, etc.
 ///
@@ -105,6 +114,8 @@ pub struct Grant {
     pub target: Target,
 }
 
+// -------------------------------------------------------------------------
+
 /// When asking for a list of keys, this struct is used for pagination
 #[derive(Serialize, Deserialize, Debug)]
 pub struct KeyList {
@@ -117,6 +128,8 @@ pub struct KeyList {
     /// Current key block
     pub keys: Vec<Key>,
 }
+
+// -------------------------------------------------------------------------
 
 /// Main API methods for `key` type
 impl<'cl> Client<'cl> {
@@ -176,6 +189,8 @@ impl<'cl> Client<'cl> {
         unimplemented!()
     }
 }
+
+// -------------------------------------------------------------------------
 
 #[cfg(test)]
 mod tests {
