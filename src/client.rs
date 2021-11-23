@@ -112,6 +112,7 @@ pub enum AF {
 /// Represents the different categories aka first level of requests (probes, credits, etc.
 #[derive(Debug)]
 pub enum Cmd {
+    None = 0,
     Anchors,
     AnchorMeasurements,
     Credits,
@@ -119,6 +120,12 @@ pub enum Cmd {
     Measurements,
     ParticipationRequests,
     Probes,
+}
+
+impl Default for Cmd {
+    fn default() -> Self {
+        Cmd::None
+    }
 }
 
 // ---------------------------------------------------------------------------
