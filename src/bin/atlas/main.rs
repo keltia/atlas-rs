@@ -4,13 +4,18 @@
 //!
 
 /// External crates
+///
 use anyhow::Result;
 use clap::Parser;
 
+/// API-related ones.
+///
 use atlas_rs::client::ClientBuilder;
 use atlas_rs::errors::APIError;
 use atlas_rs::keys::Key;
 use atlas_rs::probes::Probe;
+
+// Link with other modules.
 
 mod cli;
 mod config;
@@ -23,6 +28,7 @@ use config::{default_file, Config};
 use data::{KeySubCommand, ProbeSubCommand};
 
 /// Wrapper to load configuration
+///
 fn load_config(opts: &Opts) -> Config {
     // Handle configuration loading & defaults
     match &opts.config {
@@ -34,6 +40,10 @@ fn load_config(opts: &Opts) -> Config {
     }
 }
 
+/// Main entry point
+///
+/// It returns an empty `Result` which enable use this type with `?`.
+///
 fn main() -> Result<()> {
     let opts: Opts = Opts::parse();
 
