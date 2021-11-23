@@ -11,15 +11,19 @@
 //! `get()` or `list()` to five parameters) with `call()`to finish and do the actual API call.
 //!
 //!
+
+// External crates
+use anyhow::Result;
+use serde::de;
+
+// Our internal crates.
+//
 use crate::client::{Client, Cmd};
 use crate::keys;
 use crate::keys::Key;
 use crate::probes;
 use crate::probes::Probe;
-use anyhow::Result;
-
 use crate::errors::APIError;
-use serde::de;
 
 // ------------------------------------------------------------
 
