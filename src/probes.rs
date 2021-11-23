@@ -15,6 +15,8 @@
 
 // std library
 use std::collections::HashMap;
+use std::fmt;
+use std::fmt::Formatter;
 
 // External crates
 use anyhow::Result;
@@ -127,6 +129,12 @@ pub struct Probe {
     /// Probe Type
     #[serde(rename = "type")]
     pub ptype: String,
+}
+
+impl fmt::Display for Probe {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", serde_json::to_string(self).unwrap())
+    }
 }
 
 /// When asking for a list of probes, this struct is used for pagination
