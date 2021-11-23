@@ -175,8 +175,9 @@ impl Probe {
         // Setup URL with potential parameters like `key`.
         let url = reqwest::Url::parse_with_params(
             format!("{}/{}", r.r.url().as_str(), add).as_str(),
-            &r.c.opts
-        ).unwrap();
+            &r.c.opts,
+        )
+        .unwrap();
 
         r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
         r

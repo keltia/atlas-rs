@@ -20,7 +20,7 @@ mod util;
 
 use cli::{Opts, SubCommand, NAME, VERSION};
 use config::{default_file, Config};
-use data::{ProbeSubCommand,KeySubCommand};
+use data::{KeySubCommand, ProbeSubCommand};
 
 /// Wrapper to load configuration
 fn load_config(opts: &Opts) -> Config {
@@ -61,7 +61,7 @@ fn main() -> Result<()> {
 
                 let p: Probe = c.probe().get(pn).call()?;
                 println!("Probe {} is:\n{:?}", pn, p);
-            },
+            }
             ProbeSubCommand::List(_opts) => (),
         },
         SubCommand::Key(opts) => match opts.subcmd {
@@ -70,7 +70,7 @@ fn main() -> Result<()> {
 
                 let k: Key = c.keys().get(uuid.as_str()).call()?;
                 println!("Key {} is:\n{:?}", uuid, k);
-            },
+            }
             KeySubCommand::List(_opts) => (),
         },
         SubCommand::Credits(_opts) => (),
