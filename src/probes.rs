@@ -159,23 +159,15 @@ pub struct ProbeList {
 
 // -------------------------------------------------------------------------
 
-/// Alternate API for probes
-///
-/// Example:
-/// ```no_run
-/// # use atlas_rs::probes::Probe;
-/// # use atlas_rs::client::ClientBuilder;
-///
-/// let c = ClientBuilder::new().api_key("the-key")?;
-/// let p = Probe::get(cl, 666)?;
-/// ```
-///
 impl Probe {
+    /// Main routing that build the URL for the request
+    ///
     pub fn dispatch<'a>(
         mut r: RequestBuilder<'a>,
         ops: Ops,
         data: Param<'a>,
     ) -> RequestBuilder<'a> {
+        // Get the parameter
         let add = set_url(ops, data.into());
 
         let url = reqwest::Url::parse(format!("{}/{}", r.r.url().as_str(), add).as_str()).unwrap();
@@ -183,10 +175,34 @@ impl Probe {
         r
     }
 
+    /// Alternate API for probes
+    ///
+    /// Example:
+    /// ```no_run
+    /// # use atlas_rs::probes::Probe;
+    /// # use atlas_rs::client::ClientBuilder;
+    ///
+    /// let c = ClientBuilder::new().api_key("the-key")?;
+    /// let p = Probe::get(cl, 666)?;
+    /// ```
+    ///
+    #[cfg(feature = "alt-api")]
     pub fn get(cl: &Client, pn: u32) -> Result<Self, APIError> {
-        Ok(cl.get_probe(pn)?)
+        Ok(cl.probe().get(pn).call()?)
     }
 
+    /// Alternate API for probes
+    ///
+    /// Example:
+    /// ```no_run
+    /// # use atlas_rs::probes::Probe;
+    /// # use atlas_rs::client::ClientBuilder;
+    ///
+    /// let c = ClientBuilder::new().api_key("the-key")?;
+    /// let p = Probe::list(cl, opts)?;
+    /// ```
+    ///
+    #[cfg(feature = "alt-api")]
     pub fn list(cl: &Client, opts: &HashMap<&str, &str>) -> Result<List<Self>, APIError> {
         Ok(cl.get_probes(opts)?)
     }
