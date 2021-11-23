@@ -20,54 +20,6 @@
 //! Calling one of these methods sets up the context for further calls with `RequestBuilder`
 //! (or plain `Request`).
 //!
-//! Examples:
-//! ```no_run
-//! use atlas_rs::client::{AF, ClientBuilder};
-//!
-//! let c = ClientBuilder::new()
-//!             .api_key("FOO")
-//!             .onoff(true)
-//!             .default_probe(666)
-//!             .want_af(AF::V4).build();
-//!
-//! let r = c.probe().get(666).call()?;
-//! ```
-//!
-//! ```no_run
-//! use atlas_rs::client::{AF, ClientBuilder};
-//!
-//! let c = ClientBuilder::new()
-//!             .api_key("FOO")
-//!             .onoff(true)
-//!             .default_probe(666)
-//!             .want_af(AF::V4)
-//!             .build();
-//!
-//! let r = c.traceroute().to("next.example.net").call()?;
-//! ```
-//!
-//! or
-//!
-//! ```no_run
-//! use atlas_rs::client::Client;
-//!
-//! let c = Client::new();
-//!
-//! let r = c.traceroute().to("next.example.net").call()?;
-//! ```
-//!
-//! like
-//!
-//! ```no_run
-//! use atlas_rs::client::Client;
-//!
-//! let c = Client::new();
-//!
-//! let r = c.ntp().from("next.example.net").call()?;
-//! ```
-//!
-//! (do we want a Client::NTP(next.example.net") or not?)
-//!
 //! Errors are handled in two steps:
 //! 1. if there is a Transport error (Unknown Host, Unreachable, etc.) call() will return an error
 //! 2. if the API returns an error, we attempt to decode as an APIError. If not, everything is good.
@@ -134,12 +86,23 @@ impl Default for Cmd {
 /// When using `Client::new()`, you get all the defaults values, if you want to configure it,
 /// please use `ClientBuilder` instead.
 ///
-/// Example:
+/// Examples:
 /// ```no_run
-/// # use atlas_rs::client::Client;
+/// use atlas_rs::client::Client;
 ///
 /// let c = Client::new();
+///
+/// let r = c.traceroute().to("next.example.net").call()?;
 /// ```
+///
+/// ```no_run
+/// use atlas_rs::client::Client;
+///
+/// let c = Client::new();
+///
+/// let r = c.ntp().from("next.example.net").call()?;
+/// ```
+///
 #[derive(Debug)]
 pub struct Client<'cl> {
     /// Mandatory
@@ -335,8 +298,37 @@ impl<'cl> Client<'cl> {
 
 // ---------------------------------------------------------------------------
 
-/// `ClientBuilder` is the main struct to create and configure a `Client`
+/// `ClientBuilder` is the main struct to create and configure a `Client`. You have to close
+/// the chain by calling `build()`.
 ///
+/// Examples:
+/// ```no_run
+/// use atlas_rs::client::{AF, ClientBuilder};
+///
+/// let c = ClientBuilder::new()
+///             .api_key("FOO")
+///             .onoff(true)
+///             .default_probe(666)
+///             .want_af(AF::V4)
+///              .build();
+///
+/// let r = c.probe().get(666).call()?;
+/// ```
+///
+/// ```no_run
+/// use atlas_rs::client::{AF, ClientBuilder};
+///
+/// let c = ClientBuilder::new()
+///             .api_key("FOO")
+///             .onoff(true)
+///             .default_probe(666)
+///             .want_af(AF::V4)
+///             .build();
+///
+/// let r = c.traceroute().to("next.example.net").call()?;
+/// ```
+///
+
 pub struct ClientBuilder<'cl> {
     cl: Client<'cl>,
 }
