@@ -227,8 +227,22 @@ impl<'cl> Client<'cl> {
         unimplemented!()
     }
 
-    pub fn credits(&self) -> RequestBuilder {
-        unimplemented!()
+    pub fn credits(mut self) -> RequestBuilder {
+        let url = reqwest::Url::parse(self.endpoint).unwrap();
+        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
+
+        // Enforce API key usage
+        if self.api_key.is_none() {
+            panic!("No API key defined");
+        }
+
+        // Ensure api-Key is filled in prior to the calls.
+        self.opts.insert("key", self.api_key.unwrap());
+        RequestBuilder {
+            ctx: Cmd::Credits,
+            c: self,
+            r,
+        }
     }
 
     pub fn keys(mut self) -> RequestBuilder<'cl> {
