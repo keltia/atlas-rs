@@ -227,7 +227,7 @@ impl<'cl> Client<'cl> {
         unimplemented!()
     }
 
-    pub fn credits(mut self) -> RequestBuilder {
+    pub fn credits(mut self) -> RequestBuilder<'cl> {
         let url = reqwest::Url::parse(self.endpoint).unwrap();
         let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
 
