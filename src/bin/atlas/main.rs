@@ -8,6 +8,7 @@ use anyhow::Result;
 use clap::Parser;
 
 use atlas_rs::client::ClientBuilder;
+use atlas_rs::errors::APIError;
 use atlas_rs::keys::Key;
 use atlas_rs::probes::Probe;
 
@@ -84,7 +85,7 @@ fn main() -> Result<()> {
         // extra utility command
         SubCommand::Ip(opts) => {
             let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
-            let p = c.get_probe(pn);
+            let p: Result<Probe, APIError> = c.probe().get(pn).call();
 
             match p {
                 Ok(p) => {
