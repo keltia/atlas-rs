@@ -231,9 +231,17 @@ impl<'cl> Client<'cl> {
         unimplemented!()
     }
 
-    pub fn keys(self) -> RequestBuilder<'cl> {
+    pub fn keys(mut self) -> RequestBuilder<'cl> {
         let url = reqwest::Url::parse(self.endpoint).unwrap();
         let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
+
+        // Enforce API key usage
+        if self.api_key.is_none() {
+            panic!("No API key defined");
+        }
+
+        // Ensure api-Key is filled in prior to the calls.
+        self.opts.insert("key", self.api_key.unwrap());
         RequestBuilder {
             ctx: Cmd::Keys,
             c: self,
@@ -245,9 +253,14 @@ impl<'cl> Client<'cl> {
         unimplemented!()
     }
 
-    pub fn probe(self) -> RequestBuilder<'cl> {
+    pub fn probe(mut self) -> RequestBuilder<'cl> {
         let url = reqwest::Url::parse(self.endpoint).unwrap();
         let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
+
+        // API key is optional but some data will be masked without one
+        if self.api_key.is_some() {
+            self.opts.insert("key", self.api_key.unwrap());
+        }
         RequestBuilder {
             ctx: Cmd::Probes,
             c: self,
