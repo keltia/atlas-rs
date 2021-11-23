@@ -86,13 +86,12 @@ impl Key {
         ops: Ops,
         data: Param<'a>,
     ) -> RequestBuilder<'a> {
-        let api_key = r.c.api_key.unwrap().clone();
-
+        let opts = r.c.opts.clone();
         let add = set_url(ops, data.into());
 
         let url = reqwest::Url::parse_with_params(
             format!("{}/{}", r.r.url().as_str(), add).as_str(),
-            &[("key", api_key)]
+            opts.iter()
         ).unwrap();
         r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
         r
