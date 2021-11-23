@@ -23,15 +23,19 @@ use serde::de;
 
 // ------------------------------------------------------------
 
+/// This enum is for passing either kind of parameter to `get()`,
+/// there might be a better way for this.
+///
 #[derive(Clone, Copy, Debug)]
 pub enum Param<'a> {
     I(u32),
     S(&'a str),
 }
 
-// Implement From: for our enum
+// Implement From: for our enum to pass stuff around without explicitely converting before.
 
 /// From &str to Param
+///
 impl<'a> From<&'a str> for Param<'a> {
     fn from(s: &'a str) -> Self {
         Param::S(s)
@@ -39,6 +43,7 @@ impl<'a> From<&'a str> for Param<'a> {
 }
 
 /// From Param to &str
+///
 impl<'a> From<Param<'a>> for &'a str {
     fn from(p: Param<'a>) -> Self {
         match p {
@@ -49,6 +54,7 @@ impl<'a> From<Param<'a>> for &'a str {
 }
 
 /// From Param to &str
+///
 impl<'a> From<Param<'a>> for String {
     fn from(p: Param<'a>) -> Self {
         match p {
@@ -59,6 +65,7 @@ impl<'a> From<Param<'a>> for String {
 }
 
 /// From u32 to Param
+///
 impl<'a> From<u32> for Param<'a> {
     fn from(p: u32) -> Self {
         Param::I(p)
@@ -66,6 +73,7 @@ impl<'a> From<u32> for Param<'a> {
 }
 
 /// From Param to u32
+///
 impl<'a> From<Param<'a>> for u32 {
     fn from(p: Param<'a>) -> Self {
         match p {
@@ -78,6 +86,10 @@ impl<'a> From<Param<'a>> for u32 {
 // ------------------------------------------------------------
 // RequestBuilder itself
 
+/// This is the chaining struct, containing all the state we are interesting in passing around.
+/// We do not need a special `Request` singleton (like for `Client` as most of what we need to
+/// pass around will be stored in either `cl` (the `Client`) or `r` (the `reqwest::Request` struct).
+///
 #[derive(Debug)]
 pub struct RequestBuilder<'rq> {
     /// Context is which part of the API we are targetting (`/probe/`, etc.)
@@ -90,8 +102,6 @@ pub struct RequestBuilder<'rq> {
 
 /// Add methods for chaining and keeping state.
 ///
-/// These are the main "routers" and why we have the `Cmd` enum.
-///
 impl<'rq> RequestBuilder<'rq> {
     /// Create an empty struct RequestBuilder
     ///
@@ -102,7 +112,23 @@ impl<'rq> RequestBuilder<'rq> {
     /// Establish the final URL before call()
     ///
     /// This method expect to be called by one of the main "categories" methods like
-    /// `probes()` or `keys()`.  That way, context is established
+    /// `probes()` or `keys()`.  That way, context is established znd propagated.
+    ///
+    /// In essence, this is the main router.  It is for single result calls, for lists please
+    /// use `list()`.  The `Cmd` enum is there for this.
+    ///
+    /// Example:
+    ///
+    /// ```rs
+    /// # use atlas_rs::client::Client;
+    ///
+    /// let c = Client::new();
+    ///
+    /// let res = c.probe()
+    ///             .get(666)
+    ///             .call()?
+    /// ```
+    ///
     pub fn get<S: Into<Param<'rq>>>(self, data: S) -> Self {
         // Main routing
         match self.ctx {
