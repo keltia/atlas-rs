@@ -1,6 +1,9 @@
 use clap::Parser;
 
+// ------------------------------------------------------------
+
 /// Probe subcommands
+///
 #[derive(Parser)]
 pub(crate) struct ProbeOpts {
     /// Print debug info
@@ -12,6 +15,7 @@ pub(crate) struct ProbeOpts {
 }
 
 /// Probe sub-commands
+///
 #[derive(Parser)]
 pub(crate) enum ProbeSubCommand {
     Info(InfoOpts),
@@ -34,7 +38,10 @@ pub(crate) struct ListOpts {
     pub(crate) debug: bool,
 }
 
+// ------------------------------------------------------------
+
 /// Key sub-commands
+///
 #[derive(Parser)]
 pub(crate) struct KeyOpts {
     /// Print debug info
@@ -52,6 +59,7 @@ pub(crate) enum KeySubCommand {
 }
 
 /// Measurement sub-commands
+///
 #[derive(Parser)]
 pub(crate) struct MeasurementOpts {
     /// Print debug info
@@ -68,7 +76,10 @@ pub(crate) enum MeasurementSubCommand {
     List(ListOpts),
 }
 
+// ------------------------------------------------------------
+
 /// Credit sub-commands
+///
 #[derive(Parser)]
 pub(crate) struct CredOpts {
     /// Sub-commands
