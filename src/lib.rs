@@ -1,6 +1,6 @@
 //! # atlas-rs
 //!
-//! The `atlas-rs`provides with a high-level Rust API to the RIPE Atlas probes and
+//! The `atlas-rs`provides with a high-level [Rust] API to the RIPE Atlas probes and
 //! measurement network.
 //!
 //! `atlas-rs` is a blocking HTTP client for now, it may evolve into a more proper
@@ -22,12 +22,9 @@
 //! `ALL_PROXY` or `all_proxy`is a "catch-all" setting for all protocols.
 //! `NO_PROXY` or `no_proxy` can prevent using any of the proxies.
 //!
-//! ## RIPE API
-//!
-//! The complete API reference is available at the [RIPE Documentation Site][ripe-docs],
-//! with both Metadata API (probes, keys, credits) and the Measurement Results API.
-//!
 //! ## Official Documentation
+//!
+//! Metadata API (probes, keys, credits) and Measurement Results API.
 //!
 //! - [Main RIPE Atlas site](https://atlas.ripe.net/)
 //! - [REST API Documentation](https://atlas.ripe.net/docs/api/v2/manual/)
