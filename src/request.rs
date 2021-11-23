@@ -113,6 +113,7 @@ impl<'rq> RequestBuilder<'rq> {
             Cmd::Anchors => unimplemented!(),
             Cmd::Keys => Key::dispatch(self, keys::Ops::Get, data.into()),
             Cmd::ParticipationRequests => unimplemented!(),
+            Cmd::None => panic!("No Cmd"),
         }
     }
 
