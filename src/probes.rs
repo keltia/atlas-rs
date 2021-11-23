@@ -31,8 +31,6 @@ use crate::common::{add_opts, List};
 use crate::errors::*;
 use crate::request::{Param, RequestBuilder};
 
-pub const BASE_PROBES: &str = "/probes/";
-
 // -------------------------------------------------------------------------
 
 /// All operations available
