@@ -97,5 +97,16 @@ Be aware that if you ask for an IPv6 object (like a domain or machine name), the
 
 Not all parameters specified for the different commands are implemented, as you can see in the [API Reference](https://atlas.ripe.net/docs/api/v2/reference/), there are *a lot* of different parameters like all the `id__{gt,gte,lt,lte,in}` stuff.
 
+## TODO
+
+It is not currently completely usable, only a few parts have been implemented (notable part of the `Probes` API) to validate our design (see [./APIDESIGN.md] for my musings about issues).
+
+- Complete the various implementations for the "core" features like `Measurements` and `Probes`.
+- add many many more tests
+- refactor to get as much idiomatic Rust as possible
+
+## Contributing
+
+Please see CONTRIBUTING.md for some simple rules.
 
 
