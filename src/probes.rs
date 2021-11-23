@@ -13,6 +13,8 @@
 //                                         ----- /tags
 //                                         ----- /tags         ----- /slugs
 
+// -------------------------------------------------------------------------
+
 // std library
 use std::collections::HashMap;
 use std::fmt;
@@ -30,6 +32,8 @@ use crate::errors::*;
 use crate::request::{Param, RequestBuilder};
 
 pub const BASE_PROBES: &str = "/probes/";
+
+// -------------------------------------------------------------------------
 
 /// All operations available
 #[derive(Debug)]
@@ -59,6 +63,8 @@ fn set_url(ops: Ops, p: u32) -> String {
         Ops::Slugs => format!("/probes/tags/{}/slugs", p), // /tags/T/slugs/
     }
 }
+
+// -------------------------------------------------------------------------
 
 /// Geolocation as reported by the probe
 #[derive(Serialize, Deserialize, Debug)]
@@ -131,11 +137,14 @@ pub struct Probe {
     pub ptype: String,
 }
 
+/// Implement fmt::Display for Probe
 impl fmt::Display for Probe {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
 }
+
+// -------------------------------------------------------------------------
 
 /// When asking for a list of probes, this struct is used for pagination
 #[derive(Serialize, Deserialize, Debug)]
@@ -149,6 +158,8 @@ pub struct ProbeList {
     /// Current Probe Block
     pub probes: Vec<Probe>,
 }
+
+// -------------------------------------------------------------------------
 
 /// Alternate API for probes
 ///
@@ -182,6 +193,8 @@ impl Probe {
         Ok(cl.get_probes(opts)?)
     }
 }
+
+// -------------------------------------------------------------------------
 
 /// Main API methods for `Probe` type
 impl<'cl> Client<'cl> {
@@ -258,6 +271,8 @@ impl<'cl> Client<'cl> {
         Ok(res)
     }
 }
+
+// -------------------------------------------------------------------------
 
 #[cfg(test)]
 mod tests {
