@@ -22,8 +22,10 @@ use std::fmt::Formatter;
 
 // External crates
 use anyhow::Result;
-use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "flat-api")]
+use reqwest::StatusCode;
 
 // Our crates
 use crate::client::Client;
@@ -226,6 +228,7 @@ impl<'cl> Client<'cl> {
     ///     println!("Probe ID {}: {}", 666, pi.description);
     ///  ```
     ///
+    #[cfg(feature = "flat-api")]
     pub fn get_probe(&self, id: u32) -> Result<Probe, APIError> {
         let opts = &self.opts.clone();
         let url = format!("{}/probes/{}/", self.endpoint, id);
@@ -264,6 +267,7 @@ impl<'cl> Client<'cl> {
 
     /// Get information about a set of probes according to parameters
     ///
+    #[cfg(feature = "flat-api")]
     pub fn get_probes(&self, opts: &HashMap<&str, &str>) -> Result<List<Probe>, APIError> {
         let gopts = &self.opts.clone();
         let url = format!("{}/probes/", &self.endpoint);
