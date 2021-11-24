@@ -4,6 +4,8 @@
 //! in various places (hom'es, datacenters, etc.) and are used for measurements, some
 //! initiated by the probes themselves and some user-generated ones.
 //!
+//! Measurements are not handled by this part of the API, please see `measurements.rs` for this.
+//!
 
 // We have the following call tree:
 //
@@ -20,10 +22,12 @@
 // -------------------------------------------------------------------------
 
 // std library
+//
 use std::fmt;
 use std::fmt::Formatter;
 
 // External crates
+//
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
@@ -31,6 +35,7 @@ use serde::{Deserialize, Serialize};
 use reqwest::StatusCode;
 
 // Our crates
+//
 use crate::client::Client;
 use crate::common::{add_opts, List};
 use crate::errors::*;
@@ -39,6 +44,7 @@ use crate::request::{Param, RequestBuilder};
 // -------------------------------------------------------------------------
 
 /// All operations available
+///
 #[derive(Debug)]
 pub enum Ops {
     List = 1,
@@ -53,6 +59,7 @@ pub enum Ops {
 }
 
 /// Generate the proper URL for the service we want in the given category
+///
 fn set_url(ops: Ops, p: u32) -> String {
     match ops {
         Ops::List => "/probes/".to_string(),      // /list
