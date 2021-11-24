@@ -510,7 +510,7 @@ impl<'cl> ClientBuilder<'cl> {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_rs::client::{AF, ClientBuilder};
     ///
     /// let c = ClientBuilder::new()
     ///     .want_af(AF::V6)
