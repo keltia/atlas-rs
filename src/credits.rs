@@ -103,10 +103,9 @@ impl Credits {
         data: Param<'cr>,
     ) -> RequestBuilder<'cr> {
         let opts = r.c.opts.clone();
-        let add = set_url(ops, data.into());
 
         let url = reqwest::Url::parse_with_params(
-            format!("{}/{}", r.r.url().as_str(), add).as_str(),
+            r.r.url().as_str(),
             opts.iter(),
         )
             .unwrap();
