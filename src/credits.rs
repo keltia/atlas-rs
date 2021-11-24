@@ -232,6 +232,14 @@ pub struct Member<'cr> {
     pub name: &'cr str,
 }
 
+/// Struct to list of members
+///
+#[derive(Serialize, Deserialize, Debug)]
+pub struct MemberListing<'cr> {
+    /// List
+    pub members: Vec<Member<'cr>>,
+}
+
 /// Struct to hold all expense items
 ///
 #[derive(Serialize, Deserialize, Debug)]
