@@ -17,8 +17,10 @@ use std::fmt;
 use std::fmt::Formatter;
 
 // External crates
-use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
+
+#[cfg(feature = "flat-api")]
+use reqwest::StatusCode;
 
 // Our crates
 use crate::client::Client;
@@ -157,6 +159,7 @@ impl<'cl> Client<'cl> {
     ///     println!("key ID {}: {}", pi.uuid, pi.label);
     ///  ```
     ///
+    #[cfg(feature = "flat-api")]
     pub fn get_key(&self, uuid: &str) -> Result<Key, APIError> {
         let opts = &self.opts.clone();
         let url = format!("{}/keys/{}/", self.endpoint, uuid);
@@ -195,6 +198,7 @@ impl<'cl> Client<'cl> {
 
     /// Get information about a set of keys according to parameters
     ///
+    #[cfg(feature = "flat-api")]
     pub fn get_keys() -> Result<Vec<Key>, APIError> {
         unimplemented!()
     }
