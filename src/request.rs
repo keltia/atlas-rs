@@ -169,6 +169,40 @@ impl<'rq> RequestBuilder<'rq> {
         }
     }
 
+    /// Establish the final URL before call()
+    ///
+    /// This method expect to be called by one of the main "categories" methods like
+    /// `probes()` or `keys()`.  That way, context is established znd propagated.
+    ///
+    /// In essence, this is the main router.  It is for list calls, for single result please
+    /// use `get()`.  The `Cmd` enum is there for this.
+    ///
+    /// Example:
+    ///
+    /// ```rs
+    /// # use atlas_rs::client::Client;
+    ///
+    /// let c = Client::new();
+    ///
+    /// let res = c.probe()
+    ///             .list()         // XXX
+    ///             .call()?
+    /// ```
+    ///
+    pub fn list<S: Into<Param<'rq>>>(self, data: S) -> Self {
+        // Main routing
+        match self.ctx {
+            Cmd::Probes => Probe::dispatch(self, probes::Ops::List, data.into()),
+            Cmd::Measurements => unimplemented!(),
+            Cmd::AnchorMeasurements => unimplemented!(),
+            Cmd::Credits => unimplemented!(),
+            Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::List, data.into()),
+            Cmd::Keys => Key::dispatch(self, keys::Ops::List, data.into()),
+            Cmd::ParticipationRequests => unimplemented!(),
+            Cmd::None => panic!("No Cmd"),
+        }
+    }
+
     /// Finalize the chain and call the real API
     ///
     pub fn call<T>(self) -> Result<T, APIError>
