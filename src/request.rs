@@ -19,6 +19,8 @@ use serde::de;
 // Our internal crates.
 //
 use crate::client::{Client, Cmd};
+use crate::anchors;
+use crate::anchors::Anchor;
 use crate::keys;
 use crate::keys::Key;
 use crate::probes;
@@ -140,7 +142,7 @@ impl<'rq> RequestBuilder<'rq> {
             Cmd::Measurements => unimplemented!(),
             Cmd::AnchorMeasurements => unimplemented!(),
             Cmd::Credits => unimplemented!(),
-            Cmd::Anchors => unimplemented!(),
+            Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::Get, data.into()),
             Cmd::Keys => Key::dispatch(self, keys::Ops::Get, data.into()),
             Cmd::ParticipationRequests => unimplemented!(),
             Cmd::None => panic!("No Cmd"),
