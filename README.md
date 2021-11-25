@@ -20,6 +20,7 @@ It features a simple CLI-based tool called `atlas` which serve both as a collect
 - [CLI Utility](#cli-utility)
     - [Configuration](#configuration)
 - [TODO](#todo)
+- [Official documentation](#official-documentation)
 - [Contributing](#contributing)
 
 ## Features
@@ -57,9 +58,20 @@ This will be available as a crate on [crate.io](https://crate.io/atlas-rs) when 
 
 ## Documentation
 
-All the documentation on the API itself is available through Rust builtin's doc system and will visible at [atlas-rs page on docs.rs](https://docs.rs/atalas-rs).
+All the documentation on the API itself is available through Rust builtin's doc system and will visible at [atlas-rs page on docs.rs](https://docs.rs/atlas-rs).
 
 Documentation on the REST API is on the [RIPE Atlas](https://beta-docs.atlas.ripe.net/apis/) site.
+
+## Proxy features
+
+ **NOTE**: System proxies are enabled by default.
+
+ System proxies look in environment variables to set HTTP or HTTPS proxies.
+
+ `HTTP_PROXY` or `http_proxy` provide http proxies for http connections while
+ `HTTPS_PROXY` or `https_proxy` provide HTTPS proxies for HTTPS connections.
+ `ALL_PROXY` or `all_proxy`is a "catch-all" setting for all protocols.
+ `NO_PROXY` or `no_proxy` can prevent using any of the proxies.
 
 ## CLI utility
 
@@ -104,6 +116,14 @@ It is not currently completely usable, only a few parts have been implemented (n
 - add many many more tests
 - refactor to get as much idiomatic Rust as possible
 - cleanup the information displayed by `atlas`, right now a mix of json & deserialized stuff.
+
+## Official Documentation
+
+Metadata API (probes, keys, credits) and Measurement Results API.
+
+- [Main RIPE Atlas site](https://atlas.ripe.net/)
+- [REST API Documentation](https://atlas.ripe.net/docs/api/v2/manual/)
+- [REST API Reference](https://atlas.ripe.net/docs/api/v2/reference/)
 
 ## Contributing
 
