@@ -1,20 +1,25 @@
+//! data.rs
+//!
+//! Describes the various data-related commands, subcommands and options for `atlas`
+//!
+
 use clap::Parser;
 
 // ------------------------------------------------------------
 
-/// Probe subcommands
+/// Probe options
 ///
 #[derive(Parser)]
 pub(crate) struct ProbeOpts {
     /// Print debug info
     #[clap(short)]
     pub(crate) debug: bool,
-    /// Sub-commands
+    /// Subcommands
     #[clap(subcommand)]
     pub(crate) subcmd: ProbeSubCommand,
 }
 
-/// Probe sub-commands
+/// Probe subcommands
 ///
 #[derive(Parser)]
 pub(crate) enum ProbeSubCommand {
@@ -22,6 +27,8 @@ pub(crate) enum ProbeSubCommand {
     List(ListOpts),
 }
 
+/// Info options
+///
 #[derive(Parser)]
 pub(crate) struct InfoOpts {
     /// Print debug info
@@ -31,6 +38,8 @@ pub(crate) struct InfoOpts {
     pub(crate) id: Option<u32>,
 }
 
+/// List options
+///
 #[derive(Parser)]
 pub(crate) struct ListOpts {
     /// Print debug info
@@ -40,24 +49,28 @@ pub(crate) struct ListOpts {
 
 // ------------------------------------------------------------
 
-/// Key sub-commands
+/// Key options
 ///
 #[derive(Parser)]
 pub(crate) struct KeyOpts {
     /// Print debug info
     #[clap(short)]
     pub(crate) debug: bool,
-    /// Sub-commands
+    /// Subcommands
     #[clap(subcommand)]
     pub(crate) subcmd: KeySubCommand,
 }
 
+/// Key subcommands
+///
 #[derive(Parser)]
 pub(crate) enum KeySubCommand {
     Info(KInfoOpts),
     List(ListOpts),
 }
 
+/// Key info options
+///
 #[derive(Parser)]
 pub(crate) struct KInfoOpts {
     /// Print debug info
@@ -69,18 +82,20 @@ pub(crate) struct KInfoOpts {
 
 // ------------------------------------------------------------
 
-/// Measurement sub-commands
+/// Measurements options
 ///
 #[derive(Parser)]
 pub(crate) struct MeasurementOpts {
     /// Print debug info
     #[clap(short)]
     pub(crate) debug: bool,
-    /// Sub-commands
+    /// Subcommands
     #[clap(subcommand)]
     pub(crate) subcmd: MeasurementSubCommand,
 }
 
+/// Measurement subcommands
+///
 #[derive(Parser)]
 pub(crate) enum MeasurementSubCommand {
     Info(InfoOpts),
@@ -89,15 +104,17 @@ pub(crate) enum MeasurementSubCommand {
 
 // ------------------------------------------------------------
 
-/// Credit sub-commands
+/// Credits options
 ///
 #[derive(Parser)]
 pub(crate) struct CredOpts {
-    /// Sub-commands
+    /// Subcommands
     #[clap(subcommand)]
     pub(crate) subcmd: CreditSubCommand,
 }
 
+/// Credit subcommands
+///
 #[derive(Parser)]
 pub(crate) enum CreditSubCommand {
     Info(InfoOpts),
