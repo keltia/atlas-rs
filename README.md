@@ -106,16 +106,17 @@ Most of the API calls require use of an API key and in some cases, not using one
 
 ### Important note
 
-Not all parameters specified for the different commands are implemented, as you can see in the [API Reference](https://atlas.ripe.net/docs/api/v2/reference/), there are *a lot* of different parameters like all the `id__{gt,gte,lt,lte,in}` stuff.
+Not all parameters specified for the different commands are implemented, as you can see in the [API Reference](https://atlas.ripe.net/docs/api/v2/reference/), there are *a lot* of different parameters like all the `id__{gt,gte,lt,lte,in}` stuff.  See TODO :)
 
 ## TODO
 
 It is not currently completely usable, only a few parts have been implemented (notable part of the `Probes` API) to validate our design (see [./APIDESIGN.md] for my musings about issues).
 
+- Implement a good way to pass arguments to various calls besides the `opts`  HashMap.
 - Complete the various implementations for the "core" features like `Measurements` and `Probes`.
-- add many many more tests
-- refactor to get as much idiomatic Rust as possible
-- cleanup the information displayed by `atlas`, right now a mix of json & deserialized stuff.
+- Add many many more tests
+- Refactor to get as much idiomatic Rust as possible
+- Cleanup the information displayed by `atlas`, right now a mix of json & deserialized stuff.
 
 ## Official Documentation
 
@@ -126,6 +127,10 @@ Metadata API (probes, keys, credits) and Measurement Results API.
 - [REST API Reference](https://atlas.ripe.net/docs/api/v2/reference/)
 
 ## Contributing
+
+I use the [Git Flow](https://jeffkreeftmeijer.com/git-flow/) system to manage developement & release branches, hotfix, etc.  Most of the development is done on the `develop` branch, merged in `main` for each release. At the moment, there are no feature branches, all dev is on `develop`, merged from time to time with a tag on `main`.
+
+If you want to contribute, please fork the project, fetch/sync the `develop` branch and submut pull requests based on it.  Or open a ticket with a patch from the `develop` branch.
 
 Please see CONTRIBUTING.md for some simple rules.
 
