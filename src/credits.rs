@@ -243,12 +243,22 @@ pub struct MemberListing<'cr> {
     pub members: Vec<Member<'cr>>,
 }
 
+/// Struct representing an expense group.
+///
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ExpenseGroup<'cr> {
+    /// Measurements scheduled by and billed to you,
+    owned_measurements: Vec<MeasurementExpense<'cr>>,
+    /// Measurements scheduled by other users that are billed to you,
+    billed_measurements: Vec<MeasurementExpense<'cr>>,
+}
+
 /// Struct to hold all expense items
 ///
 #[derive(Serialize, Deserialize, Debug)]
-pub struct ExpenseItems<'cr> {
-    /// Grouped list of expense items
-    pub groups: Vec<ExpenseItems<'cr>>,
+pub struct ExpenseItems {
+    /// Grouped list of expense groups
+    pub groups: Vec<ExpenseGroups>,
     /// Total estimated daily expenditure from all expense items
     pub total_estimated_daily_expenditure: u32,
 }
