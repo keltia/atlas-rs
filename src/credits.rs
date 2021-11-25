@@ -93,14 +93,14 @@ pub struct Credits<'cr> {
 
 /// Implement the Display trait.
 ///
-impl fmt::Display for Credits {
+impl<'cr> fmt::Display for Credits<'cr> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
 }
 
-impl Credits {
-    pub fn dispatch<'cr>(
+impl<'cr> Credits<'cr> {
+    pub fn dispatch(
         mut r: RequestBuilder<'cr>,
         ops: Ops,
         data: Param<'cr>,
