@@ -3,7 +3,7 @@ use clap::{crate_authors, AppSettings, Parser};
 /// Binary name
 pub(crate) const NAME: &str = "atlas";
 /// Binary version, different from the API itself represented the crate.
-pub(crate) const VERSION: &str = "0.2.0";
+pub(crate) const VERSION: &str = "0.3.0";
 
 // Import our various data structures & enums
 use crate::data::{CredOpts, KeyOpts, MeasurementOpts, ProbeOpts};
@@ -28,9 +28,6 @@ pub(crate) struct Opts {
     /// Display version and exit
     #[clap(short = 'V', long = "version")]
     pub(crate) version: bool,
-    /// Get info on probe
-    #[clap(short = 'p', long = "probe")]
-    pub(crate) probe: Option<u32>,
     /// Subcommands
     #[clap(subcommand)]
     pub(crate) subcmd: SubCommand,
@@ -38,18 +35,40 @@ pub(crate) struct Opts {
 
 #[derive(Parser)]
 pub(crate) enum SubCommand {
-    /// Data-specific commands (see data.rs)
+    // Data-specific commands (see data.rs)
+
+    /// Dislays informations about credits
+    #[clap(visible_alias = "c")]
     Credits(CredOpts),
+    /// Key management
+    #[clap(visible_alias = "keys", visible_alias = "k")]
     Key(KeyOpts),
+    /// Create, starts, displays measurements
+    #[clap(visible_alias = "m")]
     Measurement(MeasurementOpts),
+    /// Get informations about probes
+    #[clap(visible_alias = "probes", visible_alias = "p")]
     Probe(ProbeOpts),
-    /// Protocol-specific commands (see protocols.rs)
+
+    // Protocol-specific commands (see protocols.rs)
+
+    /// DNS-related measurements
     Dns(DnsOpts),
+    /// HTTP-related measurements
     Http(HttpOpts),
+    /// NTP-related measurements
     Ntp(NtpOpts),
+    /// ICMP-related measurements
     Ping(PingOpts),
+    /// Certificate info management
+    #[clap(visible_alias = "cert")]
     TlsCert(TlsOpts),
+    /// Traceroute from probes
+    #[clap(visible_alias = "tracert")]
     Traceroute(TrrOpts),
-    /// Useful shortcut (see util.rs)
+
+    // Useful shortcut (see util.rs)
+
+    /// Displays the default probe IPs
     Ip(IpOpts),
 }
