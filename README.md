@@ -8,7 +8,7 @@
 [![SemVer](http://img.shields.io/SemVer/2.0.0.png)](https://semver.org/spec/v2.0.0.html)
 [![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/keltia/ripe-atlas/master/LICENSE)
 
-`ripe-atlas` is a [Rust](https://rust-lang.org/) library to access the RIPE Atlas [REST API](https://atlas.ripe.net/docs/api/v2/manual/).  It is a rewrite in Rust of my Go library called [ripe-atlas](https://github.com/keltia/ripe-atlas).
+`atlas-rs` is a [Rust](https://rust-lang.org/) library to access the RIPE Atlas [REST API](https://atlas.ripe.net/docs/api/v2/manual/).  It is a rewrite in Rust of my Go library called [ripe-atlas](https://github.com/keltia/ripe-atlas).
 
 It features a simple CLI-based tool called `atlas` which serve both as a collection of use-cases for the library and an easy way to use it.
 
@@ -16,14 +16,10 @@ It features a simple CLI-based tool called `atlas` which serve both as a collect
 
 - [Features](#features)
 - [Installation](#installation)
-- [API usage](#api-usage)
-    - [Basics](#basics)
+- [Documentation](#documentation)
 - [CLI Utility](#cli-utility)
     - [Configuration](#configuration)
-    - [Proxy Authentication](#proxy-authentication)
-    - [Usage](#usage)
 - [TODO](#todo)
-- [External Documentation](#external-documentation)
 - [Contributing](#contributing)
 
 ## Features
@@ -57,14 +53,13 @@ In addition to these major commands, there are a few shortcut commands (see belo
 
 ## Installation
 
-This will be available as a crate on [crate.io](https://crate.io/atlas-rs) when it is in a release-able shape.
+This will be available as a crate on [crate.io](https://crate.io/atlas-rs) when it is can be released, there are still many incomplete parts.
 
-### Basics
+## Documentation
 
-- Authentication
-- Probes
-- Measurements
-- Applications
+All the documentation on the API itself is available through Rust builtin's doc system and will visible at [atlas-rs page on docs.rs](https://docs.rs/atalas-rs).
+
+Documentation on the REST API is on the [RIPE Atlas](https://beta-docs.atlas.ripe.net/apis/) site.
 
 ## CLI utility
 
@@ -78,6 +73,7 @@ On UNIX, it is located in `$HOME/.config/ripe-atlas/config.toml` and in `%LOCALA
 
 There are only a few parameters for now, the most important one being your API Key for authenticate against the RIPE API endpoint.  You can now specify the default probe set (and override it from the CLI):
 
+```toml
     # Default configuration file
     
     API_key = "<INSERT-API-KEY>"
@@ -85,13 +81,16 @@ There are only a few parameters for now, the most important one being your API K
     
     [probe_set]
     
-    pool_size = <POOL-SIZE>
+    pool_size = 10
     type = "area"
     value = "WW"
+```
 
 Everything is a string except for `pool_size` and `default_probe` which are integers.
 
 Be aware that if you ask for an IPv6 object (like a domain or machine name), the API will refuse your request if the IPv6 version of that object does not exist.
+
+Most of the API calls require use of an API key and in some cases, not using one will mask a few fields in results.
 
 ### Important note
 
