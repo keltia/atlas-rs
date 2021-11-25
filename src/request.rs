@@ -34,7 +34,7 @@ use crate::errors::APIError;
 ///
 #[derive(Clone, Copy, Debug)]
 pub enum Param<'a> {
-    I(u32),
+    U(u32),
     L(i64),
     S(&'a str),
 }
@@ -75,7 +75,7 @@ impl<'a> From<Param<'a>> for String {
 ///
 impl<'a> From<u32> for Param<'a> {
     fn from(p: u32) -> Self {
-        Param::I(p)
+        Param::U(p)
     }
 }
 
@@ -84,7 +84,7 @@ impl<'a> From<u32> for Param<'a> {
 impl<'a> From<Param<'a>> for u32 {
     fn from(p: Param<'a>) -> Self {
         match p {
-            Param::I(v) => v,
+            Param::U(v) => v,
             _ => 0,
         }
     }
