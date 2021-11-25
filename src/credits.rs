@@ -17,6 +17,9 @@
 use std::fmt;
 use std::fmt::Formatter;
 
+// External crates
+use serde::{Serialize, Deserialize};
+
 // Our crates
 use crate::client::Client;
 use crate::common::add_opts;
