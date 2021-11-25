@@ -29,12 +29,13 @@ use crate::errors::APIError;
 
 // ------------------------------------------------------------
 
-/// This enum is for passing either kind of parameter to `get()`,
+/// This enum is for passing the right kind of parameter to `get()`,
 /// there might be a better way for this.
 ///
 #[derive(Clone, Copy, Debug)]
 pub enum Param<'a> {
     I(u32),
+    L(i64),
     S(&'a str),
 }
 
@@ -84,6 +85,25 @@ impl<'a> From<Param<'a>> for u32 {
     fn from(p: Param<'a>) -> Self {
         match p {
             Param::I(v) => v,
+            _ => 0,
+        }
+    }
+}
+
+/// From i64 to Param
+///
+impl<'a> From<i64> for Param<'a> {
+    fn from(p: i64) -> Self {
+        Param::L(p)
+    }
+}
+
+/// From Param to i64
+///
+impl<'a> From<Param<'a>> for i64 {
+    fn from(p: Param<'a>) -> Self {
+        match p {
+            Param::L(v) => v,
             _ => 0,
         }
     }
