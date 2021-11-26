@@ -74,7 +74,7 @@ pub struct Credits {
     /// Time that the estimates were produced
     pub calculation_time: String,
     /// Estimated elapsed time from `calculation_time` until total credit balance will drop to zero
-    pub estimated_runout_seconds: u32,
+    pub estimated_runout_seconds: Option<u32>,
     /// Number of results from user-defined measurements in the past 24 hours
     pub past_day_measurement_results: u32,
     /// Number of credits spent in the past 24 hours
