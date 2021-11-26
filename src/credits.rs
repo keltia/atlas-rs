@@ -44,11 +44,11 @@ pub enum Ops {
 fn set_url(ops: Ops) -> String {
     match ops {
         Ops::Get => "/credits/".to_string(),                 // /get
-        Ops::Incomes => "/credits/incomes/".to_string(),     // /set
-        Ops::Expenses => "/credits/expenses/".to_string(),   // /delete
-        Ops::Transfers => "/credits/transfers/".to_string(), // /list
-        Ops::Transactions => "/credits/transactions/".to_string(), // /list
-        Ops::Members => "/credits/members/".to_string(),     // /create
+        Ops::Incomes => "/credits/incomes/".to_string(),     // /get
+        Ops::Expenses => "/credits/expenses/".to_string(),   // /get
+        Ops::Transfers => "/credits/transfers/".to_string(), // /get
+        Ops::Transactions => "/credits/transactions/".to_string(), // /get
+        Ops::Members => "/credits/members/".to_string(),     // /get
         Ops::Claim => "/credits/members/claim/".to_string(), // /create
     }
 }
