@@ -21,6 +21,8 @@ use serde::de;
 use crate::client::{Client, Cmd};
 use crate::anchors;
 use crate::anchors::Anchor;
+use crate::credits;
+use crate::credits::Credits;
 use crate::keys;
 use crate::keys::Key;
 use crate::probes;
@@ -161,7 +163,7 @@ impl<'rq> RequestBuilder<'rq> {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::Get, data.into()),
             Cmd::Measurements => unimplemented!(),
             Cmd::AnchorMeasurements => unimplemented!(),
-            Cmd::Credits => unimplemented!(),
+            Cmd::Credits => Credits::dispatch(self, credits::Ops::Get, data.into()),
             Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::Get, data.into()),
             Cmd::Keys => Key::dispatch(self, keys::Ops::Get, data.into()),
             Cmd::ParticipationRequests => unimplemented!(),
