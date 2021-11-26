@@ -60,7 +60,7 @@ impl<'a> From<Param<'a>> for &'a str {
     }
 }
 
-/// From Param to &str
+/// From Param to String
 ///
 impl<'a> From<Param<'a>> for String {
     fn from(p: Param<'a>) -> Self {
