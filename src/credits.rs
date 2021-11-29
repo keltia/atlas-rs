@@ -101,17 +101,16 @@ impl fmt::Display for Credits {
 
 impl Credits {
     pub fn dispatch<'cr>(
-        mut r: RequestBuilder<'cr>,
+        r: &'cr mut RequestBuilder<'cr>,
         ops: Ops,
-        data: Param,
-    ) -> RequestBuilder<'cr> {
+        _data: Param,
+    ) -> &'cr mut RequestBuilder<'cr> {
         let opts = r.c.opts.clone();
         let add = set_url(ops);
 
         let url = reqwest::Url::parse_with_params(
             format!("{}/{}", r.r.url().as_str(), add).as_str(),
-            opts
-                .iter(),
+            opts.iter(),
         )
             .unwrap();
         r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);

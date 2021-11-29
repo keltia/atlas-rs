@@ -84,10 +84,10 @@ pub struct Key {
 
 impl Key {
     pub fn dispatch<'a>(
-        mut r: RequestBuilder<'a>,
+        r: &'a mut RequestBuilder<'a>,
         ops: Ops,
         data: Param<'a>,
-    ) -> RequestBuilder<'a> {
+    ) -> &'a mut RequestBuilder<'a> {
         let opts = r.c.opts.clone();
         let add = set_url(ops, data.into());
 

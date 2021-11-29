@@ -178,7 +178,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///             .call()?
     /// ```
     ///
-    pub fn get<S: Into<Param<'rq>>>(self, data: S) -> Self {
+    pub fn get<S: Into<Param<'rq>>>(&'rq mut self, data: S) -> &mut Self {
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::Get, data.into()),
@@ -212,7 +212,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///             .call()?
     /// ```
     ///
-    pub fn list<S: Into<Param<'rq>>>(self, data: S) -> Self {
+    pub fn list<S: Into<Param<'rq>>>(&'rq mut self, data: S) -> &'rq mut Self {
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::List, data.into()),
@@ -246,7 +246,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///             .call()?
     /// ```
     ///
-    pub fn info(self) -> Self {
+    pub fn info(&'rq mut self) -> &'rq mut Self {
         // Main routing
         match self.ctx {
             Cmd::Probes => unimplemented!(),
@@ -276,7 +276,7 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn with(&mut self, opts: &Options<'rq>) -> &mut Self
+    pub fn with(&'rq mut self, opts: &Options<'rq>) -> &'rq mut Self
     {
         for (key, item) in opts.iter() {
             self.c.opts.insert(*key, *item);
@@ -287,7 +287,7 @@ impl<'rq> RequestBuilder<'rq> {
 
     /// Finalize the chain and call the real API
     ///
-    pub fn call<T>(self) -> Result<T, APIError>
+    pub fn call<T>(&self) -> Result<T, APIError>
     where
         T: de::DeserializeOwned + std::fmt::Display,
     {
