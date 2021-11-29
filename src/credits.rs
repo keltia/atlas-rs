@@ -109,7 +109,7 @@ impl Credits {
         let add = set_url(ops);
 
         let url = reqwest::Url::parse_with_params(
-            format!("{}/{}", r.r.url().as_str(), add).as_str(),
+            format!("{}{}", r.r.url().as_str(), add).as_str(),
             opts.iter(),
         )
             .unwrap();
