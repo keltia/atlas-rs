@@ -91,10 +91,10 @@ fn main() -> Result<()> {
                 let cred: Credits = c.credits().get("").call()?;
                 println!("Credits are {:?}", &cred);
             },
-            CreditSubCommand::Income(opts) => (),
-            CreditSubCommand::Transactions(opts) => (),
-            CreditSubCommand::Transfer(opts) => (),
-            CreditSubCommand::Expense(opts) => (),
+            CreditSubCommand::Income(_opts) => (),
+            CreditSubCommand::Transactions(_opts) => (),
+            CreditSubCommand::Transfer(_opts) => (),
+            CreditSubCommand::Expense(_opts) => (),
         },
         SubCommand::Measurement(_opts) => (),
         // protocols-related commands
