@@ -16,8 +16,6 @@ use serde::{Serialize, Deserialize};
 
 // Our crates
 use crate::client::Client;
-use crate::common::add_opts;
-use crate::errors::*;
 use crate::probes::Geometry;
 use crate::request::{Param, RequestBuilder};
 

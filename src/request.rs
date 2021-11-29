@@ -12,7 +12,6 @@
 //!
 //!
 
-use std::collections::HashMap;
 // External crates
 use anyhow::Result;
 use serde::de;
@@ -22,7 +21,7 @@ use serde::de;
 use crate::client::{Client, Cmd};
 use crate::anchors;
 use crate::anchors::Anchor;
-use crate::common::Options;
+use crate::option::Options;
 use crate::credits;
 use crate::credits::Credits;
 use crate::keys;

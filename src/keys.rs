@@ -24,7 +24,7 @@ use reqwest::StatusCode;
 
 // Our crates
 use crate::client::Client;
-use crate::common::add_opts;
+use crate::option::add_opts;
 use crate::errors::*;
 use crate::request::{Param, RequestBuilder};
 

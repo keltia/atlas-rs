@@ -1,13 +1,7 @@
 //! Some commonly used functions
 //!
 
-use std::cmp::Ordering;
 /// Standard library
-use std::collections::HashMap;
-use std::convert::Infallible;
-use std::hash::Hash;
-use std::iter::{Chain, Cloned, Copied, Cycle, Enumerate, Filter, FilterMap, FlatMap, Flatten, FromIterator, Fuse, Inspect, Intersperse, IntersperseWith, Map, MapWhile, Peekable, Product, Rev, Scan, Skip, SkipWhile, StepBy, Sum, Take, TakeWhile, TrustedRandomAccessNoCoerce, Zip};
-use std::ops::Try;
 
 /// Our crates
 use crate::client::Client;
@@ -15,7 +9,6 @@ use crate::errors::APIError;
 
 /// External crates
 use anyhow::Result;
-use itertools::Itertools;
 use lazy_regex::regex;
 use reqwest::StatusCode;
 use serde::de::DeserializeOwned;
