@@ -33,7 +33,6 @@
 //!
 
 // Standard library
-use std::collections::HashMap;
 use std::time::Duration;
 
 // External crates
@@ -41,7 +40,7 @@ use anyhow::{anyhow, Result};
 use clap::{crate_name, crate_version};
 
 // Internal crates
-use crate::common::Options;
+use crate::option::Options;
 use crate::request::RequestBuilder;
 
 // ---------------------------------------------------------------------------
@@ -547,19 +546,19 @@ impl<'cl> ClientBuilder<'cl> {
     /// Example:
     ///
     /// ```no_run
-    /// # use std::collections::HashMap;
+    /// # use atlas_rs::option::Options;
     /// # use atlas_rs::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
-    ///     .opts(&HashMap::from([
+    ///     .with(&Options::from([
     ///                        ("is_anchor", "true")
     ///                    ]))
     /// # ;
     /// ```
     ///
-    pub fn opts(mut self, opts: &HashMap<&'cl str, &'cl str>) -> Self {
+    pub fn with(mut self, opts: &Options) -> Self {
         for (k, v) in opts.iter() {
-            self.cl.opts.insert(k, v);
+            self.cl.opts.insert(*k, *v);
         }
         self
     }
@@ -611,9 +610,9 @@ mod tests {
     }
 
     #[test]
-    fn test_opts() {
-        let h = HashMap::from([("foo", "a"), ("bar", "b"), ("key", "FOO")]);
-        let c = ClientBuilder::new().opts(&h).build().unwrap();
+    fn test_with() {
+        let h = Options::from([("foo", "a"), ("bar", "b"), ("key", "FOO")]);
+        let c = ClientBuilder::new().with(&h).build().unwrap();
         assert_eq!(h, c.opts);
     }
 
