@@ -3,6 +3,7 @@
 //! It is a way to both demonstrate the use of the API and a testing tool.
 //!
 
+use std::collections::HashMap;
 /// External crates
 ///
 use anyhow::Result;
@@ -11,6 +12,7 @@ use clap::Parser;
 /// API-related ones.
 ///
 use atlas_rs::client::ClientBuilder;
+use atlas_rs::credits::Credits;
 use atlas_rs::errors::APIError;
 use atlas_rs::keys::Key;
 use atlas_rs::probes::Probe;
@@ -25,7 +27,7 @@ mod util;
 
 use cli::{Opts, SubCommand, NAME, VERSION};
 use config::{default_file, Config};
-use data::{KeySubCommand, ProbeSubCommand};
+use data::{CreditSubCommand, KeySubCommand, ProbeSubCommand};
 
 /// Wrapper to load configuration
 ///
@@ -77,13 +79,23 @@ fn main() -> Result<()> {
         SubCommand::Key(opts) => match opts.subcmd {
             KeySubCommand::Info(opts) => {
                 let uuid = opts.uuid.unwrap_or_else(|| cfg.api_key.clone());
+                let opts = HashMap::from([("foo", "bar")]);
 
-                let k: Key = c.keys().get(uuid.as_str()).call()?;
+                let k: Key = c.keys().get(uuid.as_str()).with(&opts).call()?;
                 println!("Key {} is:\n{:?}", uuid, k);
             }
             KeySubCommand::List(_opts) => (),
         },
-        SubCommand::Credits(_opts) => (),
+        SubCommand::Credits(opts) => match opts.subcmd {
+            CreditSubCommand::Info(opts) => {
+                let cred: Credits = c.credits().get("").call()?;
+                println!("Credits are {:?}", &cred);
+            },
+            CreditSubCommand::Income(opts) => (),
+            CreditSubCommand::Transactions(opts) => (),
+            CreditSubCommand::Transfer(opts) => (),
+            CreditSubCommand::Expense(opts) => (),
+        },
         SubCommand::Measurement(_opts) => (),
         // protocols-related commands
         SubCommand::Dns(_opts) => (),

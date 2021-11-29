@@ -41,6 +41,7 @@ use anyhow::{anyhow, Result};
 use clap::{crate_name, crate_version};
 
 // Internal crates
+use crate::common::Options;
 use crate::request::RequestBuilder;
 
 // ---------------------------------------------------------------------------
@@ -120,7 +121,7 @@ pub struct Client<'cl> {
     pub(crate) tags: &'cl str,
 
     /// Default options
-    pub(crate) opts: HashMap<&'cl str, &'cl str>,
+    pub(crate) opts: Options<'cl>,
 
     /// Internal state, http client
     pub(crate) agent: Option<reqwest::blocking::Client>,
@@ -164,7 +165,7 @@ impl<'cl> Client<'cl> {
             want_af: AF::V46,
             verbose: false,
             tags: "",
-            opts: HashMap::new(),
+            opts: Options::new(),
             agent: None,
         }
         .httpclient()

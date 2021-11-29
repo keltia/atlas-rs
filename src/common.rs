@@ -1,8 +1,13 @@
 //! Some commonly used functions
 //!
 
+use std::cmp::Ordering;
 /// Standard library
 use std::collections::HashMap;
+use std::convert::Infallible;
+use std::hash::Hash;
+use std::iter::{Chain, Cloned, Copied, Cycle, Enumerate, Filter, FilterMap, FlatMap, Flatten, FromIterator, Fuse, Inspect, Intersperse, IntersperseWith, Map, MapWhile, Peekable, Product, Rev, Scan, Skip, SkipWhile, StepBy, Sum, Take, TakeWhile, TrustedRandomAccessNoCoerce, Zip};
+use std::ops::Try;
 
 /// Our crates
 use crate::client::Client;
@@ -103,15 +108,15 @@ pub fn get_page_num(url: &str) -> usize {
 ///
 /// Example!
 /// ```no_run
-/// # use std::collections::HashMap;
+/// # use atlas_rs::common::Options;
 /// use atlas_rs::common::add_opts;
 ///
 /// let url = "https://example.com/";
-/// let opts = HashMap::from([("foo", "bar")]);
+/// let opts = Options::new().insert("foo", "bar");
 /// let url = add_opts(&url, &opts);
 /// ```
 ///
-pub fn add_opts<'cl>(url: &str, opts: &HashMap<&'cl str, &'cl str>) -> String {
+pub fn add_opts<'cl>(url: &str, opts: &Options) -> String {
     let full = url.to_owned() + "?";
     let mut v = Vec::<String>::new();
 
@@ -122,16 +127,56 @@ pub fn add_opts<'cl>(url: &str, opts: &HashMap<&'cl str, &'cl str>) -> String {
     full + &v.join("&")
 }
 
+#[derive(Clone, Debug)]
+pub struct Options<'o>(HashMap<&'o str, &'o str>);
+
+impl<'o> Options<'o> {
+    pub fn new() -> Self {
+        HashMap::<&str, &str>::new() as Options
+    }
+
+    pub fn insert(&mut self, k: &'o str, v: &'o str) -> &mut Self {
+        self.opts.insert(k, v);
+        self
+    }
+}
+
+impl<'o> Iterator for Options<'o> {
+    fn next(&mut self) -> Option<Self::Item>
+    {
+        type Item = &'o str;
+
+
+    }
+}
+impl<K, V, const N: usize> From<[(K, V); N]> for Options
+    where
+        K: Eq + Hash,
+{
+    fn from(arr: [(K, V); N]) -> Self {
+        std::array::IntoIter::new(arr).collect()
+    }
+}
+impl<'o> Iterator for Options<'o>
+{
+    type Item = &'o str;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        Some(self.iter().next())
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
-    use crate::common::{add_opts, get_page_num};
+    use crate::common::{add_opts, get_page_num, Options};
     use rstest::rstest;
     use std::collections::HashMap;
 
     #[test]
     fn test_add_opts() {
         let url = "/hello".to_string();
-        let o = HashMap::from([("name", "foo"), ("bar", "baz")]);
+        let o = Options::from([("name", "foo"), ("bar", "baz")]);
 
         let url = add_opts(&url, &o);
         assert_eq!("/hello?bar=baz&name=foo", url);

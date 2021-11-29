@@ -12,6 +12,7 @@
 //!
 //!
 
+use std::collections::HashMap;
 // External crates
 use anyhow::Result;
 use serde::de;
@@ -21,6 +22,7 @@ use serde::de;
 use crate::client::{Client, Cmd};
 use crate::anchors;
 use crate::anchors::Anchor;
+use crate::common::Options;
 use crate::credits;
 use crate::credits::Credits;
 use crate::keys;
@@ -36,6 +38,7 @@ use crate::errors::APIError;
 ///
 #[derive(Clone, Copy, Debug)]
 pub enum Param<'a> {
+    I(i32),
     U(u32),
     L(i64),
     S(&'a str),
@@ -97,6 +100,25 @@ impl<'a> From<Param<'a>> for u32 {
 impl<'a> From<i64> for Param<'a> {
     fn from(p: i64) -> Self {
         Param::L(p)
+    }
+}
+
+/// From i32 to Param
+///
+impl<'a> From<i32> for Param<'a> {
+    fn from(p: i32) -> Self {
+        Param::I(p)
+    }
+}
+
+/// From Param to i32
+///
+impl<'a> From<Param<'a>> for i32 {
+    fn from(p: Param<'a>) -> Self {
+        match p {
+            Param::I(v) => v,
+            _ => 0,
+        }
     }
 }
 
@@ -203,6 +225,49 @@ impl<'rq> RequestBuilder<'rq> {
             Cmd::ParticipationRequests => unimplemented!(),
             Cmd::None => panic!("No Cmd"),
         }
+    }
+
+    /// Establish the final URL before call()
+    ///
+    /// This method expect to be called by one of the main "categories" methods like
+    /// `probes()` or `keys()`.  That way, context is established znd propagated.
+    ///
+    /// In essence, this is the main router.  It is for list calls, for single result please
+    /// use `get()`.  The `Cmd` enum is there for this.
+    ///
+    /// Example:
+    ///
+    /// ```rs
+    /// # use atlas_rs::client::Client;
+    ///
+    /// let c = Client::new();
+    ///
+    /// let res = c.probe()
+    ///             .info()         // XXX
+    ///             .call()?
+    /// ```
+    ///
+    pub fn info(self) -> Self {
+        // Main routing
+        match self.ctx {
+            Cmd::Probes => unimplemented!(),
+            Cmd::Measurements => unimplemented!(),
+            Cmd::AnchorMeasurements => unimplemented!(),
+            Cmd::Credits => Credits::dispatch(self, credits::Ops::Get, 0.into()),
+            Cmd::Anchors => unimplemented!(),
+            Cmd::Keys => unimplemented!(),
+            Cmd::ParticipationRequests => unimplemented!(),
+            Cmd::None => panic!("No Cmd"),
+        }
+    }
+
+    pub fn with(&mut self, opts: &Options<'rq>) -> &mut Self
+    {
+        for (key, item) in &opts.opts {
+            self.c.opts.insert(*key, *item);
+        }
+        println!("{:?}", self.c.opts);
+        self
     }
 
     /// Finalize the chain and call the real API
