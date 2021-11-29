@@ -14,9 +14,8 @@ use reqwest::StatusCode;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 
-impl<'cl> Client<'cl> {}
-
-/// When asking for a list of S, this struct is used for pagination
+/// When asking for a list of S, this generic struct is used for pagination
+///
 #[derive(Serialize, Deserialize, Debug)]
 pub struct List<S> {
     /// How many results in this block
@@ -29,6 +28,8 @@ pub struct List<S> {
     pub keys: Vec<S>,
 }
 
+/// Implement a generic fetch_one_page() function
+///
 impl<'cl> Client<'cl> {
     pub fn fetch_one_page<S: DeserializeOwned>(
         &self,
@@ -77,7 +78,7 @@ impl<'cl> Client<'cl> {
 /// # use atlas_rs::keys::Key;
 /// # use atlas_rs::client::Client;
 ///
-/// let c = Client::new("FOO");
+/// let c = Client::new();
 /// let url = "https://example.net/api/v2/foo";
 /// let rawlist: List<Key> = c.fetch_one_page(url, 1).unwrap();
 ///

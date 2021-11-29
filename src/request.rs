@@ -260,9 +260,25 @@ impl<'rq> RequestBuilder<'rq> {
         }
     }
 
+    /// Makes it easy to specify options
+    ///
+    /// Example:
+    ///
+    /// ```rs
+    /// # use atlas_rs::client::Client;
+    ///
+    /// let c = Client::new();
+    ///
+    /// let res = c.probe()
+    ///             .get(pn)         // XXX
+    ///             .with([("opt1", "foo"), ("opt2", "bar"))
+    ///             call()?
+    /// # ;
+    /// ```
+    ///
     pub fn with(&mut self, opts: &Options<'rq>) -> &mut Self
     {
-        for (key, item) in &opts.opts {
+        for (key, item) in opts.iter() {
             self.c.opts.insert(*key, *item);
         }
         println!("{:?}", self.c.opts);
