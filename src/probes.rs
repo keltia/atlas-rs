@@ -183,10 +183,10 @@ impl Probe {
     /// Main routing that build the URL for the request
     ///
     pub(crate) fn dispatch<'a>(
-        mut r: RequestBuilder<'a>,
+        r: &'a mut RequestBuilder<'a>,
         ops: Ops,
         data: Param<'a>,
-    ) -> RequestBuilder<'a> {
+    ) -> &'a mut RequestBuilder<'a> {
         // Get the parameter
         let add = set_url(ops, data.into());
 
