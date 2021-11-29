@@ -556,7 +556,7 @@ impl<'cl> ClientBuilder<'cl> {
     /// # ;
     /// ```
     ///
-    pub fn with(mut self, opts: &Options) -> Self {
+    pub fn with(mut self, opts: &Options<'cl>) -> Self {
         for (k, v) in opts.iter() {
             self.cl.opts.insert(*k, *v);
         }
