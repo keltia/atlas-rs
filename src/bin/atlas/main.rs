@@ -79,9 +79,8 @@ fn main() -> Result<()> {
         SubCommand::Key(opts) => match opts.subcmd {
             KeySubCommand::Info(opts) => {
                 let uuid = opts.uuid.unwrap_or_else(|| cfg.api_key.clone());
-                let opts = HashMap::from([("foo", "bar")]);
 
-                let k: Key = c.keys().get(uuid.as_str()).with(&opts).call()?;
+                let k: Key = c.keys().get(uuid.as_str()).call()?;
                 println!("Key {} is:\n{:?}", uuid, k);
             }
             KeySubCommand::List(_opts) => (),
