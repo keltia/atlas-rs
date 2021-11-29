@@ -281,7 +281,6 @@ impl<'rq> RequestBuilder<'rq> {
         for (key, item) in opts.iter() {
             self.c.opts.insert(*key, *item);
         }
-        println!("{:?}", self.c.opts);
         self
     }
 
