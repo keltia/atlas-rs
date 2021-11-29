@@ -97,83 +97,10 @@ pub fn get_page_num(url: &str) -> usize {
     };
 }
 
-/// Take an url and a set of options to add to the parameters
-///
-/// Example!
-/// ```no_run
-/// # use atlas_rs::common::Options;
-/// use atlas_rs::common::add_opts;
-///
-/// let url = "https://example.com/";
-/// let opts = Options::new().insert("foo", "bar");
-/// let url = add_opts(&url, &opts);
-/// ```
-///
-pub fn add_opts<'cl>(url: &str, opts: &Options) -> String {
-    let full = url.to_owned() + "?";
-    let mut v = Vec::<String>::new();
-
-    for name in opts.keys().sorted() {
-        let opt = format!("{}={}", name, opts[name]);
-        v.push(opt);
-    }
-    full + &v.join("&")
-}
-
-#[derive(Clone, Debug)]
-pub struct Options<'o>(HashMap<&'o str, &'o str>);
-
-impl<'o> Options<'o> {
-    pub fn new() -> Self {
-        HashMap::<&str, &str>::new() as Options
-    }
-
-    pub fn insert(&mut self, k: &'o str, v: &'o str) -> &mut Self {
-        self.opts.insert(k, v);
-        self
-    }
-}
-
-impl<'o> Iterator for Options<'o> {
-    fn next(&mut self) -> Option<Self::Item>
-    {
-        type Item = &'o str;
-
-
-    }
-}
-impl<K, V, const N: usize> From<[(K, V); N]> for Options
-    where
-        K: Eq + Hash,
-{
-    fn from(arr: [(K, V); N]) -> Self {
-        std::array::IntoIter::new(arr).collect()
-    }
-}
-impl<'o> Iterator for Options<'o>
-{
-    type Item = &'o str;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        Some(self.iter().next())
-    }
-}
-
-
 #[cfg(test)]
 mod tests {
-    use crate::common::{add_opts, get_page_num, Options};
+    use crate::common::get_page_num;
     use rstest::rstest;
-    use std::collections::HashMap;
-
-    #[test]
-    fn test_add_opts() {
-        let url = "/hello".to_string();
-        let o = Options::from([("name", "foo"), ("bar", "baz")]);
-
-        let url = add_opts(&url, &o);
-        assert_eq!("/hello?bar=baz&name=foo", url);
-    }
 
     #[rstest]
     #[case("", 0)]
