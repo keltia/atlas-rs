@@ -12,7 +12,7 @@ use std::fmt;
 use std::fmt::Formatter;
 
 // External crates
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 // Our crates
 use crate::client::Client;
@@ -32,7 +32,7 @@ pub enum Ops {
 fn set_url(ops: Ops, id: i64) -> String {
     match ops {
         Ops::Get => format!("/anchors/{}/", id), // /get
-        Ops::List => "/anchors/".to_string(),      // /list
+        Ops::List => "/anchors/".to_string(),    // /list
     }
 }
 
@@ -46,7 +46,7 @@ pub struct Anchor {
     #[serde(rename = "type")]
     pub atype: String,
     /// The fully qualified domain name of the anchor,
-    pub fqdn:String,
+    pub fqdn: String,
     /// The id of the probe that is hosted on this anchor,
     pub probe: i64,
     /// Is it IPv4-only?
@@ -98,7 +98,7 @@ impl Anchor {
             format!("{}{}", r.r.url().as_str(), add).as_str(),
             opts.iter(),
         )
-            .unwrap();
+        .unwrap();
         r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
         r
     }
@@ -111,4 +111,3 @@ impl fmt::Display for Anchor {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
 }
-

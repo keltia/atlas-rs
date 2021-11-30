@@ -33,10 +33,9 @@ pub fn add_opts<'cl>(url: &str, opts: &Options) -> String {
     full + &v.join("&")
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::option::{Options, add_opts};
+    use crate::option::{add_opts, Options};
 
     #[test]
     fn test_add_opts() {

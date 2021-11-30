@@ -36,7 +36,6 @@ pub(crate) struct Opts {
 #[derive(Parser)]
 pub(crate) enum SubCommand {
     // Data-specific commands (see data.rs)
-
     /// Dislays informations about credits
     #[clap(visible_alias = "c")]
     Credits(CredOpts),
@@ -51,7 +50,6 @@ pub(crate) enum SubCommand {
     Probe(ProbeOpts),
 
     // Protocol-specific commands (see protocols.rs)
-
     /// DNS-related measurements
     Dns(DnsOpts),
     /// HTTP-related measurements
@@ -68,7 +66,6 @@ pub(crate) enum SubCommand {
     Traceroute(TrrOpts),
 
     // Useful shortcut (see util.rs)
-
     /// Displays the default probe IPs
     Ip(IpOpts),
 }

@@ -38,8 +38,8 @@ use reqwest::StatusCode;
 //
 use crate::client::Client;
 use crate::common::List;
-use crate::option::add_opts;
 use crate::errors::*;
+use crate::option::add_opts;
 use crate::request::{Param, RequestBuilder};
 
 // -------------------------------------------------------------------------

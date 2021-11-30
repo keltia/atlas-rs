@@ -569,8 +569,8 @@ impl<'cl> ClientBuilder<'cl> {
 #[cfg(test)]
 mod tests {
 
-    use crate::client::*;
     use super::*;
+    use crate::client::*;
 
     #[test]
     fn test_client_new() {
@@ -615,7 +615,11 @@ mod tests {
     #[test]
     fn test_with() {
         let h = Options::from([("foo", "a"), ("bar", "b"), ("key", "FOO")]);
-        let c = ClientBuilder::new().api_key("key").with(&h).build().unwrap();
+        let c = ClientBuilder::new()
+            .api_key("key")
+            .with(&h)
+            .build()
+            .unwrap();
         assert_eq!(h, c.opts);
     }
 

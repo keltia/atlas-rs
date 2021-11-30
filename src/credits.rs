@@ -18,12 +18,12 @@ use std::fmt;
 use std::fmt::Formatter;
 
 // External crates
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 // Our crates
 use crate::client::Client;
-use crate::option::add_opts;
 use crate::errors::*;
+use crate::option::add_opts;
 use crate::request::{Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
@@ -112,7 +112,7 @@ impl Credits {
             format!("{}{}", r.r.url().as_str(), add).as_str(),
             opts.iter(),
         )
-            .unwrap();
+        .unwrap();
         r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
         r
     }
@@ -263,4 +263,3 @@ pub struct ExpenseItems {
     /// Total estimated daily expenditure from all expense items
     pub total_estimated_daily_expenditure: u32,
 }
-

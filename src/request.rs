@@ -18,17 +18,17 @@ use serde::de;
 
 // Our internal crates.
 //
-use crate::client::{Client, Cmd};
 use crate::anchors;
 use crate::anchors::Anchor;
-use crate::option::Options;
+use crate::client::{Client, Cmd};
 use crate::credits;
 use crate::credits::Credits;
+use crate::errors::APIError;
 use crate::keys;
 use crate::keys::Key;
+use crate::option::Options;
 use crate::probes;
 use crate::probes::Probe;
-use crate::errors::APIError;
 
 // ------------------------------------------------------------
 
@@ -276,8 +276,7 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn with(&'rq mut self, opts: &Options<'rq>) -> &'rq mut Self
-    {
+    pub fn with(&'rq mut self, opts: &Options<'rq>) -> &'rq mut Self {
         for (key, item) in opts.iter() {
             self.c.opts.insert(*key, *item);
         }

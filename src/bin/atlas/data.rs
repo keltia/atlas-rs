@@ -125,23 +125,22 @@ pub(crate) enum CreditSubCommand {
 }
 
 #[derive(Parser)]
-pub(crate) struct  ExpOpts {
+pub(crate) struct ExpOpts {
     /// Print debug info
     #[clap(short)]
     pub(crate) debug: bool,
 }
 
 #[derive(Parser)]
-pub(crate) struct  TransOpts {
+pub(crate) struct TransOpts {
     /// Print debug info
     #[clap(short)]
     pub(crate) debug: bool,
 }
 
 #[derive(Parser)]
-pub(crate) struct  TransfOpts {
+pub(crate) struct TransfOpts {
     /// Print debug info
     #[clap(short)]
     pub(crate) debug: bool,
 }
-

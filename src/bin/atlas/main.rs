@@ -3,7 +3,6 @@
 //! It is a way to both demonstrate the use of the API and a testing tool.
 //!
 
-use std::collections::HashMap;
 /// External crates
 ///
 use anyhow::Result;
@@ -89,7 +88,7 @@ fn main() -> Result<()> {
             CreditSubCommand::Info(_opts) => {
                 let cred: Credits = c.credits().get("").call()?;
                 println!("Credits are {:?}", &cred);
-            },
+            }
             CreditSubCommand::Income(_opts) => (),
             CreditSubCommand::Transactions(_opts) => (),
             CreditSubCommand::Transfer(_opts) => (),
