@@ -24,7 +24,7 @@ use reqwest::StatusCode;
 
 // Our crates
 use crate::client::Client;
-use crate::common::add_opts;
+use crate::option::add_opts;
 use crate::errors::*;
 use crate::request::{Param, RequestBuilder};
 
@@ -84,15 +84,15 @@ pub struct Key {
 
 impl Key {
     pub fn dispatch<'a>(
-        mut r: RequestBuilder<'a>,
+        r: &'a mut RequestBuilder<'a>,
         ops: Ops,
         data: Param<'a>,
-    ) -> RequestBuilder<'a> {
+    ) -> &'a mut RequestBuilder<'a> {
         let opts = r.c.opts.clone();
         let add = set_url(ops, data.into());
 
         let url = reqwest::Url::parse_with_params(
-            format!("{}/{}", r.r.url().as_str(), add).as_str(),
+            format!("{}{}", r.r.url().as_str(), add).as_str(),
             opts.iter(),
         )
         .unwrap();

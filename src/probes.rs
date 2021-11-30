@@ -37,7 +37,8 @@ use reqwest::StatusCode;
 // Our crates
 //
 use crate::client::Client;
-use crate::common::{add_opts, List};
+use crate::common::List;
+use crate::option::add_opts;
 use crate::errors::*;
 use crate::request::{Param, RequestBuilder};
 
@@ -182,16 +183,16 @@ impl Probe {
     /// Main routing that build the URL for the request
     ///
     pub(crate) fn dispatch<'a>(
-        mut r: RequestBuilder<'a>,
+        r: &'a mut RequestBuilder<'a>,
         ops: Ops,
         data: Param<'a>,
-    ) -> RequestBuilder<'a> {
+    ) -> &'a mut RequestBuilder<'a> {
         // Get the parameter
         let add = set_url(ops, data.into());
 
         // Setup URL with potential parameters like `key`.
         let url = reqwest::Url::parse_with_params(
-            format!("{}/{}", r.r.url().as_str(), add).as_str(),
+            format!("{}{}", r.r.url().as_str(), add).as_str(),
             &r.c.opts,
         )
         .unwrap();

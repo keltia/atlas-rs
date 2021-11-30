@@ -21,6 +21,7 @@ use serde::de;
 use crate::client::{Client, Cmd};
 use crate::anchors;
 use crate::anchors::Anchor;
+use crate::option::Options;
 use crate::credits;
 use crate::credits::Credits;
 use crate::keys;
@@ -36,6 +37,7 @@ use crate::errors::APIError;
 ///
 #[derive(Clone, Copy, Debug)]
 pub enum Param<'a> {
+    I(i32),
     U(u32),
     L(i64),
     S(&'a str),
@@ -100,6 +102,25 @@ impl<'a> From<i64> for Param<'a> {
     }
 }
 
+/// From i32 to Param
+///
+impl<'a> From<i32> for Param<'a> {
+    fn from(p: i32) -> Self {
+        Param::I(p)
+    }
+}
+
+/// From Param to i32
+///
+impl<'a> From<Param<'a>> for i32 {
+    fn from(p: Param<'a>) -> Self {
+        match p {
+            Param::I(v) => v,
+            _ => 0,
+        }
+    }
+}
+
 /// From Param to i64
 ///
 impl<'a> From<Param<'a>> for i64 {
@@ -157,7 +178,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///             .call()?
     /// ```
     ///
-    pub fn get<S: Into<Param<'rq>>>(self, data: S) -> Self {
+    pub fn get<S: Into<Param<'rq>>>(&'rq mut self, data: S) -> &mut Self {
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::Get, data.into()),
@@ -191,7 +212,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///             .call()?
     /// ```
     ///
-    pub fn list<S: Into<Param<'rq>>>(self, data: S) -> Self {
+    pub fn list<S: Into<Param<'rq>>>(&'rq mut self, data: S) -> &'rq mut Self {
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::List, data.into()),
@@ -205,9 +226,67 @@ impl<'rq> RequestBuilder<'rq> {
         }
     }
 
+    /// Establish the final URL before call()
+    ///
+    /// This method expect to be called by one of the main "categories" methods like
+    /// `probes()` or `keys()`.  That way, context is established znd propagated.
+    ///
+    /// In essence, this is the main router.  It is for list calls, for single result please
+    /// use `get()`.  The `Cmd` enum is there for this.
+    ///
+    /// Example:
+    ///
+    /// ```rs
+    /// # use atlas_rs::client::Client;
+    ///
+    /// let c = Client::new();
+    ///
+    /// let res = c.probe()
+    ///             .info()         // XXX
+    ///             .call()?
+    /// ```
+    ///
+    pub fn info(&'rq mut self) -> &'rq mut Self {
+        // Main routing
+        match self.ctx {
+            Cmd::Probes => unimplemented!(),
+            Cmd::Measurements => unimplemented!(),
+            Cmd::AnchorMeasurements => unimplemented!(),
+            Cmd::Credits => Credits::dispatch(self, credits::Ops::Get, 0.into()),
+            Cmd::Anchors => unimplemented!(),
+            Cmd::Keys => unimplemented!(),
+            Cmd::ParticipationRequests => unimplemented!(),
+            Cmd::None => panic!("No Cmd"),
+        }
+    }
+
+    /// Makes it easy to specify options
+    ///
+    /// Example:
+    ///
+    /// ```rs
+    /// # use atlas_rs::client::Client;
+    ///
+    /// let c = Client::new();
+    ///
+    /// let res = c.probe()
+    ///             .get(pn)         // XXX
+    ///             .with([("opt1", "foo"), ("opt2", "bar"))
+    ///             call()?
+    /// # ;
+    /// ```
+    ///
+    pub fn with(&'rq mut self, opts: &Options<'rq>) -> &'rq mut Self
+    {
+        for (key, item) in opts.iter() {
+            self.c.opts.insert(*key, *item);
+        }
+        self
+    }
+
     /// Finalize the chain and call the real API
     ///
-    pub fn call<T>(self) -> Result<T, APIError>
+    pub fn call<T>(&self) -> Result<T, APIError>
     where
         T: de::DeserializeOwned + std::fmt::Display,
     {

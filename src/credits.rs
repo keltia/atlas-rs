@@ -22,7 +22,7 @@ use serde::{Serialize, Deserialize};
 
 // Our crates
 use crate::client::Client;
-use crate::common::add_opts;
+use crate::option::add_opts;
 use crate::errors::*;
 use crate::request::{Param, RequestBuilder};
 
@@ -101,15 +101,15 @@ impl fmt::Display for Credits {
 
 impl Credits {
     pub fn dispatch<'cr>(
-        mut r: RequestBuilder<'cr>,
+        r: &'cr mut RequestBuilder<'cr>,
         ops: Ops,
-        data: Param,
-    ) -> RequestBuilder<'cr> {
+        _data: Param,
+    ) -> &'cr mut RequestBuilder<'cr> {
         let opts = r.c.opts.clone();
         let add = set_url(ops);
 
         let url = reqwest::Url::parse_with_params(
-            format!("{}/{}", r.r.url().as_str(), add).as_str(),
+            format!("{}{}", r.r.url().as_str(), add).as_str(),
             opts.iter(),
         )
             .unwrap();

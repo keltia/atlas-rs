@@ -2,7 +2,6 @@
 //!
 
 /// Standard library
-use std::collections::HashMap;
 
 /// Our crates
 use crate::client::Client;
@@ -10,15 +9,13 @@ use crate::errors::APIError;
 
 /// External crates
 use anyhow::Result;
-use itertools::Itertools;
 use lazy_regex::regex;
 use reqwest::StatusCode;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 
-impl<'cl> Client<'cl> {}
-
-/// When asking for a list of S, this struct is used for pagination
+/// When asking for a list of S, this generic struct is used for pagination
+///
 #[derive(Serialize, Deserialize, Debug)]
 pub struct List<S> {
     /// How many results in this block
@@ -31,6 +28,8 @@ pub struct List<S> {
     pub keys: Vec<S>,
 }
 
+/// Implement a generic fetch_one_page() function
+///
 impl<'cl> Client<'cl> {
     pub fn fetch_one_page<S: DeserializeOwned>(
         &self,
@@ -79,7 +78,7 @@ impl<'cl> Client<'cl> {
 /// # use atlas_rs::keys::Key;
 /// # use atlas_rs::client::Client;
 ///
-/// let c = Client::new("FOO");
+/// let c = Client::new();
 /// let url = "https://example.net/api/v2/foo";
 /// let rawlist: List<Key> = c.fetch_one_page(url, 1).unwrap();
 ///
@@ -99,43 +98,10 @@ pub fn get_page_num(url: &str) -> usize {
     };
 }
 
-/// Take an url and a set of options to add to the parameters
-///
-/// Example!
-/// ```no_run
-/// # use std::collections::HashMap;
-/// use atlas_rs::common::add_opts;
-///
-/// let url = "https://example.com/";
-/// let opts = HashMap::from([("foo", "bar")]);
-/// let url = add_opts(&url, &opts);
-/// ```
-///
-pub fn add_opts<'cl>(url: &str, opts: &HashMap<&'cl str, &'cl str>) -> String {
-    let full = url.to_owned() + "?";
-    let mut v = Vec::<String>::new();
-
-    for name in opts.keys().sorted() {
-        let opt = format!("{}={}", name, opts[name]);
-        v.push(opt);
-    }
-    full + &v.join("&")
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::common::{add_opts, get_page_num};
+    use crate::common::get_page_num;
     use rstest::rstest;
-    use std::collections::HashMap;
-
-    #[test]
-    fn test_add_opts() {
-        let url = "/hello".to_string();
-        let o = HashMap::from([("name", "foo"), ("bar", "baz")]);
-
-        let url = add_opts(&url, &o);
-        assert_eq!("/hello?bar=baz&name=foo", url);
-    }
 
     #[rstest]
     #[case("", 0)]

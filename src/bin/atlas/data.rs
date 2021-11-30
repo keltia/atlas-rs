@@ -118,5 +118,30 @@ pub(crate) struct CredOpts {
 #[derive(Parser)]
 pub(crate) enum CreditSubCommand {
     Info(InfoOpts),
-    List(ListOpts),
+    Income(ListOpts),
+    Expense(ExpOpts),
+    Transactions(TransOpts),
+    Transfer(TransfOpts),
 }
+
+#[derive(Parser)]
+pub(crate) struct  ExpOpts {
+    /// Print debug info
+    #[clap(short)]
+    pub(crate) debug: bool,
+}
+
+#[derive(Parser)]
+pub(crate) struct  TransOpts {
+    /// Print debug info
+    #[clap(short)]
+    pub(crate) debug: bool,
+}
+
+#[derive(Parser)]
+pub(crate) struct  TransfOpts {
+    /// Print debug info
+    #[clap(short)]
+    pub(crate) debug: bool,
+}
+
