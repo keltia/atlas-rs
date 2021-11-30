@@ -162,13 +162,20 @@ impl<'rq> RequestBuilder<'rq> {
         RequestBuilder { ctx, c, r }
     }
 
+    // ------------------------------------------------------------------------------------
     /// Establish the final URL before call()
     ///
-    /// This method expect to be called by one of the main "categories" methods like
+    /// These methods expect to be called by one of the main "categories" methods like
     /// `probes()` or `keys()`.  That way, context is established znd propagated.
     ///
-    /// In essence, this is the main router.  It is for single result calls, for lists please
-    /// use `list()`.  The `Cmd` enum is there for this.
+    /// In essence, these is the main router.  See [./APIDESIGN.md] for the list of methods
+    /// and which is called in which context.
+    ///
+    /// Some calls have a parameter (type is `Param`) and it gets converted into the proper
+    /// type automatically depending on the `dispatch` function wants to get.
+    ///
+
+    /// This is the `get` method for single results and a parameter.
     ///
     /// Example:
     ///
@@ -196,13 +203,7 @@ impl<'rq> RequestBuilder<'rq> {
         }
     }
 
-    /// Establish the final URL before call()
-    ///
-    /// This method expect to be called by one of the main "categories" methods like
-    /// `probes()` or `keys()`.  That way, context is established znd propagated.
-    ///
-    /// In essence, this is the main router.  It is for list calls, for single result please
-    /// use `get()`.  The `Cmd` enum is there for this.
+    /// This is the `list` method which return a set of results.
     ///
     /// Example:
     ///
@@ -230,13 +231,7 @@ impl<'rq> RequestBuilder<'rq> {
         }
     }
 
-    /// Establish the final URL before call()
-    ///
-    /// This method expect to be called by one of the main "categories" methods like
-    /// `probes()` or `keys()`.  That way, context is established znd propagated.
-    ///
-    /// In essence, this is the main router.  It is for list calls, for single result please
-    /// use `get()`.  The `Cmd` enum is there for this.
+    /// This is the `info` method close to `get` but without a parameter.
     ///
     /// Example:
     ///
