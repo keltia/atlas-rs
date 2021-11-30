@@ -88,19 +88,29 @@ impl Default for Cmd {
 ///
 /// Examples:
 /// ```no_run
+/// # fn main() -> Result<(), atlas_rs::errors::APIError> {
 /// use atlas_rs::client::Client;
+/// use atlas_rs::request::Param;
+/// use atlas_rs::probes::Probe;
 ///
 /// let c = Client::new();
 ///
-/// let r = c.traceroute().to("next.example.net").call()?;
+/// let p: Probe = c.probe().get(666).call()?;
+/// # Ok(())
+/// # }
 /// ```
 ///
 /// ```no_run
+/// # fn main() -> Result<(), atlas_rs::errors::APIError> {
 /// use atlas_rs::client::Client;
+/// use atlas_rs::request::Param;
+/// use atlas_rs::credits::Credits;
 ///
 /// let c = Client::new();
 ///
-/// let r = c.ntp().from("next.example.net").call()?;
+/// let r: Credits = c.credits().info().call()?;
+/// # Ok(())
+/// # }
 /// ```
 ///
 #[derive(Debug)]
@@ -175,9 +185,9 @@ impl<'cl> Client<'cl> {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_rs::client::Client;
     ///
-    /// let c = ClientBuilder::builder();
+    /// let c = Client::builder();
     /// ```
     ///
     pub fn builder() -> ClientBuilder<'cl> {
@@ -303,6 +313,9 @@ impl<'cl> Client<'cl> {
 ///
 /// Examples:
 /// ```no_run
+/// # fn main() -> Result<(), atlas_rs::errors::APIError> {
+/// use atlas_rs::request::Param;
+/// use atlas_rs::probes::Probe;
 /// use atlas_rs::client::{AF, ClientBuilder};
 ///
 /// let c = ClientBuilder::new()
@@ -310,22 +323,11 @@ impl<'cl> Client<'cl> {
 ///             .onoff(true)
 ///             .default_probe(666)
 ///             .want_af(AF::V4)
-///              .build();
+///             .build()?;
 ///
-/// let r = c.probe().get(666).call()?;
-/// ```
-///
-/// ```no_run
-/// use atlas_rs::client::{AF, ClientBuilder};
-///
-/// let c = ClientBuilder::new()
-///             .api_key("FOO")
-///             .onoff(true)
-///             .default_probe(666)
-///             .want_af(AF::V4)
-///             .build();
-///
-/// let r = c.traceroute().to("next.example.net").call()?;
+/// let p: Probe = c.probe().get(666).call()?;
+/// # Ok(())
+/// # }
 /// ```
 ///
 
@@ -566,6 +568,8 @@ impl<'cl> ClientBuilder<'cl> {
 
 #[cfg(test)]
 mod tests {
+
+    use crate::client::*;
     use super::*;
 
     #[test]
@@ -573,7 +577,7 @@ mod tests {
         let c = Client::new();
 
         // Check all defaults
-        assert_eq!("CHANGEME", c.api_key.unwrap());
+        assert!(c.api_key.is_none());
         assert_eq!(ENDPOINT, c.endpoint);
         assert_eq!(0, c.default_probe);
         assert_eq!("area", c.area_type);
@@ -583,7 +587,6 @@ mod tests {
         assert_eq!(AF::V46, c.want_af);
         assert!(!c.verbose);
         assert_eq!("", c.tags);
-        assert!(c.opts.contains_key("key"));
         assert!(c.agent.is_some());
     }
 
@@ -605,20 +608,41 @@ mod tests {
         assert_eq!(AF::V46, cb.want_af);
         assert!(!cb.verbose);
         assert_eq!("", cb.tags);
-        assert!(cb.opts.contains_key("key"));
+        assert!(!cb.opts.contains_key("key"));
         assert!(cb.agent.is_some());
     }
 
     #[test]
     fn test_with() {
         let h = Options::from([("foo", "a"), ("bar", "b"), ("key", "FOO")]);
-        let c = ClientBuilder::new().with(&h).build().unwrap();
+        let c = ClientBuilder::new().api_key("key").with(&h).build().unwrap();
         assert_eq!(h, c.opts);
     }
 
     #[test]
+    fn test_clientbuilder_error() {
+        let c = ClientBuilder::new().build();
+
+        assert!(c.is_err());
+    }
+
+    #[test]
+    fn test_clientbuilder_api_key() {
+        let c = ClientBuilder::new().api_key("FOO").build();
+
+        assert!(c.is_ok());
+        assert!(c.as_ref().unwrap().api_key.is_some());
+
+        let c = c.unwrap();
+
+        let key = c.api_key;
+        assert!(key.is_some());
+        assert_eq!("FOO", key.unwrap());
+    }
+
+    #[test]
     fn test_onoff() {
-        let c = ClientBuilder::new().onoff(true).build();
+        let c = ClientBuilder::new().api_key("key").onoff(true).build();
 
         assert!(c.unwrap().is_oneoff);
     }

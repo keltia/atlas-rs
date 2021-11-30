@@ -15,7 +15,7 @@ pub type Options<'o> = HashMap<&'o str, &'o str>;
 /// # use atlas_rs::option::{add_opts, Options};
 ///
 /// let url = "https://example.com/";
-/// let opts = Options::new().insert("foo", "bar");
+/// let opts = Options::from([("foo", "bar")]);
 /// let url = add_opts(&url, &opts);
 /// ```
 ///
