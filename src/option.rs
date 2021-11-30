@@ -1,3 +1,6 @@
+//! We define our own set of options to simplify the code dealing with them.
+//!
+
 // Std library
 use std::collections::HashMap;
 use std::hash::Hash;
