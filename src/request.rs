@@ -37,9 +37,13 @@ use crate::probes::Probe;
 ///
 #[derive(Clone, Copy, Debug)]
 pub enum Param<'a> {
+    /// Represents the most usual 32-bit integer
     I(i32),
+    /// Represents an unsigned 32-bit integer
     U(u32),
+    /// Represents the long aka 64-bit integer
     L(i64),
+    /// Represents the string pointer aka `str`
     S(&'a str),
 }
 
