@@ -101,7 +101,9 @@ pub struct Status {
 ///
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Tag {
+    /// free-text Name like "system: IPv4 works"
     pub name: String,
+    /// Value like "system-ipv4-works"
     pub slug: String,
 }
 
