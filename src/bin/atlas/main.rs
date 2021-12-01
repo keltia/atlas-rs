@@ -86,7 +86,7 @@ fn main() -> Result<()> {
         },
         SubCommand::Credits(opts) => match opts.subcmd {
             CreditSubCommand::Info(_opts) => {
-                let cred: Credits = c.credits().get("").call()?;
+                let cred: Credits = c.credits().info().call()?;
                 println!("Credits are {:?}", &cred);
             }
             CreditSubCommand::Income(_opts) => (),
