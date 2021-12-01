@@ -116,7 +116,8 @@ Per context/cmd:
 
     RequestBuilder
             list        anchor-measurements/anchors/keys/measurements/participation-requests/probes
-            get         anchor-measurements/anchors/credits/keys/measurements/probes
+            get         anchor-measurements/anchors/keys/measurements/probes
+            info        credits
             set         keys/probes
             permissions keys
             delete      keys/measurements            
