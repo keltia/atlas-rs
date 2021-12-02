@@ -1,9 +1,9 @@
 # API Design
 
-## Usual way
+## Usual way (aka feature `flat_api`)
 
 This way has the inconvenient of "polluting" client as everything done through methods
-on the `Client`struct (like we do in Go.)
+on the `Client`struct (like we do in Go.).  Next issue is passing options (same thing as in `ripe-atlas`).
 
 ```rs
 let cl = Client::new(Config{});
@@ -35,9 +35,9 @@ let c = ClientBuilder::new().key("FOO")
             .default_probe(666)
             .build();
 
-let p = c.probe().info(666).call();
+let p = c.probe().get(666).call();
 
-let pl = c.probe().list(opts).call();
+let pl = c.probe().list(opts).call();     // or c.probe().list().with(opts).call();
 
 // there c.<category>() returns a RequestBuilder and .call() returns a Response.
 ```
@@ -71,6 +71,8 @@ except
 Atlas API
 
 /api/v2
+
+### List of operations per category
 
           ----- /anchor-measurement     ----- /list  ----- List<AM>
                                         ----- /get   ----- AM
@@ -112,7 +114,7 @@ Atlas API
                                         ----- /tags
                                         ----- /tags         ----- /slugs
 
-Per context/cmd:
+### Per context/cmd:
 
     RequestBuilder
             list        anchor-measurements/anchors/keys/measurements/participation-requests/probes
@@ -127,4 +129,20 @@ Per context/cmd:
             rankings    probes
             tags        probes
 
+### Call tree
+
+      client.rs                  anchor.rs/.../probe.rs           request.rs
+
+      c = Client::new()
+      c = ClientBuilder::new()
+
+      c.anchor()
+      c.anchor_measurement()
+      c.credits()
+      c.keys()
+      c.probe()
+                                    <Type>::dispatch()
+
+                                                                  RequestBuilder()
+                                                                  .call()
 
