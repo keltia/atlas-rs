@@ -196,29 +196,6 @@ impl<'cl> Client<'cl> {
         ClientBuilder::new()
     }
 
-    /// Private routing function for first level (`probe()`, `keys()`, etc.)
-    ///
-    fn route_to(mut self, op: Cmd) -> RequestBuilder<'cl> {
-        let url = self.endpoint.to_owned();
-
-        // Default HTTP operation is GET, some will be POST/DELETE but that is handled in the
-        // next call in the chain.
-        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
-
-        // Enforce API key usage
-        if self.api_key.is_none() {
-            panic!("No API key defined");
-        }
-
-        // Ensure api-Key is filled in prior to the calls.
-        self.opts.insert("key", self.api_key.unwrap());
-        RequestBuilder {
-            ctx: op,
-            c: self,
-            r,
-        }
-    }
-
     // ---------------------------------------------------------------------
     // Entities
     //
@@ -295,6 +272,29 @@ impl<'cl> Client<'cl> {
             .unwrap();
         self.agent = Some(agent);
         self
+    }
+
+    /// Private routing function for first level (`probe()`, `keys()`, etc.)
+    ///
+    fn route_to(mut self, op: Cmd) -> RequestBuilder<'cl> {
+        let url = self.endpoint.to_owned();
+
+        // Default HTTP operation is GET, some will be POST/DELETE but that is handled in the
+        // next call in the chain.
+        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
+
+        // Enforce API key usage
+        if self.api_key.is_none() {
+            panic!("No API key defined");
+        }
+
+        // Ensure api-Key is filled in prior to the calls.
+        self.opts.insert("key", self.api_key.unwrap());
+        RequestBuilder {
+            ctx: op,
+            c: self,
+            r,
+        }
     }
 }
 
