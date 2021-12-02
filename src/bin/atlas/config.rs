@@ -1,4 +1,6 @@
-//! This is the module to handle configuration for the `atlas` client.
+//! This is the module to handle configuration for the `atlas` client.  Upon calling
+//! `Config::new()` the struct contain reasonable defaults (and a bad API key that
+//! you must change).
 //!
 //! It takes a [TOML] configuration file of the following format:
 //!
@@ -16,12 +18,13 @@
 //! tags = "+ipv4"
 //! ```
 //!
-//! We can share the configuration file with the Go `ripe-atlas` of course
-//! and this is the default.
+//! On Unix systems (FreeBSD, macOS, Linux, etc.) the default configuration
+//! directory is `$HOME/.config/atlas-rs/` whereas on Windows, it is located
+//! in `%LOCALAPPDATA%\atlas-rs\`.
 //!
 //! Examples:
 //! ```rs
-//! use crate::config::Config;
+//! use atlas_rs::config::Config;
 //!
 //! let cfg = Config::new();  // will contain the defaults values from here.
 //!
@@ -31,11 +34,11 @@
 //! or
 //!
 //! ```rs
-//!  use atlas_rs::config::Config;
+//! use atlas_rs::config::Config;
 //!
-//!  let cfg = Config::load("./atlas.toml").unwrap();
+//! let cfg = Config::load("./atlas.toml").unwrap();
 //!
-//!  println!("Default key is {}", cfg.api_key);
+//! println!("Default key is {}", cfg.api_key);
 //! ```
 //!
 //! There is also a `reload()` method to override an existing configuration.
@@ -43,13 +46,13 @@
 //! Example:
 //!
 //! ```rs
-//!  use atlas_rs::config::Config;
+//! use atlas_rs::config::Config;
 //!
-//!  let cfg = Config::load("./atlas.toml").unwrap();
+//! let cfg = Config::load("./atlas.toml").unwrap();
 //!
-//!  let cfg = cfg.reload("new.toml").unwrap();
+//! let cfg = cfg.reload("new.toml").unwrap();
 //!
-//!  println!("Key is now {}", cfg.api_key);
+//! println!("Key is now {}", cfg.api_key);
 //! ```
 //!
 //! [TOML]: https://crates.io/crates/toml
@@ -91,6 +94,7 @@ pub struct ProbeSet {
 /// one behind the API key).
 ///
 /// NOTE: I never used it but it is part of the API.
+///
 #[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct Measurements {
     /// RIPE Account ID to be billed for subsequent queries
@@ -113,6 +117,8 @@ pub struct Config {
     pub measurements: Option<Measurements>,
 }
 
+/// Here are the "reasonable" defaults.
+///
 impl Default for Config {
     /// Fills in the default values
     fn default() -> Self {
@@ -131,6 +137,7 @@ impl Default for Config {
 }
 
 /// Methods for Config
+///
 impl Config {
     /// Create a `Config` struct with default values.
     ///
@@ -199,6 +206,7 @@ impl Config {
 
 /// Returns the path of the default config file. On Unix systems we use the standard `$HOME/.config`
 /// base directory.
+///
 #[cfg(unix)]
 pub fn default_file() -> Result<String> {
     let homedir = home_dir().unwrap();
@@ -216,6 +224,7 @@ pub fn default_file() -> Result<String> {
 
 /// Returns the path of the default config file.  Here we use the standard %LOCALAPPDATA%
 /// variable to base our directory into.
+///
 #[cfg(windows)]
 pub fn default_file() -> Result<String> {
     let basedir = env::var("LOCALAPPDATA")?;
