@@ -200,22 +200,22 @@ impl<'cl> Client<'cl> {
     // Entities
     //
     #[inline]
-    pub fn anchors(mut self) -> RequestBuilder<'cl> {
+    pub fn anchors(self) -> RequestBuilder<'cl> {
         self.route_to(Cmd::Anchors)
     }
 
     #[inline]
-    pub fn credits(mut self) -> RequestBuilder<'cl> {
+    pub fn credits(self) -> RequestBuilder<'cl> {
         self.route_to(Cmd::Credits)
     }
 
     #[inline]
-    pub fn keys(mut self) -> RequestBuilder<'cl> {
+    pub fn keys(self) -> RequestBuilder<'cl> {
         self.route_to(Cmd::Keys)
     }
 
     #[inline]
-    pub fn measurement(&self) -> RequestBuilder {
+    pub fn measurement(self) -> RequestBuilder<'cl> {
         unimplemented!()
     }
 
