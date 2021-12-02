@@ -198,8 +198,22 @@ impl<'cl> Client<'cl> {
 
     // ---------------------------------------------------------------------
     // Entities
-    pub fn anchors(&self) -> RequestBuilder {
-        unimplemented!()
+    pub fn anchors(mut self) -> RequestBuilder<'cl> {
+        let url = self.endpoint.to_owned();
+        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
+
+        // Enforce API key usage
+        if self.api_key.is_none() {
+            panic!("No API key defined");
+        }
+
+        // Ensure api-Key is filled in prior to the calls.
+        self.opts.insert("key", self.api_key.unwrap());
+        RequestBuilder {
+            ctx: Cmd::Anchors,
+            c: self,
+            r,
+        }
     }
 
     pub fn credits(mut self) -> RequestBuilder<'cl> {
