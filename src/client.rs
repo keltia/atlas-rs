@@ -49,29 +49,6 @@ use crate::request::RequestBuilder;
 /// We target the v2 API (not sure if it needs to be public)
 const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
 
-macro_rules! dispatch {
-    (
-        $self:ident,        // self
-        $op:expr        // operation
-    ) => {{
-        let url = $self.endpoint.to_owned();
-        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
-
-        // Enforce API key usage
-        if $self.api_key.is_none() {
-            panic!("No API key defined");
-        }
-
-        // Ensure api-Key is filled in prior to the calls.
-        $self.opts.insert("key", $self.api_key.unwrap());
-        RequestBuilder {
-            ctx: $op,
-            c: $self,
-            r,
-        }
-    }};
-}
-
 // ---------------------------------------------------------------------------
 
 /// Represents all possible INET Address Family values
@@ -219,86 +196,60 @@ impl<'cl> Client<'cl> {
         ClientBuilder::new()
     }
 
+    /// Private routing function for first level (`probe()`, `keys()`, etc.)
+    ///
+    fn route_to(mut self, op: Cmd) -> RequestBuilder<'cl> {
+        let url = self.endpoint.to_owned();
+
+        // Default HTTP operation is GET, some will be POST/DELETE but that is handled in the
+        // next call in the chain.
+        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
+
+        // Enforce API key usage
+        if self.api_key.is_none() {
+            panic!("No API key defined");
+        }
+
+        // Ensure api-Key is filled in prior to the calls.
+        self.opts.insert("key", self.api_key.unwrap());
+        RequestBuilder {
+            ctx: op,
+            c: self,
+            r,
+        }
+    }
+
     // ---------------------------------------------------------------------
     // Entities
+    //
+    #[inline]
     pub fn anchors(mut self) -> RequestBuilder<'cl> {
-        let url = self.endpoint.to_owned();
-        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
-
-        // Enforce API key usage
-        if self.api_key.is_none() {
-            panic!("No API key defined");
-        }
-
-        // Ensure api-Key is filled in prior to the calls.
-        self.opts.insert("key", self.api_key.unwrap());
-        RequestBuilder {
-            ctx: Cmd::Anchors,
-            c: self,
-            r,
-        }
+        self.route_to(Cmd::Anchors)
     }
 
+    #[inline]
     pub fn credits(mut self) -> RequestBuilder<'cl> {
-        let url = self.endpoint.to_owned();
-        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
-
-        // Enforce API key usage
-        if self.api_key.is_none() {
-            panic!("No API key defined");
-        }
-
-        // Ensure api-Key is filled in prior to the calls.
-        self.opts.insert("key", self.api_key.unwrap());
-        RequestBuilder {
-            ctx: Cmd::Credits,
-            c: self,
-            r,
-        }
+        self.route_to(Cmd::Credits)
     }
 
+    #[inline]
     pub fn keys(mut self) -> RequestBuilder<'cl> {
-        let url = self.endpoint.to_owned();
-        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
-
-        // Enforce API key usage
-        if self.api_key.is_none() {
-            panic!("No API key defined");
-        }
-
-        // Ensure api-Key is filled in prior to the calls.
-        self.opts.insert("key", self.api_key.unwrap());
-        RequestBuilder {
-            ctx: Cmd::Keys,
-            c: self,
-            r,
-        }
+        self.route_to(Cmd::Keys)
     }
 
+    #[inline]
     pub fn measurement(&self) -> RequestBuilder {
         unimplemented!()
     }
 
-    pub fn probe(mut self) -> RequestBuilder<'cl> {
-        return dispatch!(self, Cmd::Probes);
-
-        /*let url = self.endpoint.to_owned();
-        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
-
-        // API key is optional but some data will be masked without one
-        if self.api_key.is_some() {
-            self.opts.insert("key", self.api_key.unwrap());
-        }
-        RequestBuilder {
-            ctx: Cmd::Probes,
-            c: self,
-            r,
-        }*/
+    #[inline]
+    pub fn probe(self) -> RequestBuilder<'cl> {
+        self.route_to(Cmd::Probes)
     }
 
     // ---------------------------------------------------------------------
     // Protocols
-
+    //
     pub fn dns(&self) -> RequestBuilder {
         unimplemented!()
     }
