@@ -563,7 +563,6 @@ impl<'cl> ClientBuilder<'cl> {
 mod tests {
 
     use super::*;
-    use crate::client::*;
 
     #[test]
     fn test_client_new() {

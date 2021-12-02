@@ -15,7 +15,6 @@ use std::fmt::Formatter;
 use serde::{Deserialize, Serialize};
 
 // Our crates
-use crate::client::Client;
 use crate::probes::Geometry;
 use crate::request::{Param, RequestBuilder};
 

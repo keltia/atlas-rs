@@ -3,7 +3,6 @@
 
 // Std library
 use std::collections::HashMap;
-use std::hash::Hash;
 
 // External crates
 use itertools::Itertools;

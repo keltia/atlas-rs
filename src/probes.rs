@@ -28,7 +28,6 @@ use std::fmt::Formatter;
 
 // External crates
 //
-use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "flat-api")]
@@ -37,9 +36,6 @@ use reqwest::StatusCode;
 // Our crates
 //
 use crate::client::Client;
-use crate::common::List;
-use crate::errors::*;
-use crate::option::add_opts;
 use crate::request::{Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
