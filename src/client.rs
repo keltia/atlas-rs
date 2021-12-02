@@ -283,7 +283,7 @@ impl<'cl> Client<'cl> {
     // Private functions
 
     /// Create an instance of the HTTP client and attach it there.  It is called as part of
-    /// .build().
+    /// `.build()`.
     ///
     fn httpclient(mut self) -> Self {
         let ag = format!("{}/{}", crate_name!(), crate_version!());
