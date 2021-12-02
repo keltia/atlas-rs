@@ -38,6 +38,7 @@ use std::time::Duration;
 // External crates
 use anyhow::{anyhow, Result};
 use clap::{crate_name, crate_version};
+use reqwest::Url;
 
 // Internal crates
 use crate::option::Options;
@@ -46,7 +47,7 @@ use crate::request::RequestBuilder;
 // ---------------------------------------------------------------------------
 
 /// We target the v2 API (not sure if it needs to be public)
-pub(crate) const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
+const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
 
 // ---------------------------------------------------------------------------
 
@@ -119,7 +120,7 @@ pub struct Client<'cl> {
     pub(crate) api_key: Option<&'cl str>,
 
     /// Optional
-    pub(crate) endpoint: &'cl str,
+    pub(crate) endpoint: reqwest::Url,
     pub(crate) default_probe: u32,
     pub(crate) area_type: &'cl str,
     pub(crate) area_value: &'cl str,
@@ -163,9 +164,10 @@ impl<'cl> Client<'cl> {
     /// ```
     ///
     pub fn new() -> Client<'cl> {
+        let endp = reqwest::Url::parse(ENDPOINT).unwrap();
         Client {
             api_key: None,
-            endpoint: ENDPOINT,
+            endpoint: endp,
             default_probe: 0,
             area_type: "area",
             area_value: "WW",
@@ -201,7 +203,7 @@ impl<'cl> Client<'cl> {
     }
 
     pub fn credits(mut self) -> RequestBuilder<'cl> {
-        let url = reqwest::Url::parse(self.endpoint).unwrap();
+        let url = self.endpoint.to_owned();
         let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
 
         // Enforce API key usage
@@ -219,7 +221,7 @@ impl<'cl> Client<'cl> {
     }
 
     pub fn keys(mut self) -> RequestBuilder<'cl> {
-        let url = reqwest::Url::parse(self.endpoint).unwrap();
+        let url = self.endpoint.to_owned();
         let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
 
         // Enforce API key usage
@@ -241,7 +243,7 @@ impl<'cl> Client<'cl> {
     }
 
     pub fn probe(mut self) -> RequestBuilder<'cl> {
-        let url = reqwest::Url::parse(self.endpoint).unwrap();
+        let url = self.endpoint.to_owned();
         let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
 
         // API key is optional but some data will be masked without one
@@ -401,7 +403,8 @@ impl<'cl> ClientBuilder<'cl> {
     /// ```
     ///
     pub fn endpoint<S: Into<&'cl str>>(mut self, v: S) -> Self {
-        self.cl.endpoint = v.into();
+        let endp = Url::parse(v.into()).unwrap();
+        self.cl.endpoint = endp.to_owned();
         self
     }
 
@@ -578,7 +581,7 @@ mod tests {
 
         // Check all defaults
         assert!(c.api_key.is_none());
-        assert_eq!(ENDPOINT, c.endpoint);
+        assert_eq!(ENDPOINT, c.endpoint.as_str());
         assert_eq!(0, c.default_probe);
         assert_eq!("area", c.area_type);
         assert_eq!("WW", c.area_value);
@@ -597,9 +600,10 @@ mod tests {
         assert!(cb.is_ok());
 
         let cb = cb.unwrap();
+
         // Check all defaults
         assert_eq!("key", cb.api_key.unwrap());
-        assert_eq!(ENDPOINT, cb.endpoint);
+        assert_eq!(ENDPOINT, cb.endpoint.as_str());
         assert_eq!(0, cb.default_probe);
         assert_eq!("area", cb.area_type);
         assert_eq!("WW", cb.area_value);
