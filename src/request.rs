@@ -20,6 +20,8 @@ use serde::de;
 //
 use crate::anchors;
 use crate::anchors::Anchor;
+use crate::anchor_measurements;
+use crate::anchor_measurements::AnchorMeasurement;
 use crate::client::{Client, Cmd};
 use crate::credits;
 use crate::credits::Credits;
@@ -194,7 +196,7 @@ impl<'rq> RequestBuilder<'rq> {
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::Get, data.into()),
             Cmd::Measurements => unimplemented!(),
-            Cmd::AnchorMeasurements => unimplemented!(),
+            Cmd::AnchorMeasurements => AnchorMeasurement::dispatch(self, anchor_measurements::Ops::Get, data.into()),
             Cmd::Credits => Credits::dispatch(self, credits::Ops::Get, data.into()),
             Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::Get, data.into()),
             Cmd::Keys => Key::dispatch(self, keys::Ops::Get, data.into()),
