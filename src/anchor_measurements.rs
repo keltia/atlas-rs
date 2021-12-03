@@ -6,6 +6,10 @@
 // Atlas API ----- /anchor-measurement     ----- /list  ----- List<AM>
 //                                         ----- /get  ----- AM
 
+// Std library
+use std::fmt;
+use std::fmt::Formatter;
+
 // Our own crates
 use crate::request::{Param, RequestBuilder};
 
@@ -67,5 +71,13 @@ impl AnchorMeasurement {
             .unwrap();
         r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
         r
+    }
+}
+
+/// Implement the Display trait.
+///
+impl fmt::Display for AnchorMeasurement {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", serde_json::to_string(self).unwrap())
     }
 }
