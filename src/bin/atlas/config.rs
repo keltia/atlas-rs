@@ -168,40 +168,6 @@ impl Config {
         println!("{:?}", content);
         Ok(toml::from_str(&content)?)
     }
-
-    /// Reloads the configuration from the named file.
-    ///
-    /// Example:
-    ///
-    /// ```no_run
-    ///
-    ///   let cfg = Config::load("./atlas.conf");
-    ///  #...
-    ///   let n = cfg.reload("./new.toml").unwrap();
-    /// ```
-    ///
-    pub fn reload(&mut self, fname: &str) -> Result<&mut Self> {
-        let val = Config::load(fname)?;
-
-        // copy non-null values
-        if val.api_key != *"" {
-            self.api_key = val.api_key;
-        }
-
-        if val.default_probe != None {
-            self.default_probe = val.default_probe;
-        }
-
-        if val.probe_set != None {
-            self.probe_set = val.probe_set;
-        }
-
-        if val.measurements != None {
-            self.measurements = val.measurements;
-        }
-
-        Ok(self)
-    }
 }
 
 /// Returns the path of the default config file. On Unix systems we use the standard `$HOME/.config`
