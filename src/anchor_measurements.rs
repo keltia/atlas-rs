@@ -16,6 +16,8 @@ use crate::request::{Param, RequestBuilder};
 // External crates
 use serde::{Serialize, Deserialize};
 
+// -------------------------------------------------------------------------
+
 /// All operations available
 ///
 #[derive(Debug)]
@@ -32,6 +34,8 @@ fn set_url(ops: Ops, uuid: String) -> String {
         Ops::List => "/anchor-measurements/".to_string(),      // /list
     }
 }
+
+// -------------------------------------------------------------------------
 
 /// Struct describing all data about a given anchor targetted by a measurement
 ///
