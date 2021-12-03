@@ -397,7 +397,7 @@ impl<'cl> ClientBuilder<'cl> {
     ///
     pub fn endpoint<S: Into<&'cl str>>(mut self, v: S) -> Self {
         let endp = Url::parse(v.into()).unwrap();
-        self.cl.endpoint = endp.to_owned();
+        self.cl.endpoint = endp;
         self
     }
 
