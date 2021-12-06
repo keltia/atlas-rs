@@ -284,13 +284,12 @@ impl<'rq> RequestBuilder<'rq> {
         self
     }
 
-    /// Finalize the chain and call the real API
-    ///
-    pub fn call<T>(&self) -> Result<T, APIError>
+
+    pub fn call_single<T>(&self) -> Result<T, APIError>
     where
         T: de::DeserializeOwned + std::fmt::Display,
     {
-        println!("in call");
+        println!("in call_single");
         let resp = self
             .c
             .agent
@@ -306,6 +305,24 @@ impl<'rq> RequestBuilder<'rq> {
 
         let r: T = serde_json::from_str(&txt)?;
         println!("after r={}", r);
+        Ok(r)
+    }
+
+    pub fn call_list<T>(&self) -> Result<Vec<T>, APIError>
+        where
+            T: de::DeserializeOwned + std::fmt::Display,
+    {
+        unimplemented!()
+    }
+
+    /// Finalize the chain and call the real API
+    ///
+    pub fn call<T>(&self) -> Result<T, APIError>
+    where
+        T: de::DeserializeOwned + std::fmt::Display,
+    {
+        println!("in call");
+        if self.r.o
         Ok(r)
     }
 }
