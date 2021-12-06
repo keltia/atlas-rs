@@ -295,6 +295,7 @@ impl<'cl> Client<'cl> {
         self.opts.insert("key", self.api_key.unwrap());
         RequestBuilder {
             ctx: op,
+            paged: false,
             c: self,
             r,
         }
