@@ -193,7 +193,9 @@ impl<'rq> RequestBuilder<'rq> {
     ///             .call()?
     /// ```
     ///
-    pub fn get<S: Into<Param<'rq>>>(&'rq mut self, data: S) -> &mut Self {
+    pub fn get<S>(&'rq mut self, data: S) -> &mut Self
+        where S: Into<Param<'rq>>,
+    {
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::Get, data.into()),
@@ -222,7 +224,10 @@ impl<'rq> RequestBuilder<'rq> {
     ///             .call()?
     /// ```
     ///
-    pub fn list<S: Into<Param<'rq>>>(&'rq mut self, data: S) -> &'rq mut Self {
+    pub fn list<S>(&'rq mut self, data: S) -> &'rq mut Self
+        where S: Into<Param<'rq>>,
+    {
+        self.paged = true;
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::List, data.into()),
