@@ -149,6 +149,8 @@ impl<'a> From<Param<'a>> for i64 {
 pub struct RequestBuilder<'rq> {
     /// Context is which part of the API we are targetting (`/probe/`, etc.)
     pub ctx: Cmd,
+    /// Do we return paginated results?
+    pub paged: bool,
     /// Client for API calls
     pub c: Client<'rq>,
     /// Build our request here
@@ -161,7 +163,7 @@ impl<'rq> RequestBuilder<'rq> {
     /// Create an empty struct RequestBuilder
     ///
     pub fn new(ctx: Cmd, c: Client<'rq>, r: reqwest::blocking::Request) -> Self {
-        RequestBuilder { ctx, c, r }
+        RequestBuilder { ctx, paged: false, c, r }
     }
 
     // ------------------------------------------------------------------------------------
@@ -227,11 +229,9 @@ impl<'rq> RequestBuilder<'rq> {
             Cmd::Measurements => unimplemented!(),
             Cmd::AnchorMeasurements =>
                 AnchorMeasurement::dispatch(self, anchor_measurements::Ops::List, data.into()),
-            Cmd::Credits => unimplemented!(),
             Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::List, data.into()),
             Cmd::Keys => Key::dispatch(self, keys::Ops::List, data.into()),
-            Cmd::ParticipationRequests => unimplemented!(),
-            Cmd::None => panic!("No Cmd"),
+            _ => unimplemented!(),
         }
     }
 
