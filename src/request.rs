@@ -199,14 +199,12 @@ impl<'rq> RequestBuilder<'rq> {
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::Get, data.into()),
-            Cmd::Measurements => unimplemented!(),
             Cmd::AnchorMeasurements =>
                 AnchorMeasurement::dispatch(self, anchor_measurements::Ops::Get, data.into()),
             Cmd::Credits => Credits::dispatch(self, credits::Ops::Get, data.into()),
             Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::Get, data.into()),
             Cmd::Keys => Key::dispatch(self, keys::Ops::Get, data.into()),
-            Cmd::ParticipationRequests => unimplemented!(),
-            Cmd::None => panic!("No Cmd"),
+            _ => unimplemented!()
         }
     }
 
@@ -231,7 +229,6 @@ impl<'rq> RequestBuilder<'rq> {
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::List, data.into()),
-            Cmd::Measurements => unimplemented!(),
             Cmd::AnchorMeasurements =>
                 AnchorMeasurement::dispatch(self, anchor_measurements::Ops::List, data.into()),
             Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::List, data.into()),
@@ -257,14 +254,8 @@ impl<'rq> RequestBuilder<'rq> {
     pub fn info(&'rq mut self) -> &'rq mut Self {
         // Main routing
         match self.ctx {
-            Cmd::Probes => unimplemented!(),
-            Cmd::Measurements => unimplemented!(),
-            Cmd::AnchorMeasurements => unimplemented!(),
             Cmd::Credits => Credits::dispatch(self, credits::Ops::Get, 0.into()),
-            Cmd::Anchors => unimplemented!(),
-            Cmd::Keys => unimplemented!(),
-            Cmd::ParticipationRequests => unimplemented!(),
-            Cmd::None => panic!("No Cmd"),
+            _ => unimplemented!(),
         }
     }
 
