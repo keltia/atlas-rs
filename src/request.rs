@@ -320,7 +320,10 @@ impl<'rq> RequestBuilder<'rq> {
         T: de::DeserializeOwned + std::fmt::Display,
     {
         println!("in call");
-        if self.r.o
-        Ok(r)
+        /*if self.paged {
+            let r: Vec<T> =  self.call_list()?;
+            return Ok(r)
+        }*/
+        self.call_single()
     }
 }
