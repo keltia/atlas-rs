@@ -146,3 +146,21 @@ Atlas API
                                                                   RequestBuilder()
                                                                   .call()
 
+
+    struct Callable<T> {
+    // ...
+    }
+    impl<T> Callable<T> {
+    pub fn call(self) -> T {
+    todo!()
+    }
+    }
+    
+    fn get<T>() -> Callable<T> {
+    Callable { /* ... */ }
+    }
+    
+    fn list<T>() -> Callable<Vec<T>> {
+    Callable { /* ... */ }
+    }
+    
