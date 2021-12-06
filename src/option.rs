@@ -21,7 +21,7 @@ pub type Options<'o> = HashMap<&'o str, &'o str>;
 /// let url = add_opts(&url, &opts);
 /// ```
 ///
-pub fn add_opts<'cl>(url: &str, opts: &Options) -> String {
+pub fn add_opts(url: &str, opts: &Options) -> String {
     let full = url.to_owned() + "?";
     let mut v = Vec::<String>::new();
 
