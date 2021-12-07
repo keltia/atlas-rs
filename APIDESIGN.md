@@ -131,20 +131,25 @@ Atlas API
 
 ### Call tree
 
-      client.rs                  anchor.rs/.../probe.rs           request.rs
+    client.rs                  anchor.rs/.../probe.rs           request.rs
 
-      c = Client::new()
-      c = ClientBuilder::new()
+    c = Client::new()
+    c = ClientBuilder::new()
 
-      c.anchor()
-      c.anchor_measurement()
-      c.credits()
-      c.keys()
-      c.probe()
-                                    <Type>::dispatch()
+    c.anchor()
+    c.anchor_measurement()
+    c.credits()
+    c.keys()
+    c.probe()
+                                                                RequestBuilder()
+                                                                get(N)
+                                                                list()
+                                                                info()
 
-                                                                  RequestBuilder()
-                                                                  .call()
+                                  <Type>::dispatch()
+                                                                 with(opts)
+
+                                                                .call()
 
 
     struct Callable<T> {
