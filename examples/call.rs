@@ -1,7 +1,7 @@
 //! Example on how having a `Callable` trait should help the chained calls and
 //! return values/type.
 //!
-//! Thanks to kangalioo#9108 on Discord for it.
+//! Thanks to kangalioo#9108 on the Rust Discord for the base example, now heavily modified.
 //!
 
 use std::fmt::Debug;
@@ -9,12 +9,14 @@ use anyhow::Result;
 
 /// Generic return type
 ///
-#[derive(Debug)]
-struct Callable<T> { res: T }
+#[derive(Clone, Copy, Debug)]
+struct Callable<'c, T> {
+    tag: &'c str,
+    res: T }
 
 /// Implementation.
 ///
-impl<T> Callable<T> {
+impl<'c, T> Callable<'c, T> {
     /// This is the generic return type call
     ///
     pub fn call(self) -> T
@@ -22,45 +24,95 @@ impl<T> Callable<T> {
     {
         println!("res={:?}", self.res);
         self.res
-        //unimplemented!()
     }
+
 }
 
 /// This will be our RequestBuilder thingy
-/// 
+///
 #[derive(Debug, Copy, Clone)]
-struct Request<T> {
+struct Request<'r, T> {
+    t: u32,
+    opts: &'r str,
     val: T,
 }
 
 /// And how we implement both `get()` and `list()`
 ///
-impl<T> Request<T> {
+impl<'r, T> Request<'r, T> {
     fn new(v: T) -> Self {
-        Self { val: v }
+        Self { t: 0, opts: "", val: v }
     }
 
-    fn get(self) -> Callable<T>
-        where T: Copy,
+    pub fn with(mut self, opts: &'r str) -> Self
+        where T: Debug,
     {
-        Callable { res: self.val }
+        self.opts = opts.as_str();
+        self
     }
 
-    fn list(self) -> Callable<Vec<T>>
+    fn get(self, n: u32) -> Callable<'r, T>
         where T: Copy,
     {
-        Callable { res: vec![self.val, self.val ] }
+        Callable { tag: "get", res: self.val }
+    }
+
+    fn list(self) -> Callable<'r, Vec<T>>
+        where T: Copy,
+    {
+        Callable { tag: "list", res: vec![self.val, self.val ] }
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
+struct Probe<'p> {
+    s: &'p str,
+}
+
+#[derive(Copy, Clone, Debug)]
+struct Key {
+    n: u32,
+}
+
+#[derive(Copy, Clone, Debug)]
+struct Client {
+    id: u32,
+}
+
+impl<'c> Client {
+    fn new(id: u32) -> Self {
+        Client {
+            id: id,
+        }
+    }
+
+    fn probe<T>(self) -> Request<'c, T> {
+        Request {
+            opts: "",
+            t: 1,
+            val: self.id.into(),
+        }
+    }
+
+    fn keys<T>(self) -> Request<'c, T> {
+        Request {
+            opts: "",
+            t: 2,
+            val: self.id.into(),
+        }
     }
 }
 
 /// Practical example.
 ///
 fn main() -> Result<()> {
-    let a = Request::new(5);
-    let b = Request::new("aa");
+    let c = Client::new(1);
 
-    let r = a.get().call();
-    let s = b.list().call();
+    let r: Probe = c.probe().get(5).call();
+    let l: Vec<Key> = c.keys().with("aa").list().call();
+
+    println!("r={:?}", r);
+    println!("r={:?}", l);
 
     Ok(())
 }
