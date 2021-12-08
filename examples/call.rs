@@ -31,36 +31,36 @@ impl<'c, T> Callable<'c, T> {
 /// This will be our RequestBuilder thingy
 ///
 #[derive(Debug, Copy, Clone)]
-struct Request<'r, T> {
+struct Request<'r> {
     t: u32,
     opts: &'r str,
-    val: T,
 }
 
 /// And how we implement both `get()` and `list()`
 ///
-impl<'r, T> Request<'r, T> {
-    fn new(v: T) -> Self {
-        Self { t: 0, opts: "", val: v }
+impl<'r> Request<'r> {
+    fn new() -> Self {
+        Self { t: 0, opts: "", }
     }
 
-    pub fn with(mut self, opts: &'r str) -> Self
-        where T: Debug,
-    {
-        self.opts = opts.as_str();
+    pub fn with(mut self, opts: &'r str) -> Self {
+        self.opts = opts;
         self
     }
 
-    fn get(self, n: u32) -> Callable<'r, T>
+    fn get<T>(self, n: u32) -> Callable<'r, T>
         where T: Copy,
     {
-        Callable { tag: "get", res: self.val }
+        let r: T = n * 2;
+        Callable { tag: "get", res: r }
     }
 
-    fn list(self) -> Callable<'r, Vec<T>>
+    fn list<T>(self) -> Callable<'r, Vec<T>>
         where T: Copy,
     {
-        Callable { tag: "list", res: vec![self.val, self.val ] }
+        let mut r: Vec<T> = [7, 42, 666].as_slice().into();
+
+        Callable { tag: "list", res: r }
     }
 }
 
@@ -86,19 +86,17 @@ impl<'c> Client {
         }
     }
 
-    fn probe<T>(self) -> Request<'c, T> {
+    fn probe(self) -> Request<'c> {
         Request {
             opts: "",
             t: 1,
-            val: self.id.into(),
         }
     }
 
-    fn keys<T>(self) -> Request<'c, T> {
+    fn keys(self) -> Request<'c> {
         Request {
             opts: "",
             t: 2,
-            val: self.id.into(),
         }
     }
 }
