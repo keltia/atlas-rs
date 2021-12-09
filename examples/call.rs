@@ -12,7 +12,8 @@ use anyhow::Result;
 #[derive(Clone, Copy, Debug)]
 struct Callable<'c, T> {
     tag: &'c str,
-    res: T }
+    res: T
+}
 
 /// Implementation.
 ///
@@ -51,14 +52,14 @@ impl<'r> Request<'r> {
     fn get<T>(self, n: u32) -> Callable<'r, T>
         where T: Copy,
     {
-        let r: T = n * 2;
+        let r = getint(n);
         Callable { tag: "get", res: r }
     }
 
     fn list<T>(self) -> Callable<'r, Vec<T>>
         where T: Copy,
     {
-        let mut r: Vec<T> = [7, 42, 666].as_slice().into();
+        let mut r: Vec<Probe> = getresults();
 
         Callable { tag: "list", res: r }
     }
@@ -88,17 +89,25 @@ impl<'c> Client {
 
     fn probe(self) -> Request<'c> {
         Request {
-            opts: "",
+            opts: "probe",
             t: 1,
         }
     }
 
     fn keys(self) -> Request<'c> {
         Request {
-            opts: "",
+            opts: "keys",
             t: 2,
         }
     }
+}
+
+fn getresults() -> Vec<Probe<'static>> {
+    vec![Probe{s:"probe1"}]
+}
+
+fn getint(p: u32) -> u32 {
+    42 + p
 }
 
 /// Practical example.
@@ -106,8 +115,15 @@ impl<'c> Client {
 fn main() -> Result<()> {
     let c = Client::new(1);
 
-    let r: Probe = c.probe().get(5).call();
-    let l: Vec<Key> = c.keys().with("aa").list().call();
+    let r: Probe = c
+        .probe()
+        .get(5)
+        .call();
+    let l: Vec<Key> = c
+        .keys()
+        .with("aa")
+        .list()
+        .call();
 
     println!("r={:?}", r);
     println!("r={:?}", l);
