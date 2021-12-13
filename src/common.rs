@@ -46,11 +46,10 @@ pub struct List<S> {
 /// ```
 ///
 impl<'cl> Client<'cl> {
-    pub fn fetch_one_page<S: DeserializeOwned>(
-        &self,
-        url: &'cl str,
-        page: usize,
-    ) -> Result<List<S>, APIError> {
+    pub fn fetch_one_page<S>(&self, url: &'cl str, page: usize) -> Result<List<S>, APIError>
+    where
+        S: DeserializeOwned,
+    {
         let url = format!("{}&page={}", url, page);
 
         let resp = self.agent.as_ref().unwrap().get(&url).send();
