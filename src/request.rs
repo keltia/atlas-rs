@@ -18,10 +18,10 @@ use serde::de;
 
 // Our internal crates.
 //
-use crate::anchors;
-use crate::anchors::Anchor;
 use crate::anchor_measurements;
 use crate::anchor_measurements::AnchorMeasurement;
+use crate::anchors;
+use crate::anchors::Anchor;
 use crate::client::{Client, Cmd};
 use crate::credits;
 use crate::credits::Credits;
@@ -163,7 +163,12 @@ impl<'rq> RequestBuilder<'rq> {
     /// Create an empty struct RequestBuilder
     ///
     pub fn new(ctx: Cmd, c: Client<'rq>, r: reqwest::blocking::Request) -> Self {
-        RequestBuilder { ctx, paged: false, c, r }
+        RequestBuilder {
+            ctx,
+            paged: false,
+            c,
+            r,
+        }
     }
 
     // ------------------------------------------------------------------------------------
@@ -194,17 +199,19 @@ impl<'rq> RequestBuilder<'rq> {
     /// ```
     ///
     pub fn get<S>(&'rq mut self, data: S) -> &mut Self
-        where S: Into<Param<'rq>>,
+    where
+        S: Into<Param<'rq>>,
     {
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::Get, data.into()),
-            Cmd::AnchorMeasurements =>
-                AnchorMeasurement::dispatch(self, anchor_measurements::Ops::Get, data.into()),
+            Cmd::AnchorMeasurements => {
+                AnchorMeasurement::dispatch(self, anchor_measurements::Ops::Get, data.into())
+            }
             Cmd::Credits => Credits::dispatch(self, credits::Ops::Get, data.into()),
             Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::Get, data.into()),
             Cmd::Keys => Key::dispatch(self, keys::Ops::Get, data.into()),
-            _ => unimplemented!()
+            _ => unimplemented!(),
         }
     }
 
@@ -223,14 +230,16 @@ impl<'rq> RequestBuilder<'rq> {
     /// ```
     ///
     pub fn list<S>(&'rq mut self, data: S) -> &'rq mut Self
-        where S: Into<Param<'rq>>,
+    where
+        S: Into<Param<'rq>>,
     {
         self.paged = true;
         // Main routing
         match self.ctx {
             Cmd::Probes => Probe::dispatch(self, probes::Ops::List, data.into()),
-            Cmd::AnchorMeasurements =>
-                AnchorMeasurement::dispatch(self, anchor_measurements::Ops::List, data.into()),
+            Cmd::AnchorMeasurements => {
+                AnchorMeasurement::dispatch(self, anchor_measurements::Ops::List, data.into())
+            }
             Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::List, data.into()),
             Cmd::Keys => Key::dispatch(self, keys::Ops::List, data.into()),
             _ => unimplemented!(),
@@ -282,7 +291,6 @@ impl<'rq> RequestBuilder<'rq> {
         self
     }
 
-
     pub fn call_single<T>(&self) -> Result<T, APIError>
     where
         T: de::DeserializeOwned + std::fmt::Display,
@@ -307,8 +315,8 @@ impl<'rq> RequestBuilder<'rq> {
     }
 
     pub fn call_list<T>(&self) -> Result<Vec<T>, APIError>
-        where
-            T: de::DeserializeOwned + std::fmt::Display,
+    where
+        T: de::DeserializeOwned + std::fmt::Display,
     {
         unimplemented!()
     }

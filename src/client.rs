@@ -205,7 +205,9 @@ impl<'cl> Client<'cl> {
     }
 
     #[inline]
-    pub fn anchor_measurement(self) -> RequestBuilder<'cl> { self.route_to(Cmd::AnchorMeasurements) }
+    pub fn anchor_measurement(self) -> RequestBuilder<'cl> {
+        self.route_to(Cmd::AnchorMeasurements)
+    }
 
     #[inline]
     pub fn credits(self) -> RequestBuilder<'cl> {

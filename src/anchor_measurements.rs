@@ -14,7 +14,7 @@ use std::fmt::Formatter;
 use crate::request::{Param, RequestBuilder};
 
 // External crates
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 // -------------------------------------------------------------------------
 
@@ -72,7 +72,7 @@ impl AnchorMeasurement {
             format!("{}{}", r.r.url().as_str(), add).as_str(),
             opts.iter(),
         )
-            .unwrap();
+        .unwrap();
         r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
         r
     }
