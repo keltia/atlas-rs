@@ -30,6 +30,21 @@ pub struct List<S> {
 
 /// Implement a generic fetch_one_page() function
 ///
+/// Example:
+/// ```no_run
+/// # use atlas_rs::client::Client;
+/// # use atlas_rs::common::List;
+/// # use atlas_rs::probes::Probe;
+///
+/// # let c = Client::new();
+/// # let url = "https://foo.example.net/";
+///
+/// let rawlist: List<Probe> = c.fetch_one_page(url, 1)?;
+/// if rawlist.next.is_empty() {
+/// #
+/// }
+/// ```
+///
 impl<'cl> Client<'cl> {
     pub fn fetch_one_page<S: DeserializeOwned>(
         &self,
