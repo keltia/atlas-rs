@@ -25,7 +25,7 @@ pub struct List<S> {
     /// URL to fetch previous block
     pub previous: String,
     /// Current key block
-    pub keys: Vec<S>,
+    pub data: Vec<S>,
 }
 
 /// Implement a generic fetch_one_page() function
