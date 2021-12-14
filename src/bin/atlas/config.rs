@@ -23,7 +23,7 @@
 //! in `%LOCALAPPDATA%\atlas-rs\`.
 //!
 //! Examples:
-//! ```rs
+//! ```
 //! use atlas_rs::config::Config;
 //!
 //! let cfg = Config::new();  // will contain the defaults values from here.
@@ -33,7 +33,7 @@
 //!
 //! or
 //!
-//! ```rs
+//! ```
 //! use atlas_rs::config::Config;
 //!
 //! let cfg = Config::load("./atlas.toml").unwrap();
@@ -45,7 +45,7 @@
 //!
 //! Example:
 //!
-//! ```rs
+//! ```
 //! use atlas_rs::config::Config;
 //!
 //! let cfg = Config::load("./atlas.toml").unwrap();
@@ -142,7 +142,7 @@ impl Config {
     /// Create a `Config` struct with default values.
     ///
     /// Example:
-    /// ```rs
+    /// ```
     ///  # use atlas_rs::config::Config;
     ///
     ///  let cfg = Config::new();
