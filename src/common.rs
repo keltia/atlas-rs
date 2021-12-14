@@ -107,10 +107,10 @@ pub fn get_page_num(url: &str) -> usize {
     let re = regex!(r"page=(\d+)");
 
     // If None, return 0
-    return match re.captures(url) {
+    match re.captures(url) {
         None => 0,
         Some(m) => m.get(1).unwrap().as_str().parse::<usize>().unwrap(),
-    };
+    }
 }
 
 #[cfg(test)]
