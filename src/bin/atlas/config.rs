@@ -143,9 +143,9 @@ impl Config {
     ///
     /// Example:
     /// ```
-    ///  # use atlas_rs::config::Config;
+    /// # use atlas_rs::config::Config;
     ///
-    ///  let cfg = Config::new();
+    /// let cfg = Config::new();
     /// ```
     ///
     pub fn new() -> Config {
@@ -160,7 +160,7 @@ impl Config {
     ///
     /// ```no_run
     ///
-    ///   let cfg = Config::load("./atlas.conf");
+    /// let cfg = Config::load("./atlas.conf");
     /// ```
     ///
     pub fn load(fname: &str) -> Result<Self> {
