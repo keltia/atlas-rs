@@ -188,7 +188,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///
     /// Example:
     ///
-    /// ```rs
+    /// ```
     /// # use atlas_rs::client::Client;
     ///
     /// let c = Client::new();
@@ -219,7 +219,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///
     /// Example:
     ///
-    /// ```rs
+    /// ```
     /// # use atlas_rs::client::Client;
     ///
     /// let c = Client::new();
@@ -250,7 +250,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///
     /// Example:
     ///
-    /// ```rs
+    /// ```
     /// # use atlas_rs::client::Client;
     ///
     /// let c = Client::new();
@@ -272,7 +272,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///
     /// Example:
     ///
-    /// ```rs
+    /// ```
     /// # use atlas_rs::client::Client;
     ///
     /// let c = Client::new();
