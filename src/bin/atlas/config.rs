@@ -234,26 +234,6 @@ mod tests {
     }
 
     #[test]
-    fn test_reload_ok() {
-        let mut c = Config::new();
-
-        assert_eq!(Some(0), c.default_probe);
-
-        let d = c.reload("src/bin/atlas/config.toml").unwrap();
-        assert_eq!(Some(666), d.default_probe);
-    }
-
-    #[test]
-    fn test_reload_nok() {
-        let mut c = Config::new();
-
-        assert_eq!(Some(0), c.default_probe);
-
-        let d = c.reload("/nonexistent");
-        assert!(d.is_err());
-    }
-
-    #[test]
     #[cfg(unix)]
     fn test_default_file() -> Result<()> {
         let h = env::var("HOME")?;
