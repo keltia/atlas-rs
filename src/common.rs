@@ -1,13 +1,14 @@
 //! Some commonly used functions
 //!
+//! Here we have an implementation of a generic paginator
 
-/// Standard library
+// Standard library
 
-/// Our crates
+// Our crates
 use crate::client::Client;
 use crate::errors::APIError;
 
-/// External crates
+// External crates
 use anyhow::Result;
 use lazy_regex::regex;
 use reqwest::StatusCode;
