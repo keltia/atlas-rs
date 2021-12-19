@@ -196,6 +196,7 @@ impl<'rq> RequestBuilder<'rq> {
     /// let res = c.probe()
     ///             .get(666)
     ///             .call()?
+    /// # ;
     /// ```
     ///
     pub fn get<S>(&'rq mut self, data: S) -> &mut Self
@@ -227,6 +228,7 @@ impl<'rq> RequestBuilder<'rq> {
     /// let res = c.probe()
     ///             .list()         // XXX
     ///             .call()?
+    /// # ;
     /// ```
     ///
     pub fn list<S>(&'rq mut self, data: S) -> &'rq mut Self
@@ -258,6 +260,7 @@ impl<'rq> RequestBuilder<'rq> {
     /// let res = c.probe()
     ///             .info()         // XXX
     ///             .call()?
+    /// # ;
     /// ```
     ///
     pub fn info(&'rq mut self) -> &'rq mut Self {
@@ -278,9 +281,9 @@ impl<'rq> RequestBuilder<'rq> {
     /// let c = Client::new();
     ///
     /// let res = c.probe()
-    ///             .get(pn)         // XXX
-    ///             .with([("opt1", "foo"), ("opt2", "bar"))
-    ///             call()?
+    ///             .with([("opt1", "foo"), ("opt2", "bar")])
+    ///             .list()         // XXX
+    ///             .call()?
     /// # ;
     /// ```
     ///
