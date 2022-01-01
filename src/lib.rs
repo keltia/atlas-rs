@@ -62,6 +62,7 @@ pub mod common;
 pub mod credits;
 pub mod errors;
 pub mod keys;
+pub mod measurement;
 pub mod option;
 pub mod probes;
 pub mod request;
