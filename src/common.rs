@@ -85,6 +85,22 @@ impl<'cl> Client<'cl> {
     }
 }
 
+/// Generic return type
+///
+#[derive(Clone, Copy, Debug)]
+pub struct Callable<T> {
+    res: T,
+}
+
+/// Implementation.
+///
+impl<T> Callable<T> {
+    /// This is the generic return type call
+    ///
+    pub fn call(self) -> T { self.res }
+}
+
+
 /// Get a n URL and parse it to extract the next page number.
 ///
 /// Example:

@@ -1,7 +1,7 @@
 //! Struct and methods to deal with probes
 //!
 //! Probes are one of the main objects you deal with in the API.  These devices are
-//! in various places (hom'es, datacenters, etc.) and are used for measurements, some
+//! in various places (homes, datacenters, etc.) and are used for measurements, some
 //! initiated by the probes themselves and some user-generated ones.
 //!
 //! Measurements are not handled by this part of the API, please see `measurements.rs` for this.
@@ -36,38 +36,23 @@ use reqwest::StatusCode;
 // Our crates
 //
 use crate::client::Client;
-use crate::request::{Param, RequestBuilder};
+use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
 
-/// All operations available
-///
-#[derive(Debug)]
-pub enum Ops {
-    List = 1,
-    Get,
-    Set,
-    Update,
-    Measurement,
-    Archive,
-    Rankings,
-    Tags,
-    Slugs,
-}
-
 /// Generate the proper URL for the service we want in the given category
 ///
-fn set_url(ops: Ops, p: u32) -> String {
-    match ops {
-        Ops::List => "/probes/".to_string(),      // /list
-        Ops::Get => format!("/probes/{}/", p),    // /get
-        Ops::Set => format!("/probes/{}/", p),    // /set
-        Ops::Update => format!("/probes/{}/", p), // /update
-        Ops::Measurement => format!("/probes/{}/measurements/", p), // P/measurements
-        Ops::Archive => "/probes/archive/".to_string(), // /archive
-        Ops::Rankings => "/probes/rankings/".to_string(), // rankings
-        Ops::Tags => "/probes/tags/".to_string(), // /tags/
-        Ops::Slugs => format!("/probes/tags/{}/slugs", p), // /tags/T/slugs/
+pub fn set_url(op: Op, p: u32) -> String {
+    match op {
+        Op::List => "/probes/".to_string(),      // /list
+        Op::Get => format!("/probes/{}/", p),    // /get
+        Op::Set => format!("/probes/{}/", p),    // /set
+        Op::Update => format!("/probes/{}/", p), // /update
+        Op::Measurement => format!("/probes/{}/measurements/", p), // P/measurements
+        Op::Archive => "/probes/archive/".to_string(), // /archive
+        Op::Rankings => "/probes/rankings/".to_string(), // rankings
+        Op::Tags => "/probes/tags/".to_string(), // /tags/
+        Op::Slugs => format!("/probes/tags/{}/slugs", p), // /tags/T/slugs/
     }
 }
 
@@ -178,27 +163,6 @@ pub struct ProbeList {
 /// Methods associated with probes.
 ///
 impl Probe {
-    /// Main routing that build the URL for the request
-    ///
-    pub(crate) fn dispatch<'a>(
-        r: &'a mut RequestBuilder<'a>,
-        ops: Ops,
-        data: Param<'a>,
-    ) -> &'a mut RequestBuilder<'a> {
-        // Get the parameter
-        let add = set_url(ops, data.into());
-
-        // Setup URL with potential parameters like `key`.
-        let url = reqwest::Url::parse_with_params(
-            format!("{}{}", r.r.url().as_str(), add).as_str(),
-            &r.c.opts,
-        )
-        .unwrap();
-
-        r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
-        r
-    }
-
     /// Alternate API for probes
     ///
     /// Example:
@@ -322,11 +286,6 @@ impl<'cl> Client<'cl> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_set_url() {
-        assert_eq!("/probes/666/measurements/", set_url(Ops::Measurement, 666));
-    }
 
     #[test]
     fn test_get_probe() {}

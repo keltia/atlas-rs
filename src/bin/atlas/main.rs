@@ -70,7 +70,7 @@ fn main() -> Result<()> {
             ProbeSubCommand::Info(opts) => {
                 let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
 
-                let p: Probe = c.probe().get(pn).call()?;
+                let p: Probe = c.probe().get(pn)?;
                 println!("Probe {} is:\n{:?}", pn, p);
             }
             ProbeSubCommand::List(_opts) => (),
@@ -105,7 +105,7 @@ fn main() -> Result<()> {
         // extra utility command
         SubCommand::Ip(opts) => {
             let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
-            let p: Result<Probe, APIError> = c.probe().get(pn).call();
+            let p: Result<Probe, APIError> = c.probe().get(pn);
 
             match p {
                 Ok(p) => {

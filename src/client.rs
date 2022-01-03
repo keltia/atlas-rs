@@ -64,7 +64,7 @@ pub enum AF {
 
 /// Represents the different categories aka first level of requests (probes, credits, etc.
 #[derive(Debug)]
-pub enum Cmd {
+pub enum Ctx {
     None = 0,
     Anchors,
     AnchorMeasurements,
@@ -75,9 +75,9 @@ pub enum Cmd {
     Probes,
 }
 
-impl Default for Cmd {
+impl Default for Ctx {
     fn default() -> Self {
-        Cmd::None
+        Ctx::None
     }
 }
 
@@ -201,22 +201,22 @@ impl<'cl> Client<'cl> {
     //
     #[inline]
     pub fn anchors(self) -> RequestBuilder<'cl> {
-        self.route_to(Cmd::Anchors)
+        self.route_to(Ctx::Anchors)
     }
 
     #[inline]
     pub fn anchor_measurement(self) -> RequestBuilder<'cl> {
-        self.route_to(Cmd::AnchorMeasurements)
+        self.route_to(Ctx::AnchorMeasurements)
     }
 
     #[inline]
     pub fn credits(self) -> RequestBuilder<'cl> {
-        self.route_to(Cmd::Credits)
+        self.route_to(Ctx::Credits)
     }
 
     #[inline]
     pub fn keys(self) -> RequestBuilder<'cl> {
-        self.route_to(Cmd::Keys)
+        self.route_to(Ctx::Keys)
     }
 
     #[inline]
@@ -226,7 +226,7 @@ impl<'cl> Client<'cl> {
 
     #[inline]
     pub fn probe(self) -> RequestBuilder<'cl> {
-        self.route_to(Cmd::Probes)
+        self.route_to(Ctx::Probes)
     }
 
     // ---------------------------------------------------------------------
@@ -281,7 +281,7 @@ impl<'cl> Client<'cl> {
 
     /// Private routing function for first level (`probe()`, `keys()`, etc.)
     ///
-    fn route_to(mut self, op: Cmd) -> RequestBuilder<'cl> {
+    fn route_to(mut self, op: Ctx) -> RequestBuilder<'cl> {
         let url = self.endpoint.to_owned();
 
         // Default HTTP operation is GET, some will be POST/DELETE but that is handled in the

@@ -21,32 +21,22 @@ use std::fmt::Formatter;
 use serde::{Deserialize, Serialize};
 
 // Our crates
-use crate::request::{Param, RequestBuilder};
+use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
 
-/// All operations available
-#[derive(Debug)]
-pub enum Ops {
-    Get = 1,
-    Incomes,
-    Expenses,
-    Transfers,
-    Transactions,
-    Members,
-    Claim,
-}
-
 /// Generate the proper URL for the service we want in the given category
-fn set_url(ops: Ops) -> String {
-    match ops {
-        Ops::Get => "/credits/".to_string(),                 // /get
-        Ops::Incomes => "/credits/incomes/".to_string(),     // /get
-        Ops::Expenses => "/credits/expenses/".to_string(),   // /get
-        Ops::Transfers => "/credits/transfers/".to_string(), // /get
-        Ops::Transactions => "/credits/transactions/".to_string(), // /get
-        Ops::Members => "/credits/members/".to_string(),     // /get
-        Ops::Claim => "/credits/members/claim/".to_string(), // /create
+///
+pub fn set_url(op: Op) -> String {
+    match op {
+        Op::Get => "/credits/".to_string(),                       // /get
+        Op::Incomes => "/credits/incomes/".to_string(),           // /get
+        Op::Expenses => "/credits/expenses/".to_string(),         // /get
+        Op::Transfers => "/credits/transfers/".to_string(),       // /get
+        Op::Transactions => "/credits/transactions/".to_string(), // /get
+        Op::Members => "/credits/members/".to_string(),           // /get
+        Op::Claim => "/credits/members/claim/".to_string(),       // /create
+        _ => panic!("not possible"),
     }
 }
 
@@ -93,25 +83,6 @@ pub struct Credits {
 impl fmt::Display for Credits {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
-    }
-}
-
-impl Credits {
-    pub fn dispatch<'cr>(
-        r: &'cr mut RequestBuilder<'cr>,
-        ops: Ops,
-        _data: Param,
-    ) -> &'cr mut RequestBuilder<'cr> {
-        let opts = r.c.opts.clone();
-        let add = set_url(ops);
-
-        let url = reqwest::Url::parse_with_params(
-            format!("{}{}", r.r.url().as_str(), add).as_str(),
-            opts.iter(),
-        )
-        .unwrap();
-        r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
-        r
     }
 }
 

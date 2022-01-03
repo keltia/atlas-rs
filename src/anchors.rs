@@ -16,22 +16,17 @@ use serde::{Deserialize, Serialize};
 
 // Our crates
 use crate::probes::Geometry;
-use crate::request::{Param, RequestBuilder};
+use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
 
-/// All operations available
-#[derive(Debug)]
-pub enum Ops {
-    Get,
-    List,
-}
-
 /// Generate the proper URL for the service we want in the given category
-fn set_url(ops: Ops, id: i64) -> String {
-    match ops {
-        Ops::Get => format!("/anchors/{}/", id), // /get
-        Ops::List => "/anchors/".to_string(),    // /list
+///
+pub fn set_url(op: Op, id: i64) -> String {
+    match op {
+        Op::Get => format!("/anchors/{}/", id), // /get
+        Op::List => "/anchors/".to_string(),    // /list
+        _ => panic!("not possible"),
     }
 }
 
@@ -82,25 +77,6 @@ pub struct Anchor {
     pub date_live: String,
     /// Version [ 0, 1, 2, 99 ]
     pub hardware_version: i32,
-}
-
-impl Anchor {
-    pub fn dispatch<'a>(
-        r: &'a mut RequestBuilder<'a>,
-        ops: Ops,
-        data: Param<'a>,
-    ) -> &'a mut RequestBuilder<'a> {
-        let opts = r.c.opts.clone();
-        let add = set_url(ops, data.into());
-
-        let url = reqwest::Url::parse_with_params(
-            format!("{}{}", r.r.url().as_str(), add).as_str(),
-            opts.iter(),
-        )
-        .unwrap();
-        r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
-        r
-    }
 }
 
 /// Implement the Display trait.

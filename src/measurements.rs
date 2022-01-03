@@ -24,35 +24,20 @@ use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
 
-/// All operations available
-#[derive(Debug)]
-pub enum Ops {
-    Create,
-    Delete,
-    Get,
-    List,
-    Update,
-}
-
-/// Dispatch table for the measurements ops.
+/// Generate the proper URL for the service we want in the given category
 ///
-impl Ops {
-    /// Generate the proper URL for the service we want in the given category
-    ///
-    pub fn set_url(self, op: Op, uuid: String) -> String {
-        match self {
-            Ops::Create => unimplemented!(),
-            Ops::Delete => unimplemented!(),
-            Ops::Get => format!("/measurements/{}/", uuid), // /get
-            Ops::List => "/measurements/".to_string(),      // /list
-            Ops::Update => unimplemented!(),
-        }
+pub fn set_url(op: Op, uuid: String) -> String {
+    match op {
+        Op::Create => unimplemented!(),
+        Op::Delete => unimplemented!(),
+        Op::Get => format!("/measurements/{}/", uuid), // /get
+        Op::List => "/measurements/".to_string(),      // /list
+        Op::Update => unimplemented!(),
+        _ => panic!("not possible"),
     }
 }
 
 /// Struct describing all data about a given measurement
 ///
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Measurement {
-
-}
+pub struct Measurement {}

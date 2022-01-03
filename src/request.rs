@@ -22,17 +22,59 @@ use crate::anchor_measurements;
 use crate::anchor_measurements::AnchorMeasurement;
 use crate::anchors;
 use crate::anchors::Anchor;
-use crate::client::{Client, Cmd};
+use crate::client::{Client, Ctx};
+use crate::common::Callable;
 use crate::credits;
 use crate::credits::Credits;
 use crate::errors::APIError;
 use crate::keys;
 use crate::keys::Key;
+use crate::measurements;
+use crate::measurements::Measurement;
 use crate::option::Options;
 use crate::probes;
 use crate::probes::Probe;
 
 // ------------------------------------------------------------
+
+/// All operations available
+///
+#[derive(Debug)]
+pub enum Op {
+    Archive,
+    Claim,
+    Create,
+    Delete,
+    Expenses,
+    Get,
+    Incomes,
+    Info,
+    List,
+    Measurement,
+    Members,
+    Permissions,
+    Rankings,
+    Set,
+    Tags,
+    Transactions,
+    Transfers,
+    Update,
+}
+
+// Dispatch table for the various operations in the different contexts.
+//
+fn get_ops_url<T>(ctx: &Ctx, op: Op, p: T) -> String {
+    match ctx {
+        Ctx::AnchorMeasurements => anchor_measurements::set_url(op, p.into()),
+        Ctx::Anchors => anchors::set_url(op, p.into()),
+        Ctx::Credits => credits::set_url(op),
+        Ctx::Keys => keys::set_url(op, p.into()),
+        Ctx::Measurements => measurements::set_url(op, p.into()),
+        Ctx::ParticipationRequests => participation_requests::set_url(op, p.into()),
+        Ctx::Probes => probes::set_url(op, p.into()),
+        Ctx::None => panic!("should not happen"),
+    }
+}
 
 /// This enum is for passing the right kind of parameter to `get()`,
 /// there might be a better way for this.
@@ -148,7 +190,7 @@ impl<'a> From<Param<'a>> for i64 {
 #[derive(Debug)]
 pub struct RequestBuilder<'rq> {
     /// Context is which part of the API we are targetting (`/probe/`, etc.)
-    pub ctx: Cmd,
+    pub ctx: Ctx,
     /// Do we return paginated results?
     pub paged: bool,
     /// Client for API calls
@@ -162,7 +204,7 @@ pub struct RequestBuilder<'rq> {
 impl<'rq> RequestBuilder<'rq> {
     /// Create an empty struct RequestBuilder
     ///
-    pub fn new(ctx: Cmd, c: Client<'rq>, r: reqwest::blocking::Request) -> Self {
+    pub fn new(ctx: Ctx, c: Client<'rq>, r: reqwest::blocking::Request) -> Self {
         RequestBuilder {
             ctx,
             paged: false,
@@ -199,21 +241,38 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn get<S>(&'rq mut self, data: S) -> &mut Self
+    pub fn get<S, T>(&'rq mut self, data: S) -> Result<T, APIError>
     where
         S: Into<Param<'rq>>,
+        T: de::DeserializeOwned + std::fmt::Display,
     {
-        // Main routing
-        match self.ctx {
-            Cmd::Probes => Probe::dispatch(self, probes::Ops::Get, data.into()),
-            Cmd::AnchorMeasurements => {
-                AnchorMeasurement::dispatch(self, anchor_measurements::Ops::Get, data.into())
-            }
-            Cmd::Credits => Credits::dispatch(self, credits::Ops::Get, data.into()),
-            Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::Get, data.into()),
-            Cmd::Keys => Key::dispatch(self, keys::Ops::Get, data.into()),
-            _ => unimplemented!(),
-        }
+        // Get the parameter
+        let add = get_ops_url(&self.ctx, Op::Get, data.into());
+
+        // Setup URL with potential parameters like `key`.
+        let url = reqwest::Url::parse_with_params(
+            format!("{}{}", self.r.url().as_str(), add).as_str(),
+            &self.c.opts,
+        )
+        .unwrap();
+
+        self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
+        let resp = self
+            .c
+            .agent
+            .as_ref()
+            .unwrap()
+            .get(self.r.url().as_str())
+            .send()?;
+
+        println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
+
+        let txt = resp.text()?;
+        println!("after text={}", txt);
+
+        let r: T = serde_json::from_str(&txt)?;
+        println!("after r={}", r);
+        Ok(r)
     }
 
     /// This is the `list` method which return a set of results.
@@ -226,26 +285,45 @@ impl<'rq> RequestBuilder<'rq> {
     /// let c = Client::new();
     ///
     /// let res = c.probe()
-    ///             .list()         // XXX
-    ///             .call()?
+    ///             .list(data)?
     /// # ;
     /// ```
     ///
-    pub fn list<S>(&'rq mut self, data: S) -> &'rq mut Self
+    pub fn list<S, T>(&'rq mut self, data: S) -> Result<Vec<T>, APIError>
     where
         S: Into<Param<'rq>>,
+        T: de::DeserializeOwned + std::fmt::Display + std::fmt::Debug,
     {
         self.paged = true;
         // Main routing
-        match self.ctx {
-            Cmd::Probes => Probe::dispatch(self, probes::Ops::List, data.into()),
-            Cmd::AnchorMeasurements => {
-                AnchorMeasurement::dispatch(self, anchor_measurements::Ops::List, data.into())
-            }
-            Cmd::Anchors => Anchor::dispatch(self, anchors::Ops::List, data.into()),
-            Cmd::Keys => Key::dispatch(self, keys::Ops::List, data.into()),
-            _ => unimplemented!(),
-        }
+
+        // Get the parameter
+        let add = get_ops_url(self.ctx, Op::List, data.into());
+
+        // Setup URL with potential parameters like `key`.
+        let url = reqwest::Url::parse_with_params(
+            format!("{}{}", self.r.url().as_str(), add).as_str(),
+            &self.c.opts,
+        )
+        .unwrap();
+
+        self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
+        let resp = self
+            .c
+            .agent
+            .as_ref()
+            .unwrap()
+            .get(self.r.url().as_str())
+            .send()?;
+
+        println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
+
+        let txt = resp.text()?;
+        println!("after text={}", txt);
+
+        let r: Vec<T> = serde_json::from_str(&txt)?;
+        println!("after r={:?}", r);
+        Ok(r)
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -258,17 +336,41 @@ impl<'rq> RequestBuilder<'rq> {
     /// let c = Client::new();
     ///
     /// let res = c.probe()
-    ///             .info()         // XXX
-    ///             .call()?
+    ///             .info()?
     /// # ;
     /// ```
     ///
-    pub fn info(&'rq mut self) -> &'rq mut Self {
-        // Main routing
-        match self.ctx {
-            Cmd::Credits => Credits::dispatch(self, credits::Ops::Get, 0.into()),
-            _ => unimplemented!(),
-        }
+    pub fn info(&'rq mut self) -> Result<T, APIError>
+    where
+        T: de::DeserializeOwned + std::fmt::Display,
+    {
+        // Get the parameter
+        let add = get_ops_url(&self.ctx, Op::Info, data.into());
+
+        // Setup URL with potential parameters like `key`.
+        let url = reqwest::Url::parse_with_params(
+            format!("{}{}", self.r.url().as_str(), add).as_str(),
+            &self.c.opts,
+        )
+        .unwrap();
+
+        self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
+        let resp = self
+            .c
+            .agent
+            .as_ref()
+            .unwrap()
+            .get(self.r.url().as_str())
+            .send()?;
+
+        println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
+
+        let txt = resp.text()?;
+        println!("after text={}", txt);
+
+        let r: T = serde_json::from_str(&txt)?;
+        println!("after r={}", r);
+        Ok(r)
     }
 
     /// Makes it easy to specify options
@@ -294,47 +396,12 @@ impl<'rq> RequestBuilder<'rq> {
         self
     }
 
-    pub fn call_single<T>(&self) -> Result<T, APIError>
-    where
-        T: de::DeserializeOwned + std::fmt::Display,
-    {
-        println!("in call_single");
-        let resp = self
-            .c
-            .agent
-            .as_ref()
-            .unwrap()
-            .get(self.r.url().as_str())
-            .send()?;
-
-        println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
-
-        let txt = resp.text()?;
-        println!("after text={}", txt);
-
-        let r: T = serde_json::from_str(&txt)?;
-        println!("after r={}", r);
-        Ok(r)
-    }
-
-    pub fn call_list<T>(&self) -> Result<Vec<T>, APIError>
-    where
-        T: de::DeserializeOwned + std::fmt::Display,
-    {
-        unimplemented!()
-    }
-
     /// Finalize the chain and call the real API
     ///
     pub fn call<T>(&self) -> Result<T, APIError>
     where
         T: de::DeserializeOwned + std::fmt::Display,
     {
-        println!("in call");
-        /*if self.paged {
-            let r: Vec<T> =  self.call_list()?;
-            return Ok(r)
-        }*/
-        self.call_single()
+        unimplemented!()
     }
 }

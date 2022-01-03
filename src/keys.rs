@@ -24,32 +24,22 @@ use reqwest::StatusCode;
 
 // Our crates
 use crate::client::Client;
-use crate::request::{Param, RequestBuilder};
+use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
 
-/// All operations available
-#[derive(Debug)]
-pub enum Ops {
-    Permissions = 1,
-    Targets,
-    Get,
-    Set,
-    Delete,
-    List,
-    Create,
-}
-
 /// Generate the proper URL for the service we want in the given category
-fn set_url(ops: Ops, uuid: String) -> String {
-    match ops {
-        Ops::Permissions => "/keys/permissions/".to_string(), // /permissions
-        Ops::Targets => format!("/keys/permissions/{}/targets/", uuid), // /get targets
-        Ops::Get => format!("/keys/{}/", uuid),               // /get
-        Ops::Set => format!("/keys/{}/", uuid),               // /set
-        Ops::Delete => format!("/keys/{}/", uuid),            // /delete
-        Ops::List => "/keys/".to_string(),                    // /list
-        Ops::Create => "/keys/".to_string(),                  // /create
+///
+pub fn set_url(op: Op, uuid: String) -> String {
+    match op {
+        Op::Permissions => "/keys/permissions/".to_string(), // /permissions
+        Op::Targets => format!("/keys/permissions/{}/targets/", uuid), // /get targets
+        Op::Get => format!("/keys/{}/", uuid),               // /get
+        Op::Set => format!("/keys/{}/", uuid),               // /set
+        Op::Delete => format!("/keys/{}/", uuid),            // /delete
+        Op::List => "/keys/".to_string(),                    // /list
+        Op::Create => "/keys/".to_string(),                  // /create
+        _ => panic!("not possible"),
     }
 }
 
@@ -78,25 +68,6 @@ pub struct Key {
     /// Key type
     #[serde(rename = "type")]
     pub ktype: String,
-}
-
-impl Key {
-    pub fn dispatch<'a>(
-        r: &'a mut RequestBuilder<'a>,
-        ops: Ops,
-        data: Param<'a>,
-    ) -> &'a mut RequestBuilder<'a> {
-        let opts = r.c.opts.clone();
-        let add = set_url(ops, data.into());
-
-        let url = reqwest::Url::parse_with_params(
-            format!("{}{}", r.r.url().as_str(), add).as_str(),
-            opts.iter(),
-        )
-        .unwrap();
-        r.r = reqwest::blocking::Request::new(r.r.method().clone(), url);
-        r
-    }
 }
 
 /// Implement the Display trait.
