@@ -64,6 +64,7 @@ pub mod errors;
 pub mod keys;
 pub mod measurements;
 pub mod option;
+pub mod participation_requests;
 pub mod probes;
 pub mod request;
 
