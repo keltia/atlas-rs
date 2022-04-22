@@ -1,6 +1,6 @@
 //! # atlas-rs
 //!
-//! The `atlas-rs`provides with a high-level [Rust] API to the RIPE Atlas probes and
+//! The `atlas-rs` carte provides with a high-level [Rust] API to the RIPE Atlas probes and
 //! measurement network.
 //!
 //! `atlas-rs` is a blocking HTTP client for now, it may evolve into a more proper
