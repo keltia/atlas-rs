@@ -54,7 +54,7 @@ In addition to these major commands, there are a few shortcut commands (see belo
 
 ## Installation
 
-This will be available as a crate on [crate.io](https://crate.io/atlas-rs) when it is can be released, there are still many incomplete parts.
+This will be available as a crate on [crates.io](https://crates.io/atlas-rs) when it is can be released, there are still many incomplete parts.
 
 ## Documentation
 
