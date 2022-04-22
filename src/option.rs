@@ -3,12 +3,56 @@
 
 // Std library
 use std::collections::HashMap;
+use std::iter::FromIterator;
+use std::array::IntoIter;
 
 // External crates
 use itertools::Itertools;
 
 /// Our own option type
-pub type Options<'o> = HashMap<&'o str, &'o str>;
+#[derive(Debug)]
+pub struct Options<'o> { h: HashMap<&'o str, &'o str> }
+
+impl<K, V, const N: usize> From<[(K, V); N]> for Options<'_> {
+    fn from(a: [(K, V); N]) -> Self {
+        std::array::IntoIter::new(a).collect()
+    }
+}
+
+impl<'o> Options<'o> {
+    #[inline]
+    pub fn insert(&mut self, k: &'o str, v: &'o str) -> Option<&'o str> {
+        self.h.insert(k, v)
+    }
+
+    /// Gets an iterator over the keys of the map.
+    #[inline]
+    pub fn keys<K, V>(&self) -> Keys<'_, K, V> {
+        Keys {
+            iter: self.h.keys()
+        }
+    }
+}
+
+impl<'o> FromIterator<(&'o str, &'o str)> for Options<'o> {
+    fn from_iter<T>(iter: T) -> Self
+        where
+            T: IntoIterator<Item = (&'o str, &'o str)>,
+    {
+        Options {
+            h: FromIterator::from_iter(iter),
+        }
+    }
+}
+
+/// An iterator over an Options  keys.
+pub struct Keys<'a, K, V> {
+    iter: KeysImpl<'a, K, V>,
+}
+
+type KeysImpl<'a, K, V> = HashMap<K,V>::Keys<'a>;
+
+//delegate_iterator!((Keys<'a>) => &'a str);
 
 /// Take an url and a set of options to add to the parameters
 ///

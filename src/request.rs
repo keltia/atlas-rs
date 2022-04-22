@@ -32,6 +32,8 @@ use crate::keys::Key;
 use crate::measurements;
 use crate::measurements::Measurement;
 use crate::option::Options;
+use crate::participation_requests;
+use crate::participation_requests::ParticipationRequests;
 use crate::probes;
 use crate::probes::Probe;
 
@@ -298,7 +300,7 @@ impl<'rq> RequestBuilder<'rq> {
         // Main routing
 
         // Get the parameter
-        let add = get_ops_url(self.ctx, Op::List, data.into());
+        let add = get_ops_url(&self.ctx, Op::List, data.into());
 
         // Setup URL with potential parameters like `key`.
         let url = reqwest::Url::parse_with_params(
@@ -340,12 +342,12 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn info(&'rq mut self) -> Result<T, APIError>
+    pub fn info<T>(&'rq mut self) -> Result<T, APIError>
     where
         T: de::DeserializeOwned + std::fmt::Display,
     {
         // Get the parameter
-        let add = get_ops_url(&self.ctx, Op::Info, data.into());
+        let add = get_ops_url(&self.ctx, Op::Info, 0.into());
 
         // Setup URL with potential parameters like `key`.
         let url = reqwest::Url::parse_with_params(
@@ -377,15 +379,14 @@ impl<'rq> RequestBuilder<'rq> {
     ///
     /// Example:
     ///
-    /// ```
+    /// ```no_run
     /// # use atlas_rs::client::Client;
     ///
     /// let c = Client::new();
     ///
     /// let res = c.probe()
-    ///             .with([("opt1", "foo"), ("opt2", "bar")])
-    ///             .list()         // XXX
-    ///             .call()?
+    ///             .with([("opt1", "foo"), ("opt2", "bar")].into())
+    ///             .list(data)?         // XXX
     /// # ;
     /// ```
     ///
@@ -405,3 +406,5 @@ impl<'rq> RequestBuilder<'rq> {
         unimplemented!()
     }
 }
+
+impl<K,V;N as usize>
