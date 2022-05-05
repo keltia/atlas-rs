@@ -163,7 +163,7 @@ impl Config {
     /// let cfg = Config::load("./atlas.conf");
     /// ```
     ///
-    pub fn load(fname: &str) -> Result<Self> {
+    pub fn load(fname: PathBuf) -> Result<Self> {
         let content = fs::read_to_string(fname)?;
         println!("{:?}", content);
         Ok(toml::from_str(&content)?)

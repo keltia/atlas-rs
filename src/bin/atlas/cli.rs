@@ -1,3 +1,7 @@
+//! Everything related to CLI option and argument handling.
+//!
+
+use std::path::PathBuf;
 use clap::{crate_authors, AppSettings, Parser};
 
 /// Binary name
@@ -18,7 +22,7 @@ use crate::util::IpOpts;
 pub(crate) struct Opts {
     /// configuration file
     #[clap(short = 'c', long)]
-    pub(crate) config: Option<String>,
+    pub(crate) config: Option<PathBuf>,
     /// debug mode
     #[clap(short = 'D', long = "debug")]
     pub(crate) debug: bool,
