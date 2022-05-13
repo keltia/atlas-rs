@@ -30,7 +30,7 @@ pub fn set_url(op: Op, uuid: String) -> String {
 
 // -------------------------------------------------------------------------
 
-/// Struct describing all data about a given anchor targetted by a measurement
+/// Struct describing all data about a given anchor targeted by a measurement
 ///
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AnchorMeasurement {
