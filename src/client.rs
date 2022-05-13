@@ -120,7 +120,7 @@ pub struct Client<'cl> {
     pub(crate) api_key: Option<&'cl str>,
 
     /// Optional
-    pub(crate) endpoint: reqwest::Url,
+    pub(crate) endpoint: Url,
     pub(crate) default_probe: u32,
     pub(crate) area_type: &'cl str,
     pub(crate) area_value: &'cl str,
