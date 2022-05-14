@@ -1,9 +1,16 @@
-use clap::{crate_authors, AppSettings, Parser};
 
 /// Binary name
 pub(crate) const NAME: &str = "atlas";
 /// Binary version, different from the API itself represented the crate.
 pub(crate) const VERSION: &str = "0.3.0";
+
+// Std library
+//
+use std::path::PathBuf;
+
+// External crates
+//
+use clap::{crate_authors, AppSettings, Parser};
 
 // Import our various data structures & enums
 use crate::data::{CredOpts, KeyOpts, MeasurementOpts, ProbeOpts};
@@ -18,7 +25,7 @@ use crate::util::IpOpts;
 pub(crate) struct Opts {
     /// configuration file
     #[clap(short = 'c', long)]
-    pub(crate) config: Option<String>,
+    pub(crate) config: Option<PathBuf>,
     /// debug mode
     #[clap(short = 'D', long = "debug")]
     pub(crate) debug: bool,

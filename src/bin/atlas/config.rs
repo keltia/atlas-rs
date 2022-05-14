@@ -60,7 +60,7 @@
 // Standard library
 use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 // External crates
 use anyhow::Result;
@@ -71,11 +71,11 @@ use serde::Deserialize;
 use home::home_dir;
 
 /// Default configuration filename
-const CONFIG: &str = "config.toml";
+const CONFIG: PathBuf = PathBuf::from("config.toml");
 
 /// Use the standard location `$HOME/.config`
 #[cfg(unix)]
-const BASEDIR: &str = ".config";
+const BASEDIR: PathBuf = PathBuf::from(".config");
 
 /// Default set of probes to be used for queries
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -163,7 +163,7 @@ impl Config {
     /// let cfg = Config::load("./atlas.conf");
     /// ```
     ///
-    pub fn load(fname: &str) -> Result<Self> {
+    pub fn load<T: Into<Path>>(fname: &T) -> Result<Self> {
         let content = fs::read_to_string(fname)?;
         println!("{:?}", content);
         Ok(toml::from_str(&content)?)
@@ -179,9 +179,9 @@ pub fn default_file() -> Result<String> {
 
     let def: PathBuf = [
         homedir,
-        PathBuf::from(BASEDIR),
+        BASEDIR,
         PathBuf::from(crate_name!()),
-        PathBuf::from(CONFIG),
+        CONFIG,
     ]
     .iter()
     .collect();
@@ -198,7 +198,7 @@ pub fn default_file() -> Result<String> {
     let def: PathBuf = [
         PathBuf::from(basedir),
         PathBuf::from(crate_name!()),
-        PathBuf::from(CONFIG),
+        CONFIG,
     ]
     .iter()
     .collect();
@@ -253,7 +253,7 @@ mod tests {
         let h: PathBuf = [
             PathBuf::from(h),
             PathBuf::from("atlas-rs"),
-            PathBuf::from(CONFIG),
+            CONFIG,
         ]
         .iter()
         .collect();
