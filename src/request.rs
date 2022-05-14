@@ -93,7 +93,7 @@ pub enum Param<'a> {
     S(&'a str),
 }
 
-// Implement From: for our enum to pass stuff around without explicitely converting before.
+// Implement From: for our enum to pass stuff around without explicitly converting before.
 
 /// From &str to Param
 ///
