@@ -2,36 +2,63 @@
 //!
 
 // Std library
+use std::array::IntoIter;
+use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::iter::FromIterator;
-use std::array::IntoIter;
+use std::ops::{Index, IndexMut};
 
 // External crates
 use itertools::Itertools;
 
+// Our crates
+//
+use crate::request::Op;
+
 /// Our own option type
 #[derive(Debug)]
-pub struct Options<'o> { h: HashMap<&'o str, &'o str> }
+pub struct Options<'o>(HashMap<&'o str, &'o str>);
 
-impl<K, V, const N: usize> From<[(K, V); N]> for Options<'_> {
-    fn from(a: [(K, V); N]) -> Self {
-        std::array::IntoIter::new(a).collect()
+impl<'o, K, V, const N: usize> From<[(K, V); N]> for Options<'o> {
+    fn from(arr: [(K, V); N]) -> Self {
+        IntoIter::into_iter(arr)
     }
 }
 
 impl<'o> Options<'o> {
     #[inline]
+    pub fn new() -> Self {
+        Self(HashMap::new())
+    }
+
+    #[inline]
     pub fn insert(&mut self, k: &'o str, v: &'o str) -> Option<&'o str> {
-        self.h.insert(k, v)
+        self.0.insert(k, v)
     }
 
     /// Gets an iterator over the keys of the map.
     #[inline]
     pub fn keys<K, V>(&self) -> Keys<'_, K, V> {
         Keys {
-            iter: self.h.keys()
+            iter: self.0.keys()
         }
     }
+}
+
+impl<'o> Iterator for Options<'o> {
+    type Item = (&'o str, &'o str);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.into_iter().next()
+    }
+}
+
+impl<'o> IntoIterator for Options<'o> {
+    type Item = (&'o str, &'o str);
+    type IntoIter = std::hash::IntoIter<&'o Self::Item>;
+
+    #[inline]
+    fn into_iter(self) -> Self::IntoIter { self.0.into_iter() }
 }
 
 impl<'o> FromIterator<(&'o str, &'o str)> for Options<'o> {
@@ -39,18 +66,45 @@ impl<'o> FromIterator<(&'o str, &'o str)> for Options<'o> {
         where
             T: IntoIterator<Item = (&'o str, &'o str)>,
     {
-        Options {
-            h: FromIterator::from_iter(iter),
-        }
+        Options(FromIterator::from_iter(iter))
     }
 }
+
+/// Implement `Index` on `Options` for accessing list elements.
+///
+impl<'o> Index<&'o str> for Options<'o> {
+    type Output = &'o str;
+
+    /// Example:
+    /// ```
+    /// ```
+    ///
+    #[inline]
+    fn index(&self, index: &'o str) -> &'o Self::Output {
+        &self.0[index]
+    }
+}
+
+/// Implement `IndexMut` on `Options` for accessing list elements as mutable objects.
+///
+impl<'o> IndexMut<&'o str> for Options<'o> {
+    /// Example:
+    /// ```
+    /// ```
+    ///
+    #[inline]
+    fn index_mut(&'o mut self, index: &'o str) -> &'o mut Self::Output {
+        &mut self.0[index]
+    }
+}
+
 
 /// An iterator over an Options  keys.
 pub struct Keys<'a, K, V> {
     iter: KeysImpl<'a, K, V>,
 }
 
-type KeysImpl<'a, K, V> = HashMap<K,V>::Keys<'a>;
+type KeysImpl<'a, K, V> = <HashMap<K,V> as Trait>::Keys<'a>;
 
 //delegate_iterator!((Keys<'a>) => &'a str);
 
