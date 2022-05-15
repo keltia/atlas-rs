@@ -96,7 +96,7 @@ impl Default for Ctx {
 ///
 /// let c = Client::new();
 ///
-/// let p: Probe = c.probe().get(666).call()?;
+/// let p: Probe = c.probe().get(666)?;
 /// # Ok(())
 /// # }
 /// ```
@@ -109,7 +109,7 @@ impl Default for Ctx {
 ///
 /// let c = Client::new();
 ///
-/// let r: Credits = c.credits().info().call()?;
+/// let r: Credits = c.credits().info()?;
 /// # Ok(())
 /// # }
 /// ```
