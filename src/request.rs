@@ -240,8 +240,7 @@ impl<'rq> RequestBuilder<'rq> {
     /// let c = Client::new();
     ///
     /// let res = c.probe()
-    ///             .get(666)
-    ///             .call()?
+    ///             .get(666)?
     /// # ;
     /// ```
     ///
@@ -288,8 +287,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///
     /// let c = Client::new();
     ///
-    /// let res = c.probe()
-    ///             .list(data)?
+    /// let res = c.probe().list(data)?
     /// # ;
     /// ```
     ///
@@ -339,8 +337,7 @@ impl<'rq> RequestBuilder<'rq> {
     ///
     /// let c = Client::new();
     ///
-    /// let res = c.probe()
-    ///             .info()?
+    /// let res = c.probe().info()?
     /// # ;
     /// ```
     ///
