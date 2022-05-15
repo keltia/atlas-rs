@@ -1,3 +1,6 @@
+//! Everything related to CLI option and argument handling.
+//!
+
 
 /// Binary name
 pub(crate) const NAME: &str = "atlas";
