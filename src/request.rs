@@ -244,9 +244,8 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn get<S, T>(&'rq mut self, data: S) -> Result<T, APIError>
+    pub fn get<T>(&'rq mut self, data: impl Into<Param<'rq>>) -> Result<T, APIError>
     where
-        S: Into<Param<'rq>>,
         T: de::DeserializeOwned + std::fmt::Display,
     {
         // Get the parameter
@@ -291,9 +290,8 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn list<S, T>(&'rq mut self, data: S) -> Result<Vec<T>, APIError>
+    pub fn list<T>(&'rq mut self, data: impl Into<Param<'rq>>) -> Result<Vec<T>, APIError>
     where
-        S: Into<Param<'rq>>,
         T: de::DeserializeOwned + std::fmt::Display + std::fmt::Debug,
     {
         self.paged = true;
@@ -389,8 +387,8 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn with(&'rq mut self, opts: &Options<'rq>) -> &'rq mut Self {
-        for (key, item) in opts.iter() {
+    pub fn with(&'rq mut self, opts: impl Into<&'rq Options<'rq>>) -> &'rq mut Self {
+        for (key, item) in opts.into_iter() {
             self.c.opts.insert(*key, *item);
         }
         self
