@@ -41,3 +41,11 @@ pub fn set_url(op: Op, uuid: String) -> String {
 ///
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Measurement {}
+
+/// Implement the Display trait.
+///
+impl fmt::Display for Measurement {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", serde_json::to_string(self).unwrap())
+    }
+}
