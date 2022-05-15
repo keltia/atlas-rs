@@ -558,7 +558,7 @@ impl<'cl> ClientBuilder<'cl> {
     /// ```
     ///
     pub fn with(mut self, opts: &Options<'cl>) -> Self {
-        for (k, v) in opts.iter() {
+        for (k, v) in opts.into_iter() {
             self.cl.opts.insert(*k, *v);
         }
         self
@@ -567,7 +567,6 @@ impl<'cl> ClientBuilder<'cl> {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
 
     #[test]
