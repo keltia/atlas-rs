@@ -14,19 +14,11 @@ use std::fmt::Formatter;
 use serde::{Deserialize, Serialize};
 
 // Our crates
+use crate::common::Routing;
 use crate::probes::Geometry;
 use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
-
-/// Generate the proper URL for the service we want in the given category
-///
-pub fn set_url(op: Op, data: u32) -> String {
-    match op {
-        Op::Get => format!("/participation-requests/{}/", data.into()),      // /list
-        _ => panic!("not possible"),
-    }
-}
 
 /// Struct describing all data about a given anchor
 ///
@@ -43,4 +35,13 @@ pub struct ParticipationRequests {
     pub created_at: u32,
 }
 
-
+impl Routing<T> for ParticipationRequests {
+    /// Generate the proper URL for the service we want in the given category
+    ///
+    fn set_url(op: Op, data: T) -> String {
+        match op {
+            Op::Get => format!("/participation-requests/{}/", data.into()),      // /list
+            _ => panic!("not possible"),
+        }
+    }
+}

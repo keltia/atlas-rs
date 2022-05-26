@@ -16,32 +16,17 @@
 use std::fmt;
 use std::fmt::Formatter;
 
+#[cfg(feature = "flat-api")]
+use reqwest::StatusCode;
 // External crates
 use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "flat-api")]
-use reqwest::StatusCode;
-
 // Our crates
 use crate::client::Client;
+use crate::common::Routing;
 use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
-
-/// Generate the proper URL for the service we want in the given category
-///
-pub fn set_url(op: Op, uuid: String) -> String {
-    match op {
-        Op::Permissions => "/keys/permissions/".to_string(), // /permissions
-        Op::Targets => format!("/keys/permissions/{}/targets/", uuid), // /get targets
-        Op::Get => format!("/keys/{}/", uuid),               // /get
-        Op::Set => format!("/keys/{}/", uuid),               // /set
-        Op::Delete => format!("/keys/{}/", uuid),            // /delete
-        Op::List => "/keys/".to_string(),                    // /list
-        Op::Create => "/keys/".to_string(),                  // /create
-        _ => panic!("not possible"),
-    }
-}
 
 // -------------------------------------------------------------------------
 
@@ -113,7 +98,7 @@ pub struct KeyList {
 // -------------------------------------------------------------------------
 
 /// Main API methods for `key` type
-impl<'cl> Client<'cl> {
+impl Client {
     /// Get information on a specific key by ID
     ///
     /// Examples:
@@ -170,6 +155,23 @@ impl<'cl> Client<'cl> {
     #[cfg(feature = "flat-api")]
     pub fn get_keys() -> Result<Vec<Key>, APIError> {
         unimplemented!()
+    }
+}
+
+impl Routing<T> for Key {
+    /// Generate the proper URL for the service we want in the given category
+    ///
+    fn set_url(op: Op, uuid: T) -> String {
+        match op {
+            Op::Permissions => "/keys/permissions/".to_string(), // /permissions
+            Op::Targets => format!("/keys/permissions/{}/targets/", uuid), // /get targets
+            Op::Get => format!("/keys/{}/", uuid),               // /get
+            Op::Set => format!("/keys/{}/", uuid),               // /set
+            Op::Delete => format!("/keys/{}/", uuid),            // /delete
+            Op::List => "/keys/".to_string(),                    // /list
+            Op::Create => "/keys/".to_string(),                  // /create
+            _ => panic!("not possible"),
+        }
     }
 }
 

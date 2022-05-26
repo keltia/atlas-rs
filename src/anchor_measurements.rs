@@ -19,16 +19,6 @@ use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
 
-/// Generate the proper URL for the service we want in the given category
-///
-pub fn set_url(op: Op, uuid: String) -> String {
-    match op {
-        Op::Get => format!("/anchor-measurements/{}/", uuid), // /get
-        Op::List => "/anchor-measurements/".to_string(),      // /list
-        _ => panic!("not possible"),
-    }
-}
-
 // -------------------------------------------------------------------------
 
 /// Struct describing all data about a given anchor targeted by a measurement
@@ -56,5 +46,19 @@ pub struct AnchorMeasurement {
 impl Display for AnchorMeasurement {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
+    }
+}
+
+impl<T> Routing<T> for AnchorMeasurement {
+    /// Generate the proper URL for the service we want in the given category
+    ///
+    fn set_url(op: Op, uuid: T) -> String
+    where T: Display,
+    {
+        match op {
+            Op::Get => format!("/anchor-measurements/{}/", uuid), // /get
+            Op::List => "/anchor-measurements/".to_string(),      // /list
+            _ => panic!("not possible"),
+        }
     }
 }

@@ -15,20 +15,11 @@ use std::fmt::Formatter;
 use serde::{Deserialize, Serialize};
 
 // Our crates
+use crate::common::Routing;
 use crate::probes::Geometry;
 use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
-
-/// Generate the proper URL for the service we want in the given category
-///
-pub fn set_url(op: Op, id: i64) -> String {
-    match op {
-        Op::Get => format!("/anchors/{}/", id), // /get
-        Op::List => "/anchors/".to_string(),    // /list
-        _ => panic!("not possible"),
-    }
-}
 
 /// Struct describing all data about a given anchor
 ///
@@ -84,5 +75,17 @@ pub struct Anchor {
 impl fmt::Display for Anchor {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
+    }
+}
+
+impl Routing<T> for Anchor {
+    /// Generate the proper URL for the service we want in the given category
+    ///
+    fn set_url(op: Op, id: T) -> String {
+        match op {
+            Op::Get => format!("/anchors/{}/", id.into()), // /get
+            Op::List => "/anchors/".to_string(),    // /list
+            _ => panic!("not possible"),
+        }
     }
 }

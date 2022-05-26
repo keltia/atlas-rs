@@ -24,37 +24,21 @@
 // std library
 //
 use std::fmt;
-use std::fmt::Formatter;
+use std::fmt::{Display, Formatter};
 
+#[cfg(feature = "flat-api")]
+use reqwest::StatusCode;
 // External crates
 //
 use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "flat-api")]
-use reqwest::StatusCode;
-
 // Our crates
 //
 use crate::client::Client;
+use crate::common::Routing;
 use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
-
-/// Generate the proper URL for the service we want in the given category
-///
-pub fn set_url(op: Op, p: u32) -> String {
-    match op {
-        Op::List => "/probes/".to_string(),      // /list
-        Op::Get => format!("/probes/{}/", p),    // /get
-        Op::Set => format!("/probes/{}/", p),    // /set
-        Op::Update => format!("/probes/{}/", p), // /update
-        Op::Measurement => format!("/probes/{}/measurements/", p), // P/measurements
-        Op::Archive => "/probes/archive/".to_string(), // /archive
-        Op::Rankings => "/probes/rankings/".to_string(), // rankings
-        Op::Tags => "/probes/tags/".to_string(), // /tags/
-        Op::Slugs => format!("/probes/tags/{}/slugs", p), // /tags/T/slugs/
-    }
-}
 
 // -------------------------------------------------------------------------
 
@@ -204,7 +188,7 @@ impl Probe {
 ///
 /// XXX May just disappear as I do not see this as real idiomatic Rust code.
 ///
-impl<'cl> Client<'cl> {
+impl Client {
     /// Get information on a specific probe by ID
     ///
     /// Examples:
@@ -281,6 +265,28 @@ impl<'cl> Client<'cl> {
     }
 }
 
+impl Routing<T> for Probe {
+    /// Generate the proper URL for the service we want in the given category
+    ///
+    fn set_url(op: Op, p: T) -> String
+        where T: Display,
+    {
+        match op {
+            Op::List => "/probes/".to_string(),      // /list
+            Op::Get => format!("/probes/{}/", p),    // /get
+            Op::Set => format!("/probes/{}/", p),    // /set
+            Op::Update => format!("/probes/{}/", p), // /update
+            Op::Measurement => format!("/probes/{}/measurements/", p), // P/measurements
+            Op::Archive => "/probes/archive/".to_string(), // /archive
+            Op::Rankings => "/probes/rankings/".to_string(), // rankings
+            Op::Tags => "/probes/tags/".to_string(), // /tags/
+            Op::Slugs => format!("/probes/tags/{}/slugs", p), // /tags/T/slugs/
+            _ => panic!("not possible"),
+        }
+    }
+
+
+}
 // -------------------------------------------------------------------------
 
 #[cfg(test)]
