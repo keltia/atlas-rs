@@ -8,13 +8,14 @@
 
 // Std library
 use std::fmt;
-use std::fmt::Formatter;
-
-// Our own crates
-use crate::request::{Op, Param, RequestBuilder};
+use std::fmt::{Display, Formatter};
 
 // External crates
 use serde::{Deserialize, Serialize};
+
+// Our own crates
+use crate::common::Routing;
+use crate::request::{Op, Param, RequestBuilder};
 
 // -------------------------------------------------------------------------
 
@@ -52,7 +53,7 @@ pub struct AnchorMeasurement {
 
 /// Implement the Display trait.
 ///
-impl fmt::Display for AnchorMeasurement {
+impl Display for AnchorMeasurement {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
