@@ -18,7 +18,9 @@ use crate::request::Op;
 
 /// This trait enables routing for types based on the allowed operations
 ///
-pub trait Routing<T> {
+pub trait Routing<T>
+    where T: std::fmt::Display,
+{
     /// Returns the proper URL for the given operation
     ///
     fn set_url(op: Op, p: T) -> String;
