@@ -1,10 +1,14 @@
 //! Module to manage API calls parameters and conversions.
 //!
 
+use std::fmt::{Display, Formatter};
+
+use serde::Serialize;
+
 /// This enum is for passing the right kind of parameter to `get()`,
 /// there might be a better way for this.
 ///
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub enum Param {
     /// Represents the most usual 32-bit integer
     I(i32),
@@ -14,6 +18,12 @@ pub enum Param {
     L(i64),
     /// Represents the string pointer aka `str`
     S(String),
+}
+
+impl Display for Param {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", serde_json::to_string(self).unwrap())
+    }
 }
 
 // Implement From: for our enum to pass stuff around without explicitly converting before.
