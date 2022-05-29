@@ -1,3 +1,4 @@
+<!-- omit in TOC -->
 # Atlas-rs
 
 [![CircleCI](https://circleci.com/gh/keltia/atlas-rs/tree/main.svg?style=shield)](https://circleci.com/gh/keltia/atlas-rs/tree/main)
@@ -44,7 +45,7 @@ The following topic are available:
 - keys
 
   API Key management
-- 
+
 - probes
 
   you can query one probe or ask for a list of probes with a few criterias
@@ -78,10 +79,8 @@ This will be available as a crate on [crates.io](https://crates.io/atlas-rs) whe
 
 ## Documentation
 
-All the documentation on the API itself is available through Rust builtin's doc system and will be visible at
+All the documentation on the API itself is available through Rust builtin doc system and will be visible at
 [atlas-rs page on docs.rs](https://docs.rs/atlas-rs).
-
-Documentation on the REST API is on the [RIPE Atlas](https://beta-docs.atlas.ripe.net/apis/) site.
 
 ## Proxy features
 
@@ -124,6 +123,8 @@ Everything is a string except for `pool_size` and `default_probe` which are inte
 Be aware that if you ask for an IPv6 object (like a domain or machine name), the API will refuse your request if the IPv6 version of that object does not exist.
 
 Most of the API calls require use of an API key and in some cases, not using one will mask a few fields in results.
+
+**NOTE**: If you don't have a configuration file, some defaults will be picked but as above, many calls **require** an API key.
 
 ### Important note
 
