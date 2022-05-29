@@ -12,29 +12,38 @@ use serde::{Deserialize, Serialize};
 /// `APIError` is used to report API errors but we use it for ourselves
 #[derive(Deserialize, Serialize, Debug)]
 pub struct APIError {
+    /// Inner error struct.
     pub error: AErr,
 }
 
 /// Container for errors
 #[derive(Deserialize, Serialize, Debug)]
 pub struct AErr {
+    /// HTTP status code.
     pub status: u16,
+    /// Error code.
     pub code: u16,
+    /// Detailed error message.
     pub detail: String,
+    /// Error short title.
     pub title: String,
+    /// We might have more detail messages here.
     pub errors: Option<Vec<AError>>,
 }
 
 /// We can have several more specialized messages
 #[derive(Deserialize, Serialize, Debug)]
 pub struct AError {
+    /// Source pointer.
     pub source: Source,
+    /// Detailed error.
     pub detail: String,
 }
 
 /// We used it to say where the `APIError` is generated
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Source {
+    /// Error "location" whatever that means.
     pub pointer: String,
 }
 
@@ -45,7 +54,6 @@ impl Default for APIError {
     }
 }
 
-/// A few helpers for `APIError`
 impl APIError {
     /// Generate a properly formatted `APIError`
     ///
@@ -56,6 +64,7 @@ impl APIError {
     /// let e = APIError::new(501, "NotFound", "some error", "get_probe");
     /// ```
     ///
+    #[inline]
     pub fn new(code: u16, title: &str, descr: &str, loc: &str) -> Self {
         APIError {
             error: AErr {
@@ -75,6 +84,7 @@ impl APIError {
 }
 
 /// Used to display a text version of the error (for `println!` and co)
+///
 impl fmt::Display for APIError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "({:?})", self.error.title)
@@ -82,14 +92,18 @@ impl fmt::Display for APIError {
 }
 
 /// Convert a regular `std::io::error` into `APIError`
+///
 impl From<io::Error> for APIError {
+    #[inline]
     fn from(error: io::Error) -> Self {
         APIError::new(500, "I/O error", &error.to_string(), "std::io::error")
     }
 }
 
 /// Convert a deserialize error from `serde`
+///
 impl From<serde_json::Error> for APIError {
+    #[inline]
     fn from(error: serde_json::Error) -> Self {
         APIError::new(500, "json/decode", &error.to_string(), "serde")
     }
@@ -97,6 +111,7 @@ impl From<serde_json::Error> for APIError {
 
 /// Convert a deserialize error from `anyhow`
 impl From<anyhow::Error> for APIError {
+    #[inline]
     fn from(error: anyhow::Error) -> Self {
         APIError::new(500, "json/decode", &error.to_string(), "anyhow")
     }
@@ -104,6 +119,7 @@ impl From<anyhow::Error> for APIError {
 
 /// Convert a deserialize error from `reqwest`
 impl From<reqwest::Error> for APIError {
+    #[inline]
     fn from(error: reqwest::Error) -> Self {
         APIError::new(500, "reqwest", &error.to_string(), "reqwest")
     }
@@ -111,6 +127,7 @@ impl From<reqwest::Error> for APIError {
 
 /// Convert our APIError into an anyhow one
 impl From<APIError> for anyhow::Error {
+    #[inline]
     fn from(aerr: APIError) -> Self {
         anyhow!(aerr)
     }
