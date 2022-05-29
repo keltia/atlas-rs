@@ -78,6 +78,12 @@ impl Options {
     }
 }
 
+impl Default for Options {
+    fn default() -> Self {
+        Options::new()
+    }
+}
+
 impl<const N: usize> From<[(&str, &str); N]> for Options {
     /// Used as a shortcut to `from_iter()`
     ///
