@@ -2,144 +2,195 @@
 //!
 
 // Std library
-use std::array::IntoIter;
-use std::cmp::Ordering;
+use std::collections::hash_map::{IntoIter, IntoValues, Iter, Keys, Values, ValuesMut};
 use std::collections::HashMap;
-use std::iter::FromIterator;
+use std::iter::{FromIterator, IntoIterator};
 use std::ops::{Index, IndexMut};
 
 // External crates
-use itertools::Itertools;
 
 // Our crates
 //
-use crate::request::Op;
 
 /// Our own option type
-#[derive(Debug)]
-pub struct Options<'o>(HashMap<&'o str, &'o str>);
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Options(HashMap<String, String>);
 
-impl<'o, K, V, const N: usize> From<[(K, V); N]> for Options<'o> {
-    fn from(arr: [(K, V); N]) -> Self {
-        IntoIter::into_iter(arr)
-    }
-}
-
-impl<'o> Options<'o> {
+impl Options {
     #[inline]
     pub fn new() -> Self {
         Self(HashMap::new())
     }
 
     #[inline]
-    pub fn insert(&mut self, k: &'o str, v: &'o str) -> Option<&'o str> {
+    pub fn insert(&mut self, k: String, v: String) -> Option<String> {
         self.0.insert(k, v)
     }
 
     /// Gets an iterator over the keys of the map.
     #[inline]
-    pub fn keys<K, V>(&self) -> Keys<'_, K, V> {
-        Keys {
-            iter: self.0.keys()
-        }
+    pub fn keys(&self) -> Keys<'_, String, String> {
+        self.0.keys()
     }
-}
 
-impl<'o> Iterator for Options<'o> {
-    type Item = (&'o str, &'o str);
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.0.into_iter().next()
+    /// Gets an iterator over the values of the map.
+    #[inline]
+    pub fn values(&self) -> Values<'_, String, String> {
+        self.0.values()
     }
-}
 
-impl<'o> IntoIterator for Options<'o> {
-    type Item = (&'o str, &'o str);
-    type IntoIter = std::hash::IntoIter<&'o Self::Item>;
+    /// Gets an iterator over the values of the map.
+    #[inline]
+    pub fn values_mut(&mut self) -> ValuesMut<'_, String, String> {
+        self.0.values_mut()
+    }
+
+    /// Gets an iterator over the values of the map.
+    #[inline]
+    pub fn into_values(self) -> IntoValues<String, String> {
+        self.0.into_values()
+    }
+
+    /// Gets an iterator over the values of the map.
+    #[inline]
+    pub fn iter(&self) -> Iter<'_, String, String> {
+        self.0.iter()
+    }
+
+    /// Gets an iterator over the values of the map.
+    #[inline]
+    pub fn into_iter(self) -> IntoIter<String, String> {
+        self.0.into_iter()
+    }
 
     #[inline]
-    fn into_iter(self) -> Self::IntoIter { self.0.into_iter() }
+    pub fn contains_key(self, s: &str) -> bool {
+        self.0.contains_key(s)
+    }
+
+    /// Merge another set of option into our own
+    ///
+    pub fn merge(&mut self, o: &Options) -> &mut Self {
+        for (k, v) in o.iter() {
+            self.insert(k.clone(), v.clone());
+        }
+        self
+    }
 }
 
-impl<'o> FromIterator<(&'o str, &'o str)> for Options<'o> {
-    fn from_iter<T>(iter: T) -> Self
-        where
-            T: IntoIterator<Item = (&'o str, &'o str)>,
-    {
-        Options(FromIterator::from_iter(iter))
+impl<const N: usize> From<[(&str, &str); N]> for Options {
+    /// Used as a shortcut to `from_iter()`
+    ///
+    /// Example:
+    /// ```
+    /// # use atlas_rs::option::Options;
+    /// let o = Options::from([("foo", "bar"), ("baz", "nope")]);
+    ///
+    /// assert_eq!(2, l.len());
+    /// ```
+    ///
+    #[inline]
+    fn from(arr: [(&str, &str); N]) -> Self {
+        let mut h = HashMap::new();
+        for (k, v) in arr.iter() {
+            h.insert(k.to_string(), v.to_string());
+        }
+        Options(h)
+    }
+}
+
+impl<'a> FromIterator<(&'a str, &'a str)> for Options {
+    fn from_iter<T: IntoIterator<Item=(&'a str, &'a str)>>(iter: T) -> Self {
+        let mut h = HashMap::new();
+        for (k, v) in iter {
+            h.insert(k.to_string(), v.to_string());
+        }
+        Options(h)
+    }
+}
+
+impl<'a> IntoIterator for &'a Options {
+    type Item = (&'a String, &'a String);
+    type IntoIter = Iter<'a, String, String>;
+
+    fn into_iter(self) -> Iter<'a, String, String> {
+        self.0.iter()
     }
 }
 
 /// Implement `Index` on `Options` for accessing list elements.
 ///
-impl<'o> Index<&'o str> for Options<'o> {
-    type Output = &'o str;
+impl Index<&str> for Options {
+    type Output = String;
 
     /// Example:
     /// ```
+    /// # use atlas_rs::option::Options;
+    /// let mut o = Options::from([("foo", "bar")]);
+    ///
+    /// println!("{}", o["foo"]);
     /// ```
     ///
     #[inline]
-    fn index(&self, index: &'o str) -> &'o Self::Output {
-        &self.0[index]
+    fn index(&self, index: &str) -> &Self::Output {
+        &self.0[&index.to_string()]
     }
 }
 
 /// Implement `IndexMut` on `Options` for accessing list elements as mutable objects.
 ///
-impl<'o> IndexMut<&'o str> for Options<'o> {
+impl IndexMut<&str> for Options {
+    /// Access elements as mutable
+    ///
+    /// XXX If an element is not present, it will create it.
+    ///
     /// Example:
     /// ```
+    /// # use atlas_rs::option::Options;
+    /// let mut o = Options::new();
+    ///
+    /// o["foo"] = "blah".to_string();
     /// ```
     ///
     #[inline]
-    fn index_mut(&'o mut self, index: &'o str) -> &'o mut Self::Output {
-        &mut self.0[index]
+    fn index_mut(&mut self, index: &str) -> &mut Self::Output {
+        let me = self.0.get_mut(index);
+        if  me == None {
+            self.0.insert(index.to_string(), "".to_string());
+        }
+        self.0.get_mut(index).unwrap()
     }
-}
-
-
-/// An iterator over an Options  keys.
-pub struct Keys<'a, K, V> {
-    iter: KeysImpl<'a, K, V>,
-}
-
-type KeysImpl<'a, K, V> = <HashMap<K,V> as Trait>::Keys<'a>;
-
-//delegate_iterator!((Keys<'a>) => &'a str);
-
-/// Take an url and a set of options to add to the parameters
-///
-/// Example!
-/// ```no_run
-/// # use atlas_rs::option::{add_opts, Options};
-///
-/// let url = "https://example.com/";
-/// let opts = Options::from([("foo", "bar")]);
-/// let url = add_opts(&url, &opts);
-/// ```
-///
-pub fn add_opts(url: &str, opts: &Options) -> String {
-    let full = url.to_owned() + "?";
-    let mut v = Vec::<String>::new();
-
-    for name in opts.keys().sorted() {
-        let opt = format!("{}={}", name, opts[name]);
-        v.push(opt);
-    }
-    full + &v.join("&")
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::option::{add_opts, Options};
+    use crate::option::Options;
 
     #[test]
-    fn test_add_opts() {
-        let url = "/hello".to_string();
-        let o = Options::from([("name", "foo"), ("bar", "baz")]);
+    fn test_options_merge() {
+        let mut s1 = Options::from([("foo", "bar")]);
+        let s2 = Options::from([("baz", "blah")]);
+        let s = Options::from([("foo", "bar"), ("baz", "blah")]);
 
-        let url = add_opts(&url, &o);
-        assert_eq!("/hello?bar=baz&name=foo", url);
+        let r = s1.merge(&s2);
+        assert_eq!(s, *r);
+    }
+
+    #[test]
+    fn test_index() {
+        let o = Options::from([("foo", "bar")]);
+
+        assert_eq!("bar", o["foo"]);
+    }
+
+    #[test]
+    fn test_index_mut() {
+        let mut o = Options::from([("foo", "bar")]);
+
+        o["foo"] = "blah".to_string();
+        assert_eq!("blah", o["foo"]);
+
+        o["baz"] = "hello".to_string();
+        assert_eq!("hello", o["baz"]);
     }
 }
