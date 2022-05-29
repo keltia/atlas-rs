@@ -36,17 +36,6 @@ impl From<&str> for Param {
     }
 }
 
-/// From Param to &str
-///
-impl From<Param> for &str {
-    fn from(p: Param) -> Self {
-        match p {
-            Param::S(s) => s.as_str(),
-            _ => "",
-        }
-    }
-}
-
 /// From Param to String
 ///
 impl<'a> From<Param> for String {
