@@ -86,23 +86,23 @@ fn get_ops_url<T: Display>(ctx: &Ctx, op: Op, p: T) -> String {
 /// pass around will be stored in either `cl` (the `Client`) or `r` (the `reqwest::Request` struct).
 ///
 #[derive(Debug)]
-pub struct RequestBuilder<'rq> {
+pub struct RequestBuilder {
     /// Context is which part of the API we are targetting (`/probe/`, etc.)
     pub ctx: Ctx,
     /// Do we return paginated results?
     pub paged: bool,
     /// Client for API calls
-    pub c: Client<'rq>,
+    pub c: Client,
     /// Build our request here
     pub r: reqwest::blocking::Request,
 }
 
 /// Add methods for chaining and keeping state.
 ///
-impl<'rq> RequestBuilder<'rq> {
+impl RequestBuilder {
     /// Create an empty struct RequestBuilder
     ///
-    pub fn new(ctx: Ctx, c: Client<'rq>, r: reqwest::blocking::Request) -> Self {
+    pub fn new(ctx: Ctx, c: Client, r: reqwest::blocking::Request) -> Self {
         RequestBuilder {
             ctx,
             paged: false,
@@ -123,7 +123,6 @@ impl<'rq> RequestBuilder<'rq> {
     /// Some calls have a parameter (type is `Param`) and it gets converted into the proper
     /// type automatically depending on the `dispatch` function wants to get.
     ///
-
     /// This is the `get` method for single results and a parameter.
     ///
     /// Example:
@@ -138,17 +137,19 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn get<T>(&'rq mut self, data: impl Into<Param<'rq>>) -> Result<T, APIError>
+    pub fn get<T>(&mut self, data: impl Into<Param> + Display) -> Result<T, APIError>
     where
-        T: de::DeserializeOwned + std::fmt::Display,
+        T: de::DeserializeOwned + Display,
     {
         // Get the parameter
-        let add = get_ops_url(&self.ctx, Op::Get, data.into());
+        let add = get_ops_url(&self.ctx, Op::Get, data);
+
+        let opts = self.c.opts.iter();
 
         // Setup URL with potential parameters like `key`.
         let url = reqwest::Url::parse_with_params(
             format!("{}{}", self.r.url().as_str(), add).as_str(),
-            &self.c.opts,
+            opts,
         )
         .unwrap();
 
@@ -184,7 +185,7 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn list<T>(&'rq mut self, data: impl Into<Param<'rq>>) -> Result<Vec<T>, APIError>
+    pub fn list<T>(&mut self, data: impl Into<Param> + Display) -> Result<Vec<T>, APIError>
     where
         T: de::DeserializeOwned + std::fmt::Display + std::fmt::Debug,
     {
@@ -194,10 +195,12 @@ impl<'rq> RequestBuilder<'rq> {
         // Get the parameter
         let add = get_ops_url(&self.ctx, Op::List, data.into());
 
+        let opts = self.c.opts.iter();
+
         // Setup URL with potential parameters like `key`.
         let url = reqwest::Url::parse_with_params(
             format!("{}{}", self.r.url().as_str(), add).as_str(),
-            &self.c.opts,
+            opts,
         )
         .unwrap();
 
@@ -233,17 +236,19 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn info<T>(&'rq mut self) -> Result<T, APIError>
+    pub fn info<T>(mut self) -> Result<T, APIError>
     where
         T: de::DeserializeOwned + std::fmt::Display,
     {
         // Get the parameter
-        let add = get_ops_url(&self.ctx, Op::Info, 0.into());
+        let add = get_ops_url(&self.ctx, Op::Info, 0u32);
+
+        let opts = self.c.opts.iter();
 
         // Setup URL with potential parameters like `key`.
         let url = reqwest::Url::parse_with_params(
             format!("{}{}", self.r.url().as_str(), add).as_str(),
-            &self.c.opts,
+            opts,
         )
         .unwrap();
 
@@ -281,12 +286,11 @@ impl<'rq> RequestBuilder<'rq> {
     /// # ;
     /// ```
     ///
-    pub fn with(&'rq mut self, opts: impl Into<&'rq Options<'rq>>) -> &'rq mut Self {
-        for (key, item) in opts.into_iter() {
-            self.c.opts.insert(*key, *item);
-        }
+    pub fn with(mut self, opts: &Options) -> Self {
+        self.c.opts.merge(opts);
         self
     }
+}
 
 /// Take an url and a set of options to add to the parameters
 ///
