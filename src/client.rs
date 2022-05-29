@@ -114,21 +114,21 @@ impl Default for Ctx {
 /// # }
 /// ```
 ///
-#[derive(Debug)]
-pub struct Client<'cl> {
+#[derive(Clone, Debug)]
+pub struct Client {
     /// Mandatory
-    pub(crate) api_key: Option<&'cl str>,
+    pub(crate) api_key: Option<String>,
 
     /// Optional
     pub(crate) endpoint: Url,
     pub(crate) default_probe: u32,
-    pub(crate) area_type: &'cl str,
-    pub(crate) area_value: &'cl str,
+    pub(crate) area_type: String,
+    pub(crate) area_value: String,
     pub(crate) is_oneoff: bool,
     pub(crate) pool_size: usize,
     pub(crate) want_af: AF,
     pub(crate) verbose: bool,
-    pub(crate) tags: &'cl str,
+    pub(crate) tags: String,
 
     /// Default options
     pub(crate) opts: Options<'cl>,
@@ -139,16 +139,14 @@ pub struct Client<'cl> {
 
 /// Default values for Client
 ///
-impl<'cl> Default for Client<'cl> {
+impl Default for Client {
     /// Defines all the default values
     fn default() -> Self {
         Client::new()
     }
 }
 
-/// All methods for `Client` for configuration
-///
-impl<'cl> Client<'cl> {
+impl Client {
     // ---------------------------------------------------------------------
     // Public API
 
@@ -163,19 +161,19 @@ impl<'cl> Client<'cl> {
     /// let c = Client::new();
     /// ```
     ///
-    pub fn new() -> Client<'cl> {
+    pub fn new() -> Self {
         let endp = reqwest::Url::parse(ENDPOINT).unwrap();
         Client {
             api_key: None,
             endpoint: endp,
             default_probe: 0,
-            area_type: "area",
-            area_value: "WW",
+            area_type: "area".to_string(),
+            area_value: "WW".to_string(),
             is_oneoff: true,
             pool_size: 10,
             want_af: AF::V46,
             verbose: false,
-            tags: "",
+            tags: "".to_string(),
             opts: Options::new(),
             agent: None,
         }
@@ -192,7 +190,7 @@ impl<'cl> Client<'cl> {
     /// let c = Client::builder();
     /// ```
     ///
-    pub fn builder() -> ClientBuilder<'cl> {
+    pub fn builder() -> ClientBuilder {
         ClientBuilder::new()
     }
 
@@ -329,13 +327,13 @@ impl<'cl> Client<'cl> {
 /// ```
 ///
 
-pub struct ClientBuilder<'cl> {
-    cl: Client<'cl>,
+pub struct ClientBuilder {
+    cl: Client,
 }
 
 /// Default values for `ClientBuilder`
 ///
-impl<'cl> Default for ClientBuilder<'cl> {
+impl Default for ClientBuilder {
     /// Defines all the default values
     fn default() -> Self {
         ClientBuilder::new()
@@ -344,7 +342,7 @@ impl<'cl> Default for ClientBuilder<'cl> {
 
 /// Methods for `ClientBuilder`
 ///
-impl<'cl> ClientBuilder<'cl> {
+impl ClientBuilder {
     // ---------------------------------------------------------------------
     // Public API
 
@@ -363,10 +361,10 @@ impl<'cl> ClientBuilder<'cl> {
 
     /// Create the final Client after checking the API key has been changed
     ///
-    pub fn build(self) -> Result<Client<'cl>> {
-        match self.cl.api_key {
+    pub fn build(self) -> Result<Client> {
+        match &self.cl.api_key {
+            Some(_k) => Ok(self.cl.clone()),
             None => Err(anyhow!("You must change the default key")),
-            Some(_k) => Ok(self.cl),
         }
     }
 
@@ -575,15 +573,15 @@ mod tests {
 
         // Check all defaults
         assert!(c.api_key.is_none());
-        assert_eq!(ENDPOINT, c.endpoint.as_str());
+        assert_eq!(ENDPOINT.to_string(), c.endpoint.as_str());
         assert_eq!(0, c.default_probe);
-        assert_eq!("area", c.area_type);
-        assert_eq!("WW", c.area_value);
+        assert_eq!("area".to_string(), c.area_type);
+        assert_eq!("WW".to_string(), c.area_value);
         assert!(c.is_oneoff);
         assert_eq!(10, c.pool_size);
         assert_eq!(AF::V46, c.want_af);
         assert!(!c.verbose);
-        assert_eq!("", c.tags);
+        assert_eq!("".to_string(), c.tags);
         assert!(c.agent.is_some());
     }
 
@@ -596,16 +594,16 @@ mod tests {
         let cb = cb.unwrap();
 
         // Check all defaults
-        assert_eq!("key", cb.api_key.unwrap());
+        assert_eq!("key".to_string(), cb.api_key.unwrap());
         assert_eq!(ENDPOINT, cb.endpoint.as_str());
         assert_eq!(0, cb.default_probe);
-        assert_eq!("area", cb.area_type);
-        assert_eq!("WW", cb.area_value);
+        assert_eq!("area".to_string(), cb.area_type);
+        assert_eq!("WW".to_string(), cb.area_value);
         assert!(cb.is_oneoff);
         assert_eq!(10, cb.pool_size);
         assert_eq!(AF::V46, cb.want_af);
         assert!(!cb.verbose);
-        assert_eq!("", cb.tags);
+        assert_eq!("".to_string(), cb.tags);
         assert!(!cb.opts.contains_key("key"));
         assert!(cb.agent.is_some());
     }

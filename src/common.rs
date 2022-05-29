@@ -55,8 +55,8 @@ pub struct List<S> {
 /// }
 /// ```
 ///
-impl<'cl> Client<'cl> {
-    pub fn fetch_one_page<S>(&self, url: &'cl str, page: usize) -> Result<List<S>, APIError>
+impl Client {
+    pub fn fetch_one_page<S>(&self, url: String, page: usize) -> Result<List<S>, APIError>
     where
         S: DeserializeOwned,
     {
@@ -119,7 +119,7 @@ impl<T> Callable<T> {
 /// # use atlas_rs::client::Client;
 ///
 /// let c = Client::new();
-/// let url = "https://example.net/api/v2/foo";
+/// let url = "https://example.net/api/v2/foo".to_string();
 /// let rawlist: List<Key> = c.fetch_one_page(url, 1).unwrap();
 ///
 /// let pn = get_page_num(&rawlist.next);
