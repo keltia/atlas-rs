@@ -64,15 +64,15 @@ pub enum Op {
 
 // Dispatch table for the various operations in the different contexts.
 //
-fn get_ops_url<T>(ctx: &Ctx, op: Op, p: T) -> String {
+fn get_ops_url<T: Display>(ctx: &Ctx, op: Op, p: T) -> String {
     match ctx {
-        Ctx::AnchorMeasurements => anchor_measurements::set_url(op, p.into()),
-        Ctx::Anchors => anchors::set_url(op, p.into()),
-        Ctx::Credits => credits::set_url(op),
-        Ctx::Keys => keys::set_url(op, p.into()),
-        Ctx::Measurements => measurements::set_url(op, p.into()),
-        Ctx::ParticipationRequests => participation_requests::set_url(op, p.into()),
-        Ctx::Probes => probes::set_url(op, p.into()),
+        Ctx::AnchorMeasurements => AnchorMeasurement::set_url(op, p),
+        Ctx::Anchors => Anchor::set_url(op, p),
+        Ctx::Credits => Credits::set_url(op, p),
+        Ctx::Keys => Key::set_url(op, p),
+        Ctx::Measurements => Measurement::set_url(op, p),
+        Ctx::ParticipationRequests => ParticipationRequests::set_url(op, p),
+        Ctx::Probes => Probe::set_url(op, p),
         Ctx::None => panic!("should not happen"),
     }
 }
