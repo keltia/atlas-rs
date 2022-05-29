@@ -2,7 +2,7 @@
 //!
 
 // Std library
-use std::collections::hash_map::{IntoIter, IntoValues, Iter, Keys, Values, ValuesMut};
+use std::collections::hash_map::{IntoValues, Iter, Keys, Values, ValuesMut};
 use std::collections::HashMap;
 use std::iter::{FromIterator, IntoIterator};
 use std::ops::{Index, IndexMut};
@@ -57,12 +57,7 @@ impl Options {
         self.0.iter()
     }
 
-    /// Gets an iterator over the values of the map.
-    #[inline]
-    pub fn into_iter(self) -> IntoIter<String, String> {
-        self.0.into_iter()
-    }
-
+    /// Check is given option exist
     #[inline]
     pub fn contains_key(self, s: &str) -> bool {
         self.0.contains_key(s)
@@ -72,6 +67,12 @@ impl Options {
     #[inline]
     pub fn len(&self) -> usize {
         self.0.len()
+    }
+
+    /// Check if there is any option
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
     }
 
     /// Merge another set of option into our own
