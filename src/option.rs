@@ -68,6 +68,12 @@ impl Options {
         self.0.contains_key(s)
     }
 
+    /// Return the number of options
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
     /// Merge another set of option into our own
     ///
     pub fn merge(&mut self, o: &Options) -> &mut Self {
@@ -92,7 +98,7 @@ impl<const N: usize> From<[(&str, &str); N]> for Options {
     /// # use atlas_rs::option::Options;
     /// let o = Options::from([("foo", "bar"), ("baz", "nope")]);
     ///
-    /// assert_eq!(2, l.len());
+    /// assert_eq!(2, o.len());
     /// ```
     ///
     #[inline]
