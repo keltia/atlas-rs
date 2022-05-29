@@ -555,11 +555,10 @@ impl ClientBuilder {
     /// # ;
     /// ```
     ///
-    pub fn with(mut self, opts: &Options<'cl>) -> Self {
-        for (k, v) in opts.into_iter() {
-            self.cl.opts.insert(*k, *v);
-        }
-        self
+    pub fn with(&self, opts: &Options) -> Self {
+        let mut cl = self.cl.clone();
+        cl.opts.merge(opts);
+        ClientBuilder { cl }
     }
 }
 
