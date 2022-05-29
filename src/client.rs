@@ -131,7 +131,7 @@ pub struct Client {
     pub(crate) tags: String,
 
     /// Default options
-    pub(crate) opts: Options<'cl>,
+    pub(crate) opts: Options,
 
     /// Internal state, http client
     pub(crate) agent: Option<reqwest::blocking::Client>,
