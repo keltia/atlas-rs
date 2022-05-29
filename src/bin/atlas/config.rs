@@ -70,11 +70,11 @@ use home::home_dir;
 use serde::Deserialize;
 
 /// Default configuration filename
-const CONFIG: PathBuf = PathBuf::from("config.toml");
+const CONFIG: &str = "config.toml";
 
 /// Use the standard location `$HOME/.config`
 #[cfg(unix)]
-const BASEDIR: PathBuf = PathBuf::from(".config");
+const BASEDIR: &str = ".config";
 
 /// Default set of probes to be used for queries
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -164,7 +164,7 @@ impl Config {
     ///
     pub fn load(fname: &PathBuf) -> Result<Self> {
         let content = fs::read_to_string(fname)?;
-        println!("{:?}", content);
+        //println!("{:?}", content);
         Ok(toml::from_str(&content)?)
     }
 }
@@ -178,9 +178,9 @@ pub fn default_file() -> Result<String> {
 
     let def: PathBuf = [
         homedir,
-        BASEDIR,
+        PathBuf::from(BASEDIR),
         PathBuf::from(crate_name!()),
-        CONFIG,
+        PathBuf::from(CONFIG),
     ]
     .iter()
     .collect();
@@ -197,7 +197,7 @@ pub fn default_file() -> Result<PathBuf> {
     let def: PathBuf = [
         PathBuf::from(basedir),
         PathBuf::from(crate_name!()),
-        CONFIG,
+        PathBuf::from(CONFIG),
     ]
     .iter()
     .collect();
@@ -218,7 +218,7 @@ mod tests {
 
     #[test]
     fn test_load_ok() {
-        let c = Config::load("src/bin/atlas/config.toml").unwrap();
+        let c = Config::load(&PathBuf::from("src/bin/atlas/config.toml")).unwrap();
 
         assert_eq!("no-way-i-tell-you", c.api_key);
         assert_eq!(Some(666), c.default_probe);
@@ -226,7 +226,7 @@ mod tests {
 
     #[test]
     fn test_load_nok() {
-        let c = Config::load("/nonexistent");
+        let c = Config::load(&PathBuf::from("/nonexistent"));
 
         assert!(c.is_err());
     }
@@ -250,15 +250,13 @@ mod tests {
         let h = env::var("LOCALAPPDATA")?;
         let h: PathBuf = [
             PathBuf::from(h),
-            PathBuf::from("atlas-rs"),
-            CONFIG,
+            PathBuf::from(crate_name!()),
+            PathBuf::from(CONFIG),
         ]
         .iter()
         .collect();
 
-        let sh = h.to_str().unwrap().to_string();
-
-        assert_eq!(sh, default_file().unwrap());
+        assert_eq!(h, default_file().unwrap());
         Ok(())
     }
 }
