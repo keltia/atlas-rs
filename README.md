@@ -75,7 +75,7 @@ And finally two for convenience:
  
 ## Installation
 
-This will be available as a crate on [crates.io](https://crates.io/atlas-rs) when it is can be released, there are still many incomplete parts.
+This will be available as a crate on [crates.io](https://crates.io/atlas-rs) when it can be released, there are still many incomplete parts.
 
 ## Documentation
 
