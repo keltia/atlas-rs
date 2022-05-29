@@ -382,8 +382,8 @@ impl ClientBuilder {
     ///         .api_key("FOO");
     /// ```
     ///
-    pub fn api_key<S: Into<&'cl str>>(mut self, key: S) -> Self {
-        self.cl.api_key = Some(key.into());
+    pub fn api_key(mut self, key: &str) -> Self {
+        self.cl.api_key = Some(key.to_owned());
         self
     }
 
@@ -399,8 +399,8 @@ impl ClientBuilder {
     /// # ;
     /// ```
     ///
-    pub fn endpoint<S: Into<&'cl str>>(mut self, v: S) -> Self {
-        let endp = Url::parse(v.into()).unwrap();
+    pub fn endpoint(mut self, v: &str) -> Self {
+        let endp = Url::parse(v).unwrap();
         self.cl.endpoint = endp;
         self
     }
@@ -434,8 +434,8 @@ impl ClientBuilder {
     /// # ;
     /// ```
     ///
-    pub fn area_type<S: Into<&'cl str>>(mut self, v: S) -> Self {
-        self.cl.area_type = v.into();
+    pub fn area_type(mut self, v: &str) -> Self {
+        self.cl.area_type = v.to_owned();
         self
     }
 
@@ -451,8 +451,8 @@ impl ClientBuilder {
     /// # ;
     /// ```
     ///
-    pub fn area_value<S: Into<&'cl str>>(mut self, v: S) -> Self {
-        self.cl.area_value = v.into();
+    pub fn area_value(mut self, v: &str) -> Self {
+        self.cl.area_value = v.to_owned();
         self
     }
 
@@ -538,7 +538,7 @@ impl ClientBuilder {
     /// # ;
     /// ```
     ///
-    pub fn tags<S: Into<&'cl str>>(mut self, v: S) -> Self {
+    pub fn tags<S: Into<String>>(mut self, v: S) -> Self {
         self.cl.tags = v.into();
         self
     }
