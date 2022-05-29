@@ -41,7 +41,7 @@ impl From<&str> for Param {
 impl<'a> From<Param> for String {
     fn from(p: Param) -> Self {
         match p {
-            Param::S(s) => s.to_string(),
+            Param::S(s) => s,
             _ => "".to_string(),
         }
     }
