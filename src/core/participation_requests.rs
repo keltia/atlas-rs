@@ -7,16 +7,14 @@
 
 // -------------------------------------------------------------------------
 // Standard library
-use std::fmt;
-use std::fmt::Formatter;
+use std::fmt::Display;
 
 // External crates
 use serde::{Deserialize, Serialize};
 
 // Our crates
 use crate::common::Routing;
-use crate::probes::Geometry;
-use crate::request::{Op, Param, RequestBuilder};
+use crate::request::Op;
 
 // -------------------------------------------------------------------------
 
@@ -35,12 +33,12 @@ pub struct ParticipationRequests {
     pub created_at: u32,
 }
 
-impl Routing<T> for ParticipationRequests {
+impl<T: Display> Routing<T> for ParticipationRequests {
     /// Generate the proper URL for the service we want in the given category
     ///
     fn set_url(op: Op, data: T) -> String {
         match op {
-            Op::Get => format!("/participation-requests/{}/", data.into()),      // /list
+            Op::Get => format!("/participation-requests/{}/", data),      // /list
             _ => panic!("not possible"),
         }
     }

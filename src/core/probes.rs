@@ -36,7 +36,7 @@ use serde::{Deserialize, Serialize};
 //
 use crate::client::Client;
 use crate::common::Routing;
-use crate::request::{Op, Param, RequestBuilder};
+use crate::request::Op;
 
 // -------------------------------------------------------------------------
 
@@ -120,7 +120,7 @@ pub struct Probe {
 }
 
 /// Implement fmt::Display for Probe
-impl fmt::Display for Probe {
+impl Display for Probe {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
@@ -151,7 +151,7 @@ impl Probe {
     ///
     /// Example:
     /// ```no_run
-    /// # use atlas_rs::probes::Probe;
+    /// # use atlas_rs::core::probes::Probe;
     /// # use atlas_rs::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new().api_key("the-key")?;
@@ -167,7 +167,7 @@ impl Probe {
     ///
     /// Example:
     /// ```no_run
-    /// # use atlas_rs::probes::Probe;
+    /// # use atlas_rs::core::probes::Probe;
     /// # use atlas_rs::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new().api_key("the-key")?;
@@ -195,7 +195,7 @@ impl Client {
     ///
     /// ```no_run
     ///  # use atlas_rs::client::ClientBuilder;
-    ///  # use atlas_rs::probes::Probe;
+    ///  # use atlas_rs::core::probes::Probe;
     ///
     ///     let cl = ClientBuilder::new().api_key("foo").verbose(true);
     ///     let pi = cl.get_probe(666)?;
@@ -265,12 +265,10 @@ impl Client {
     }
 }
 
-impl Routing<T> for Probe {
+impl<T: Display> Routing<T> for Probe {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, p: T) -> String
-        where T: Display,
-    {
+    fn set_url(op: Op, p: T) -> String {
         match op {
             Op::List => "/probes/".to_string(),      // /list
             Op::Get => format!("/probes/{}/", p),    // /get

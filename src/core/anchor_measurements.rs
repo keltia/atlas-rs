@@ -15,9 +15,7 @@ use serde::{Deserialize, Serialize};
 
 // Our own crates
 use crate::common::Routing;
-use crate::request::{Op, Param, RequestBuilder};
-
-// -------------------------------------------------------------------------
+use crate::request::Op;
 
 // -------------------------------------------------------------------------
 
@@ -49,11 +47,10 @@ impl Display for AnchorMeasurement {
     }
 }
 
-impl<T> Routing<T> for AnchorMeasurement {
+impl<T: Display> Routing<T> for AnchorMeasurement {
     /// Generate the proper URL for the service we want in the given category
     ///
     fn set_url(op: Op, uuid: T) -> String
-    where T: Display,
     {
         match op {
             Op::Get => format!("/anchor-measurements/{}/", uuid), // /get

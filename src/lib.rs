@@ -54,18 +54,12 @@
 
 use clap::{crate_name, crate_version};
 
-// main modules
-pub mod anchor_measurements;
-pub mod anchors;
 pub mod client;
 pub mod common;
-pub mod credits;
+pub mod core;
 pub mod errors;
-pub mod keys;
-pub mod measurements;
 pub mod option;
-pub mod participation_requests;
-pub mod probes;
+pub mod param;
 pub mod request;
 
 /// Basic version string for the API.

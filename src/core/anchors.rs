@@ -9,15 +9,15 @@
 // -------------------------------------------------------------------------
 // Standard library
 use std::fmt;
-use std::fmt::Formatter;
+use std::fmt::{Display, Formatter};
 
 // External crates
 use serde::{Deserialize, Serialize};
 
 // Our crates
 use crate::common::Routing;
-use crate::probes::Geometry;
-use crate::request::{Op, Param, RequestBuilder};
+use crate::core::probes::Geometry;
+use crate::request::Op;
 
 // -------------------------------------------------------------------------
 
@@ -72,18 +72,18 @@ pub struct Anchor {
 
 /// Implement the Display trait.
 ///
-impl fmt::Display for Anchor {
+impl Display for Anchor {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
 }
 
-impl Routing<T> for Anchor {
+impl<T: Display> Routing<T> for Anchor {
     /// Generate the proper URL for the service we want in the given category
     ///
     fn set_url(op: Op, id: T) -> String {
         match op {
-            Op::Get => format!("/anchors/{}/", id.into()), // /get
+            Op::Get => format!("/anchors/{}/", id), // /get
             Op::List => "/anchors/".to_string(),    // /list
             _ => panic!("not possible"),
         }

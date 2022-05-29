@@ -13,15 +13,14 @@
 // -------------------------------------------------------------------------
 // Standard library
 use std::fmt;
-use std::fmt::Formatter;
+use std::fmt::{Display, Formatter};
 
 // External crates
 use serde::{Deserialize, Serialize};
 
 // Our crates
 use crate::common::Routing;
-use crate::probes::Geometry;
-use crate::request::{Op, Param, RequestBuilder};
+use crate::request::Op;
 
 // -------------------------------------------------------------------------
 
@@ -32,16 +31,17 @@ pub struct Measurement {}
 
 /// Implement the Display trait.
 ///
-impl fmt::Display for Measurement {
+impl Display for Measurement {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
 }
 
-impl Routing<T> for Measurement {
+impl<T: Display> Routing<T> for Measurement {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, uuid: T) -> String {
+    fn set_url(op: Op, uuid: T) -> String
+    {
         match op {
             Op::Create => unimplemented!(),
             Op::Delete => unimplemented!(),

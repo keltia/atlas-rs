@@ -15,30 +15,14 @@
 // -------------------------------------------------------------------------
 // Standard library
 use std::fmt;
-use std::fmt::Formatter;
+use std::fmt::{Display, Formatter};
 
 // External crates
 use serde::{Deserialize, Serialize};
 
+use crate::common::Routing;
 // Our crates
-use crate::request::{Op, Param, RequestBuilder};
-
-// -------------------------------------------------------------------------
-
-/// Generate the proper URL for the service we want in the given category
-///
-pub fn set_url(op: Op) -> String {
-    match op {
-        Op::Get => "/credits/".to_string(),                       // /get
-        Op::Incomes => "/credits/incomes/".to_string(),           // /get
-        Op::Expenses => "/credits/expenses/".to_string(),         // /get
-        Op::Transfers => "/credits/transfers/".to_string(),       // /get
-        Op::Transactions => "/credits/transactions/".to_string(), // /get
-        Op::Members => "/credits/members/".to_string(),           // /get
-        Op::Claim => "/credits/members/claim/".to_string(),       // /create
-        _ => panic!("not possible"),
-    }
-}
+use crate::request::Op;
 
 // -------------------------------------------------------------------------
 
@@ -80,7 +64,7 @@ pub struct Credits {
 
 /// Implement the Display trait.
 ///
-impl fmt::Display for Credits {
+impl Display for Credits {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
@@ -230,4 +214,21 @@ pub struct ExpenseItems {
     pub groups: Vec<ExpenseGroup>,
     /// Total estimated daily expenditure from all expense items
     pub total_estimated_daily_expenditure: u32,
+}
+
+impl<T: Display> Routing<T> for Credits {
+/// Generate the proper URL for the service we want in the given category
+///
+    fn set_url(op: Op,_nothing: T) -> String {
+    match op {
+        Op::Info => "/credits/".to_string(),                      // /get
+        Op::Incomes => "/credits/incomes/".to_string(),           // /get
+        Op::Expenses => "/credits/expenses/".to_string(),         // /get
+        Op::Transfers => "/credits/transfers/".to_string(),       // /get
+        Op::Transactions => "/credits/transactions/".to_string(), // /get
+        Op::Members => "/credits/members/".to_string(),           // /get
+        Op::Claim => "/credits/members/claim/".to_string(),       // /create
+        _ => panic!("not possible"),
+    }
+}
 }

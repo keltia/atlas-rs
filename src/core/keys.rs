@@ -14,7 +14,7 @@
 // -------------------------------------------------------------------------
 // Standard library
 use std::fmt;
-use std::fmt::Formatter;
+use std::fmt::{Display, Formatter};
 
 #[cfg(feature = "flat-api")]
 use reqwest::StatusCode;
@@ -24,7 +24,7 @@ use serde::{Deserialize, Serialize};
 // Our crates
 use crate::client::Client;
 use crate::common::Routing;
-use crate::request::{Op, Param, RequestBuilder};
+use crate::request::Op;
 
 // -------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ pub struct Key {
 
 /// Implement the Display trait.
 ///
-impl fmt::Display for Key {
+impl Display for Key {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
@@ -105,7 +105,7 @@ impl Client {
     ///
     /// ```no_run
     ///  # use atlas_rs::client::Client;
-    ///  # use atlas_rs::keys::Key;
+    ///  # use atlas_rs::core::keys::Key;
     ///
     ///     let cl = Client::new().verbose(true);
     ///     let pi = cl.get_key("key-id").unwrap();
@@ -158,7 +158,7 @@ impl Client {
     }
 }
 
-impl Routing<T> for Key {
+impl<T: Display> Routing<T> for Key {
     /// Generate the proper URL for the service we want in the given category
     ///
     fn set_url(op: Op, uuid: T) -> String {
