@@ -52,7 +52,7 @@ const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
 // ---------------------------------------------------------------------------
 
 /// Represents all possible INET Address Family values
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum AF {
     /// Only IPv4 target
     V4,
@@ -63,7 +63,7 @@ pub enum AF {
 }
 
 /// Represents the different categories aka first level of requests (probes, credits, etc.
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum Ctx {
     None = 0,
     Anchors,
@@ -311,7 +311,7 @@ impl Client {
 /// ```no_run
 /// # fn main() -> Result<(), atlas_rs::errors::APIError> {
 /// use atlas_rs::request::Param;
-/// use atlas_rs::probes::Probe;
+/// use atlas_rs::core::probes::Probe;
 /// use atlas_rs::client::{AF, ClientBuilder};
 ///
 /// let c = ClientBuilder::new()
@@ -321,7 +321,7 @@ impl Client {
 ///             .want_af(AF::V4)
 ///             .build()?;
 ///
-/// let p: Probe = c.probe().get(666).call()?;
+/// let p: Probe = c.probe().get(666)?;
 /// # Ok(())
 /// # }
 /// ```
