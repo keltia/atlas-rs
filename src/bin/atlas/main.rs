@@ -35,7 +35,10 @@ fn load_config(opts: &Opts) -> Config {
             println!("No config file, using defaults: {}", e);
             Config::new()
         }),
-        None => Config::load(&default_file().unwrap()).unwrap_or_default(),
+        None => {
+            let cnf = default_file().unwrap();
+            Config::load(&cnf).unwrap_or_default()
+        },
     }
 }
 
