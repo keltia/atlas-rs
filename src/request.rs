@@ -127,13 +127,13 @@ impl RequestBuilder {
     ///
     /// Example:
     ///
-    /// ```
-    /// # use atlas_rs::client::Client;
+    /// ```no_run
+    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_rs::core::probes::Probe;
     ///
-    /// let c = Client::new();
+    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
     ///
-    /// let res = c.probe()
-    ///             .get(666)?
+    /// let res: Probe = c.probe().get(666).unwrap()
     /// # ;
     /// ```
     ///
@@ -176,12 +176,14 @@ impl RequestBuilder {
     ///
     /// Example:
     ///
-    /// ```
-    /// # use atlas_rs::client::Client;
+    /// ```no_run
+    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_rs::core::probes::Probe;
     ///
-    /// let c = Client::new();
+    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
     ///
-    /// let res = c.probe().list(data)?
+    ///
+    /// let res: Vec<Probe> = c.probe().list(0).unwrap()
     /// # ;
     /// ```
     ///
@@ -227,12 +229,13 @@ impl RequestBuilder {
     ///
     /// Example:
     ///
-    /// ```
-    /// # use atlas_rs::client::Client;
+    /// ```no_run
+    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_rs::core::keys::Key;
     ///
-    /// let c = Client::new();
+    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
     ///
-    /// let res = c.probe().info()?
+    /// let res: Key = c.keys().info().unwrap()
     /// # ;
     /// ```
     ///
@@ -277,17 +280,19 @@ impl RequestBuilder {
     ///
     /// ```no_run
     /// # use atlas_rs::client::Client;
+    /// # use atlas_rs::core::probes::Probe;
     ///
     /// let c = Client::new();
     ///
-    /// let res = c.probe()
-    ///             .with([("opt1", "foo"), ("opt2", "bar")].into())
-    ///             .list(data)?         // XXX
+    /// let res: Vec<Probe> = c.probe()
+    ///                        .with([("opt1", "foo"), ("opt2", "bar")])
+    ///                        .list(0u32)
+    ///                        .unwrap()
     /// # ;
     /// ```
     ///
-    pub fn with(mut self, opts: &Options) -> Self {
-        self.c.opts.merge(opts);
+    pub fn with(mut self, opts: impl Into<Options>) -> Self {
+        self.c.opts.merge(&opts.into());
         self
     }
 }
@@ -296,7 +301,7 @@ impl RequestBuilder {
 ///
 /// Example!
 /// ```no_run
-/// # use atlas_rs::option::{add_opts, Options};
+/// # use atlas_rs::option::Options;
 /// # use atlas_rs::request::add_opts;
 ///
 /// let url = "https://example.com/";

@@ -91,7 +91,7 @@ impl Default for Ctx {
 /// ```no_run
 /// # fn main() -> Result<(), atlas_rs::errors::APIError> {
 /// use atlas_rs::client::Client;
-/// use atlas_rs::request::Param;
+/// use atlas_rs::param::Param;
 /// use atlas_rs::core::probes::Probe;
 ///
 /// let c = Client::new();
@@ -104,7 +104,7 @@ impl Default for Ctx {
 /// ```no_run
 /// # fn main() -> Result<(), atlas_rs::errors::APIError> {
 /// use atlas_rs::client::Client;
-/// use atlas_rs::request::Param;
+/// use atlas_rs::param::Param;
 /// use atlas_rs::core::credits::Credits;
 ///
 /// let c = Client::new();
@@ -313,7 +313,7 @@ impl Client {
 /// Examples:
 /// ```no_run
 /// # fn main() -> Result<(), atlas_rs::errors::APIError> {
-/// use atlas_rs::request::Param;
+/// use atlas_rs::param::Param;
 /// use atlas_rs::core::probes::Probe;
 /// use atlas_rs::client::{AF, ClientBuilder};
 ///

@@ -49,9 +49,9 @@ pub struct List<S> {
 /// # use atlas_rs::core::probes::Probe;
 ///
 /// # let c = Client::new();
-/// # let url = "https://foo.example.net/";
+/// # let url = "https://foo.example.net/".to_string();
 ///
-/// let rawlist: List<Probe> = c.fetch_one_page(url, 1)?;
+/// let rawlist: List<Probe> = c.fetch_one_page(url, 1).unwrap();
 /// if rawlist.next.is_empty() {
 /// #
 /// }
