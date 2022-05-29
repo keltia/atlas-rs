@@ -10,23 +10,22 @@ use clap::Parser;
 
 /// API-related ones.
 ///
-use atlas_rs::client::ClientBuilder;
-use atlas_rs::credits::Credits;
-use atlas_rs::errors::APIError;
-use atlas_rs::keys::Key;
-use atlas_rs::probes::Probe;
+use atlas_rs::client::{Client, ClientBuilder};
+use cli::{NAME, Opts, SubCommand, VERSION};
+use config::{Config, default_file};
+
+use crate::cmds::credits::cmd_credits;
+// Import all subcommands
+use crate::cmds::ip::cmd_ip;
+use crate::cmds::keys::cmd_keys;
+use crate::cmds::probes::cmd_probes;
 
 // Link with other modules.
 
 mod cli;
+mod cmds;
 mod config;
-mod data;
 mod proto;
-mod util;
-
-use cli::{Opts, SubCommand, NAME, VERSION};
-use config::{default_file, Config};
-use data::{CreditSubCommand, KeySubCommand, ProbeSubCommand};
 
 /// Wrapper to load configuration
 ///
@@ -41,6 +40,13 @@ fn load_config(opts: &Opts) -> Config {
     }
 }
 
+/// This contains our common objects we need into commands & subcommands
+///
+pub struct Context {
+    c: Client,
+    cfg: Config,
+}
+
 /// Main entry point
 ///
 /// It returns an empty `Result` which enable use this type with `?`.
@@ -48,12 +54,8 @@ fn load_config(opts: &Opts) -> Config {
 fn main() -> Result<()> {
     let opts: Opts = Opts::parse();
 
-    // Do not forget to set NoAutoVersion otherwise this is ignored
-    if opts.version {
-        let v = atlas_rs::version();
-
-        println!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
-        std::process::exit(0);
+    if opts.debug {
+        println!("DEBUG MODE");
     }
 
     // Handle configuration loading & defaults
@@ -64,36 +66,14 @@ fn main() -> Result<()> {
         .verbose(opts.verbose)
         .build()?;
 
+    // create the context of every operation
+    let ctx = Context{c, cfg};
+
     match opts.subcmd {
         // data related commands
-        SubCommand::Probe(opts) => match opts.subcmd {
-            ProbeSubCommand::Info(opts) => {
-                let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
-
-                let p: Probe = c.probe().get(pn)?;
-                println!("Probe {} is:\n{:?}", pn, p);
-            }
-            ProbeSubCommand::List(_opts) => (),
-        },
-        SubCommand::Key(opts) => match opts.subcmd {
-            KeySubCommand::Info(opts) => {
-                let uuid = opts.uuid.unwrap_or_else(|| cfg.api_key.clone());
-
-                let k: Key = c.keys().get(uuid.as_str()).call()?;
-                println!("Key {} is:\n{:?}", uuid, k);
-            }
-            KeySubCommand::List(_opts) => (),
-        },
-        SubCommand::Credits(opts) => match opts.subcmd {
-            CreditSubCommand::Info(_opts) => {
-                let cred: Credits = c.credits().info().call()?;
-                println!("Credits are {:?}", &cred);
-            }
-            CreditSubCommand::Income(_opts) => (),
-            CreditSubCommand::Transactions(_opts) => (),
-            CreditSubCommand::Transfer(_opts) => (),
-            CreditSubCommand::Expense(_opts) => (),
-        },
+        SubCommand::Probe(opts) => cmd_probes(&ctx, opts),
+        SubCommand::Key(opts) => cmd_keys(&ctx, opts),
+        SubCommand::Credits(opts) => cmd_credits(&ctx, opts),
         SubCommand::Measurement(_opts) => (),
         // protocols-related commands
         SubCommand::Dns(_opts) => (),
@@ -103,23 +83,13 @@ fn main() -> Result<()> {
         SubCommand::TlsCert(_opts) => (),
         SubCommand::Traceroute(_opts) => (),
         // extra utility command
-        SubCommand::Ip(opts) => {
-            let pn = opts.id.unwrap_or_else(|| cfg.default_probe.unwrap());
-            let p: Result<Probe, APIError> = c.probe().get(pn);
+        SubCommand::Ip(opts) => cmd_ip(&ctx, opts),
+        SubCommand::Version => {
+                let v = atlas_rs::version();
 
-            match p {
-                Ok(p) => {
-                    let ip4 = p.address_v4.unwrap_or_else(|| "None".to_string());
-                    let ip6 = p.address_v6.unwrap_or_else(|| "None".to_string());
-
-                    let ip = format!("IPv4: {} IPv6: {}", ip4, ip6);
-                    println!("Probe {} has the following IP:\n{}", pn, ip)
-                }
-                Err(e) => {
-                    println!("Err: {:?}", e);
-                }
-            };
-        }
+                println!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
+                std::process::exit(0);
+        },
     }
     Ok(())
 }

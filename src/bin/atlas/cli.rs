@@ -2,29 +2,31 @@
 //!
 
 
-/// Binary name
-pub(crate) const NAME: &str = "atlas";
-/// Binary version, different from the API itself represented the crate.
-pub(crate) const VERSION: &str = "0.3.0";
-
 // Std library
 //
 use std::path::PathBuf;
 
 // External crates
 //
-use clap::{crate_authors, AppSettings, Parser};
+use clap::{crate_authors, Parser};
 
 // Import our various data structures & enums
-use crate::data::{CredOpts, KeyOpts, MeasurementOpts, ProbeOpts};
+use crate::cmds::credits::CredOpts;
+use crate::cmds::ip::IpOpts;
+use crate::cmds::keys::KeyOpts;
+use crate::cmds::measurements::MeasurementOpts;
+use crate::cmds::probes::ProbeOpts;
 use crate::proto::{DnsOpts, HttpOpts, NtpOpts, PingOpts, TlsOpts, TrrOpts};
-use crate::util::IpOpts;
+
+/// Binary name
+pub(crate) const NAME: &str = "atlas";
+/// Binary version, different from the API itself represented the crate.
+pub(crate) const VERSION: &str = "0.3.0";
 
 /// Help message
 #[derive(Parser)]
 #[clap(name = NAME, about = "Rust CLI for RIPE Atlas.")]
 #[clap(version = VERSION, author = crate_authors!())]
-#[clap(setting = AppSettings::NoAutoVersion)]
 pub(crate) struct Opts {
     /// configuration file
     #[clap(short = 'c', long)]
@@ -35,9 +37,6 @@ pub(crate) struct Opts {
     /// Verbose mode
     #[clap(short = 'v', long)]
     pub(crate) verbose: bool,
-    /// Display version and exit
-    #[clap(short = 'V', long = "version")]
-    pub(crate) version: bool,
     /// Subcommands
     #[clap(subcommand)]
     pub(crate) subcmd: SubCommand,
@@ -75,7 +74,9 @@ pub(crate) enum SubCommand {
     #[clap(visible_alias = "tracert")]
     Traceroute(TrrOpts),
 
-    // Useful shortcut (see util.rs)
+    /// Display the full version stuff
+    Version,
+
     /// Displays the default probe IPs
     Ip(IpOpts),
 }
