@@ -549,9 +549,7 @@ impl ClientBuilder {
     /// # use atlas_rs::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
-    ///     .with(&Options::from([
-    ///                        ("is_anchor", "true")
-    ///                    ]))
+    ///     .with(&Options::from([("is_anchor", "true")]))
     /// # ;
     /// ```
     ///
