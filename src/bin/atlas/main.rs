@@ -44,8 +44,11 @@ fn load_config(opts: &Opts) -> Config {
 
 /// This contains our common objects we need into commands & subcommands
 ///
+#[derive(Debug)]
 pub struct Context {
+    /// Client.
     c: Client,
+    /// Current configuration.
     cfg: Config,
 }
 
