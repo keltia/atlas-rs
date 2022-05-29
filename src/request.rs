@@ -313,9 +313,24 @@ pub fn add_opts(url: &str, opts: &Options) -> String {
 
 #[cfg(test)]
 mod tests {
+    use reqwest::blocking::Request;
+    use reqwest::Url;
+
     use crate::option::Options;
 
     use super::*;
+
+    #[test]
+    fn test_requestbuilder_new() {
+        let ctx = Ctx::None;
+        let cl = Client::new();
+        let url = Url::parse("http://localhost/").unwrap();
+        let rq = Request::new(reqwest::Method::GET, url);
+        let r = RequestBuilder::new(ctx, cl, rq);
+
+        assert!(!r.paged);
+        assert_eq!(reqwest::Method::GET, r.r.method());
+    }
 
     #[test]
     fn test_add_opts() {
