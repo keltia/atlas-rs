@@ -1,24 +1,38 @@
 [package]
 name = "atlas-rs"
-version = "0.2.0"
-edition = "2018"
+version = "0.3.0"
+edition = "2021"
 authors = ["Ollivier Robert <roberto@keltia.net>"]
 repository = "https://github.com/keltia/atlas-rs"
 license = "MIT"
 readme = "README.md"
+keywords = ["atlas", "ripe-atlas", "library", "REST-API", "client-library"]
 description = "Rust library to access RIPE Atlas probes API."
+categories = ["api-bindings" ]
+
+# features = ["flat-api", "alt-api"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[badges]
+maintenance = { status = "actively-developed" }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.44"
-clap = "3.0.0-beta.5"
-home = "0.5.3"
-itertools = "0.10.1"
-toml = "0.5.8"
+anyhow = "1.0"
+clap = { version = "3.1", features = ["cargo", "derive"] }
+home = "0.5"
+itertools = "0.10"
+lazy-regex = "2.3"
+regex = "1.5"
+reqwest = { version = "0.11", features = ["socks", "blocking", "gzip", "json"] }
 serde = { version = "1.0", features = ["derive"] }
-reqwest = { version = "0", features = ["socks", "blocking", "gzip", "json"] }
 serde_json = "1.0"
+toml = "0.5"
 
 [dev-dependencies]
-rstest = "0.11.0"
+rstest = "0.13"
+assert_cmd = "2.0"

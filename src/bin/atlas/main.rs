@@ -3,74 +3,98 @@
 //! It is a way to both demonstrate the use of the API and a testing tool.
 //!
 
-/// External crates
+// External crates
+//
 use anyhow::Result;
-use clap::{crate_authors, AppSettings, Parser};
+use clap::Parser;
 
-use atlas_rs::client::Client;
-use config::Config;
-use crate::config::default_file;
+// API-related ones.
+//
+use atlas_rs::client::{Client, ClientBuilder};
+use cli::{Opts, SubCommand, NAME, VERSION};
+use config::{default_file, Config};
 
-/// Binary name
-pub(crate) const NAME: &str = "atlas";
-/// Binary version, different from the API itself represented the crate.
-pub(crate) const VERSION: &str = "0.2.0";
+// Import all subcommands
+use crate::cmds::credits::cmd_credits;
+use crate::cmds::ip::cmd_ip;
+use crate::cmds::keys::cmd_keys;
+use crate::cmds::probes::cmd_probes;
 
+// Link with other modules.
+mod cli;
+mod cmds;
 mod config;
+mod proto;
 
-/// Help message
-#[derive(Debug, Parser)]
-#[clap(name = NAME, about = "Rust CLI for RIPE Atlas.")]
-#[clap(version = VERSION, author = crate_authors!())]
-#[clap(setting = AppSettings::NoAutoVersion)]
-struct Opts {
-    /// configuration file
-    #[clap(short = 'c', long)]
-    config: Option<String>,
-    /// debug mode
-    #[clap(short = 'D', long = "debug")]
-    debug: bool,
-    /// Verbose mode
-    #[clap(short = 'v', long)]
-    verbose: bool,
-    /// Display version and exit
-    #[clap(short = 'V', long = "version")]
-    version: bool,
-    /// Get info on probe
-    #[clap(short = 'p', long = "probe")]
-    probe: Option<u32>,
-}
-
-fn main() -> Result<()> {
-    let opts: Opts = Opts::parse();
-
-    // Do not forget to set NoAutoVersion otherwise this is ignored
-    if opts.version {
-        let v = atlas_rs::version();
-
-        println!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
-        std::process::exit(0);
-    }
-
+/// Wrapper to load configuration
+///
+fn load_config(opts: &Opts) -> Config {
     // Handle configuration loading & defaults
-    let cfg = match opts.config {
-        Some(fname) => Config::load(&fname).unwrap_or_else(|e| {
+    match &opts.config {
+        Some(fname) => Config::load(fname).unwrap_or_else(|e| {
             println!("No config file, using defaults: {}", e);
             Config::new()
         }),
-        None => Config::load(&default_file().unwrap()).unwrap_or_default(),
-    };
-
-    let c = Client::new(&*cfg.api_key).verbose(opts.verbose);
-
-    let pn = opts.probe.unwrap_or_else(|| cfg.default_probe.unwrap());
-    let p = c.get_probe(pn);
-
-    match p {
-        Ok(p) => println!("Probe {} is:\n{:?}", pn, p),
-        Err(e) => {
-            println!("Err: {:?}", e);
+        None => {
+            let cnf = default_file().unwrap();
+            Config::load(&cnf).unwrap_or_default()
         }
-    };
+    }
+}
+
+/// This contains our common objects we need into commands & subcommands
+///
+#[derive(Debug)]
+pub struct Context {
+    /// Client.
+    c: Client,
+    /// Current configuration.
+    cfg: Config,
+}
+
+/// Main entry point
+///
+/// It returns an empty `Result` which enable use this type with `?`.
+///
+fn main() -> Result<()> {
+    let opts: Opts = Opts::parse();
+
+    if opts.debug {
+        println!("DEBUG MODE");
+    }
+
+    // Handle configuration loading & defaults
+    let cfg = load_config(&opts);
+
+    let c = ClientBuilder::new()
+        .api_key(&*cfg.api_key)
+        .verbose(opts.verbose)
+        .build()?;
+
+    // create the context of every operation
+    let ctx = Context { c, cfg };
+
+    match opts.subcmd {
+        // data related commands
+        SubCommand::Probe(opts) => cmd_probes(&ctx, opts),
+        SubCommand::Key(opts) => cmd_keys(&ctx, opts),
+        SubCommand::Credits(opts) => cmd_credits(&ctx, opts),
+        SubCommand::Measurement(_opts) => (),
+        // protocols-related commands
+        SubCommand::Dns(_opts) => (),
+        SubCommand::Http(_opts) => (),
+        SubCommand::Ntp(_opts) => (),
+        SubCommand::Ping(_opts) => (),
+        SubCommand::TlsCert(_opts) => (),
+        SubCommand::Traceroute(_opts) => (),
+        // extra utility command
+        SubCommand::Ip(opts) => cmd_ip(&ctx, opts),
+        SubCommand::Version => {
+            let v = atlas_rs::version();
+
+            println!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
+            std::process::exit(0);
+        }
+    }
     Ok(())
 }
