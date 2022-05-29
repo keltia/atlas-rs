@@ -279,7 +279,7 @@ impl Client {
 
     /// Private routing function for first level (`probe()`, `keys()`, etc.)
     ///
-    fn route_to(mut self, op: Ctx) -> RequestBuilder<'cl> {
+    fn route_to(&self, op: Ctx) -> RequestBuilder {
         let url = self.endpoint.to_owned();
 
         // Default HTTP operation is GET, some will be POST/DELETE but that is handled in the
@@ -291,12 +291,15 @@ impl Client {
             panic!("No API key defined");
         }
 
+        let mut c = self.clone();
+        c.opts.merge(&self.opts);
+
         // Ensure api-Key is filled in prior to the calls.
-        self.opts.insert("key", self.api_key.unwrap());
+        c.opts["key"] = self.api_key.as_ref().unwrap().clone();
         RequestBuilder {
             ctx: op,
             paged: false,
-            c: self,
+            c,
             r,
         }
     }
