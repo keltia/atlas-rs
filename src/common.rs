@@ -108,17 +108,17 @@ impl Client {
 /// let url = "https://example.net/api/v2/foo".to_string();
 /// let rawlist: List<Key> = c.fetch_one_page(url, 1).unwrap();
 ///
-/// let pn = get_page_num(&rawlist.next);
+/// let pn = get_page_num(rawlist.next);
 /// if pn != 0 {
 ///     // do something
 /// }
 /// ```
 ///
-pub fn get_page_num(url: &str) -> usize {
+pub fn get_page_num(url: String) -> usize {
     let re = regex!(r"page=(\d+)");
 
     // If None, return 0
-    match re.captures(url) {
+    match re.captures(&url) {
         None => 0,
         Some(m) => m.get(1).unwrap().as_str().parse::<usize>().unwrap(),
     }
@@ -126,8 +126,9 @@ pub fn get_page_num(url: &str) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use crate::common::get_page_num;
     use rstest::rstest;
+
+    use crate::common::get_page_num;
 
     #[rstest]
     #[case("", 0)]
@@ -136,6 +137,6 @@ mod tests {
     #[case("foo&page=1", 1)]
     #[case("foo&page=n", 0)]
     fn test_get_page_num(#[case] url: &str, #[case] n: usize) {
-        assert_eq!(n, get_page_num(url));
+        assert_eq!(n, get_page_num(url.to_string()));
     }
 }
