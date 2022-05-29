@@ -44,7 +44,7 @@ pub struct List<S> {
 /// ```no_run
 /// # use atlas_rs::client::Client;
 /// # use atlas_rs::common::List;
-/// # use atlas_rs::probes::Probe;
+/// # use atlas_rs::core::probes::Probe;
 ///
 /// # let c = Client::new();
 /// # let url = "https://foo.example.net/";
@@ -115,7 +115,7 @@ impl<T> Callable<T> {
 /// Example:
 /// ```no_run
 /// # use atlas_rs::common::{get_page_num, List};
-/// # use atlas_rs::keys::Key;
+/// # use atlas_rs::core::keys::Key;
 /// # use atlas_rs::client::Client;
 ///
 /// let c = Client::new();
