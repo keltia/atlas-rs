@@ -60,15 +60,14 @@
 // Standard library
 use std::env;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 // External crates
 use anyhow::Result;
 use clap::crate_name;
-use serde::Deserialize;
-
 #[cfg(unix)]
 use home::home_dir;
+use serde::Deserialize;
 
 /// Default configuration filename
 const CONFIG: PathBuf = PathBuf::from("config.toml");
@@ -163,7 +162,7 @@ impl Config {
     /// let cfg = Config::load("./atlas.conf");
     /// ```
     ///
-    pub fn load<T: Into<Path>>(fname: &T) -> Result<Self> {
+    pub fn load(fname: &PathBuf) -> Result<Self> {
         let content = fs::read_to_string(fname)?;
         println!("{:?}", content);
         Ok(toml::from_str(&content)?)
@@ -192,7 +191,7 @@ pub fn default_file() -> Result<String> {
 /// variable to base our directory into.
 ///
 #[cfg(windows)]
-pub fn default_file() -> Result<String> {
+pub fn default_file() -> Result<PathBuf> {
     let basedir = env::var("LOCALAPPDATA")?;
 
     let def: PathBuf = [
@@ -202,7 +201,6 @@ pub fn default_file() -> Result<String> {
     ]
     .iter()
     .collect();
-    let def = def.to_str().unwrap().to_string();
     Ok(def)
 }
 
