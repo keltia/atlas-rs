@@ -1,7 +1,7 @@
 [package]
 name = "atlas-rs"
 version = "0.2.0"
-edition = "2018"
+edition = "2021"
 authors = ["Ollivier Robert <roberto@keltia.net>"]
 repository = "https://github.com/keltia/atlas-rs"
 license = "MIT"
