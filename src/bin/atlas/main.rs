@@ -3,25 +3,24 @@
 //! It is a way to both demonstrate the use of the API and a testing tool.
 //!
 
-/// External crates
-///
+// External crates
+//
 use anyhow::Result;
 use clap::Parser;
 
-/// API-related ones.
-///
+// API-related ones.
+//
 use atlas_rs::client::{Client, ClientBuilder};
 use cli::{NAME, Opts, SubCommand, VERSION};
 use config::{Config, default_file};
 
-use crate::cmds::credits::cmd_credits;
 // Import all subcommands
+use crate::cmds::credits::cmd_credits;
 use crate::cmds::ip::cmd_ip;
 use crate::cmds::keys::cmd_keys;
 use crate::cmds::probes::cmd_probes;
 
 // Link with other modules.
-
 mod cli;
 mod cmds;
 mod config;
@@ -67,7 +66,7 @@ fn main() -> Result<()> {
         .build()?;
 
     // create the context of every operation
-    let ctx = Context{c, cfg};
+    let ctx = Context { c, cfg };
 
     match opts.subcmd {
         // data related commands
@@ -85,11 +84,11 @@ fn main() -> Result<()> {
         // extra utility command
         SubCommand::Ip(opts) => cmd_ip(&ctx, opts),
         SubCommand::Version => {
-                let v = atlas_rs::version();
+            let v = atlas_rs::version();
 
-                println!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
-                std::process::exit(0);
-        },
+            println!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
+            std::process::exit(0);
+        }
     }
     Ok(())
 }
