@@ -200,32 +200,32 @@ impl<'cl> Client<'cl> {
     // Entities
     //
     #[inline]
-    pub fn anchors(self) -> RequestBuilder<'cl> {
+    pub fn anchors(&self) -> RequestBuilder {
         self.route_to(Ctx::Anchors)
     }
 
     #[inline]
-    pub fn anchor_measurement(self) -> RequestBuilder<'cl> {
+    pub fn anchor_measurement(&self) -> RequestBuilder {
         self.route_to(Ctx::AnchorMeasurements)
     }
 
     #[inline]
-    pub fn credits(self) -> RequestBuilder<'cl> {
+    pub fn credits(&self) -> RequestBuilder {
         self.route_to(Ctx::Credits)
     }
 
     #[inline]
-    pub fn keys(self) -> RequestBuilder<'cl> {
+    pub fn keys(&self) -> RequestBuilder {
         self.route_to(Ctx::Keys)
     }
 
     #[inline]
-    pub fn measurement(self) -> RequestBuilder<'cl> {
+    pub fn measurement(&self) -> RequestBuilder {
         unimplemented!()
     }
 
     #[inline]
-    pub fn probe(self) -> RequestBuilder<'cl> {
+    pub fn probe(&self) -> RequestBuilder {
         self.route_to(Ctx::Probes)
     }
 
