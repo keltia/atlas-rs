@@ -38,7 +38,7 @@ impl<T: Display> Routing<T> for ParticipationRequests {
     ///
     fn set_url(op: Op, data: T) -> String {
         match op {
-            Op::Get => format!("/participation-requests/{}/", data),      // /list
+            Op::Get => format!("/participation-requests/{}/", data), // /list
             _ => panic!("not possible"),
         }
     }

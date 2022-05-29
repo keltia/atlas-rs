@@ -1,7 +1,6 @@
 //! Everything related to CLI option and argument handling.
 //!
 
-
 // Std library
 //
 use std::path::PathBuf;

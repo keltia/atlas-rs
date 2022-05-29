@@ -8,8 +8,8 @@
 use anyhow::Result;
 use lazy_regex::regex;
 use reqwest::StatusCode;
-use serde::{Deserialize, Serialize};
 use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize};
 
 // Our crates
 use crate::client::Client;
@@ -19,7 +19,8 @@ use crate::request::Op;
 /// This trait enables routing for types based on the allowed operations
 ///
 pub trait Routing<T>
-    where T: std::fmt::Display,
+where
+    T: std::fmt::Display,
 {
     /// Returns the proper URL for the given operation
     ///

@@ -50,8 +50,7 @@ impl Display for AnchorMeasurement {
 impl<T: Display> Routing<T> for AnchorMeasurement {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, uuid: T) -> String
-    {
+    fn set_url(op: Op, uuid: T) -> String {
         match op {
             Op::Get => format!("/anchor-measurements/{}/", uuid), // /get
             Op::List => "/anchor-measurements/".to_string(),      // /list

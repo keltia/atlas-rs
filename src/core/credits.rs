@@ -217,18 +217,18 @@ pub struct ExpenseItems {
 }
 
 impl<T: Display> Routing<T> for Credits {
-/// Generate the proper URL for the service we want in the given category
-///
-    fn set_url(op: Op,_nothing: T) -> String {
-    match op {
-        Op::Info => "/credits/".to_string(),                      // /get
-        Op::Incomes => "/credits/incomes/".to_string(),           // /get
-        Op::Expenses => "/credits/expenses/".to_string(),         // /get
-        Op::Transfers => "/credits/transfers/".to_string(),       // /get
-        Op::Transactions => "/credits/transactions/".to_string(), // /get
-        Op::Members => "/credits/members/".to_string(),           // /get
-        Op::Claim => "/credits/members/claim/".to_string(),       // /create
-        _ => panic!("not possible"),
+    /// Generate the proper URL for the service we want in the given category
+    ///
+    fn set_url(op: Op, _nothing: T) -> String {
+        match op {
+            Op::Info => "/credits/".to_string(),                      // /get
+            Op::Incomes => "/credits/incomes/".to_string(),           // /get
+            Op::Expenses => "/credits/expenses/".to_string(),         // /get
+            Op::Transfers => "/credits/transfers/".to_string(),       // /get
+            Op::Transactions => "/credits/transactions/".to_string(), // /get
+            Op::Members => "/credits/members/".to_string(),           // /get
+            Op::Claim => "/credits/members/claim/".to_string(),       // /create
+            _ => panic!("not possible"),
+        }
     }
-}
 }

@@ -40,8 +40,7 @@ impl Display for Measurement {
 impl<T: Display> Routing<T> for Measurement {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, uuid: T) -> String
-    {
+    fn set_url(op: Op, uuid: T) -> String {
         match op {
             Op::Create => unimplemented!(),
             Op::Delete => unimplemented!(),

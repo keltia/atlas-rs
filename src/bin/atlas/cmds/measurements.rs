@@ -23,4 +23,3 @@ pub(crate) enum MeasurementSubCommand {
     Info(InfoOpts),
     List(ListOpts),
 }
-

@@ -11,8 +11,8 @@ use clap::Parser;
 // API-related ones.
 //
 use atlas_rs::client::{Client, ClientBuilder};
-use cli::{NAME, Opts, SubCommand, VERSION};
-use config::{Config, default_file};
+use cli::{Opts, SubCommand, NAME, VERSION};
+use config::{default_file, Config};
 
 // Import all subcommands
 use crate::cmds::credits::cmd_credits;
@@ -38,7 +38,7 @@ fn load_config(opts: &Opts) -> Config {
         None => {
             let cnf = default_file().unwrap();
             Config::load(&cnf).unwrap_or_default()
-        },
+        }
     }
 }
 
