@@ -20,7 +20,7 @@ use crate::proto::{DnsOpts, HttpOpts, NtpOpts, PingOpts, TlsOpts, TrrOpts};
 /// Binary name
 pub(crate) const NAME: &str = "atlas";
 /// Binary version, different from the API itself represented the crate.
-pub(crate) const VERSION: &str = "0.3.0";
+pub(crate) const VERSION: &str = "0.4.0";
 
 /// Help message
 #[derive(Parser)]
