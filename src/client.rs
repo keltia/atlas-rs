@@ -162,8 +162,7 @@ impl Client {
     // ---------------------------------------------------------------------
     // Public API
 
-    /// Creates a bare client with defaults except for the API key which limits to certain
-    /// RIPE Atlas calls.
+    /// Creates a bare client with defaults
     ///
     /// Example:
     ///
