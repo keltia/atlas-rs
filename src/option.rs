@@ -100,6 +100,7 @@ impl<const N: usize> From<[(&str, &str); N]> for Options {
     /// let o = Options::from([("foo", "bar"), ("baz", "nope")]);
     ///
     /// assert_eq!(2, o.len());
+    /// assert_eq!("bar".to_string(), o["foo"]);
     /// ```
     ///
     #[inline]
