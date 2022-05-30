@@ -533,7 +533,7 @@ impl ClientBuilder {
         self
     }
 
-    /// Add options
+    /// Add options (one by one)
     ///
     /// Example:
     ///
@@ -542,13 +542,34 @@ impl ClientBuilder {
     /// # use atlas_rs::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
-    ///     .with(&Options::from([("is_anchor", "true")]))
+    ///     .opt("is_anchor", "true")
+    ///     .opt("country", "fr")
     /// # ;
     /// ```
     ///
-    pub fn with(&self, opts: &Options) -> Self {
+    pub fn opt(&self, k: &str, v: &str) -> Self {
         let mut cl = self.cl.clone();
-        cl.opts.merge(opts);
+        let o = Options::from([(k, v)]);
+        cl.opts.merge(&o);
+        ClientBuilder { cl }
+    }
+
+    /// Add a set of options
+    ///
+    /// Example
+    /// ```no_run
+    /// # use atlas_rs::option::Options;
+    /// # use atlas_rs::client::ClientBuilder;
+    ///
+    /// let c = ClientBuilder::new()
+    ///     .opts([("is_anchor", "true"), ("country", "fr")])
+    /// # ;
+    /// ```
+    ///
+    pub fn opts<const N: usize>(&self, arr: [(&str, &str); N]) -> Self {
+        let mut cl = self.cl.clone();
+        let o = Options::from(arr);
+        cl.opts.merge(&o);
         ClientBuilder { cl }
     }
 }
@@ -597,16 +618,37 @@ mod tests {
     }
 
     #[test]
-    fn test_with() {
-        let h = Options::from([("foo", "a"), ("bar", "b"), ("key", "FOO")]);
+    fn test_opt() {
+        let h = [("foo", "a"), ("bar", "b"), ("key", "FOO")];
+
         let c = ClientBuilder::new()
             .api_key("key")
-            .with(&h)
+            .opt(h[0].0, h[0].1)
+            .opt(h[1].0, h[1].1)
+            .opt(h[2].0, h[2].1)
             .build();
         assert!(c.is_ok());
+
         let c = c.unwrap();
-        assert_eq!(h, c.opts);
-        assert_eq!("key", c.api_key.unwrap())
+        assert_eq!(Options::from(h), c.opts);
+        assert_eq!("key", c.api_key.unwrap());
+        assert_eq!(h.len(), c.opts.len());
+    }
+
+    #[test]
+    fn test_opts() {
+        let h = [("foo", "a"), ("bar", "b"), ("key", "FOO")];
+
+        let c = ClientBuilder::new()
+            .api_key("key")
+            .opts(h)
+            .build();
+        assert!(c.is_ok());
+
+        let c = c.unwrap();
+        assert_eq!(Options::from(h), c.opts);
+        assert_eq!("key", c.api_key.unwrap());
+        assert_eq!(h.len(), c.opts.len());
     }
 
     #[test]
