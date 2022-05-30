@@ -243,7 +243,7 @@ impl RequestBuilder {
         T: de::DeserializeOwned + std::fmt::Display,
     {
         // Get the parameter
-        let add = get_ops_url(&self.ctx, Op::Info, 0u32);
+        let add = get_ops_url(&self.ctx, Op::Info, Param::None);
 
         let opts = self.c.opts.iter();
 
