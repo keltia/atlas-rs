@@ -150,6 +150,15 @@ impl Default for Client {
 }
 
 impl Client {
+    /// Default connect timeout
+    const DEFAULT_CONNECT_TIMEOUT: u64 = 10;
+
+    /// Default HTTP timeout
+    const DEFAULT_HTTP_TIMEOUT: u64 = 5;
+
+    /// Default poolsize
+    const DEFAULT_POOLSIZE: usize = 10;
+
     // ---------------------------------------------------------------------
     // Public API
 
@@ -173,7 +182,7 @@ impl Client {
             area_type: "area".to_string(),
             area_value: "WW".to_string(),
             is_oneoff: true,
-            pool_size: 10,
+            pool_size: Client::DEFAULT_POOLSIZE,
             want_af: AF::V46,
             verbose: false,
             tags: "".to_string(),
@@ -271,8 +280,8 @@ impl Client {
     fn httpclient(mut self) -> Self {
         let ag = format!("{}/{}", crate_name!(), crate_version!());
         let agent = reqwest::blocking::ClientBuilder::new()
-            .connect_timeout(Duration::from_secs(10))
-            .timeout(Duration::from_secs(5))
+            .connect_timeout(Duration::from_secs(Client::DEFAULT_CONNECT_TIMEOUT))
+            .timeout(Duration::from_secs(Client::DEFAULT_HTTP_TIMEOUT))
             .user_agent(&ag)
             .build()
             .unwrap();
