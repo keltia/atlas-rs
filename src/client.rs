@@ -643,10 +643,7 @@ mod tests {
     fn test_opts() {
         let h = [("foo", "a"), ("bar", "b"), ("key", "FOO")];
 
-        let c = ClientBuilder::new()
-            .api_key("key")
-            .opts(h)
-            .build();
+        let c = ClientBuilder::new().api_key("key").opts(h).build();
         assert!(c.is_ok());
 
         let c = c.unwrap();
