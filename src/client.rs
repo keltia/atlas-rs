@@ -285,7 +285,11 @@ impl Client {
         self
     }
 
-    /// Private routing function for first level (`probe()`, `keys()`, etc.)
+    /// Private routing function
+    ///
+    /// It is called with Ctx which represent the first level (`probe()`, `keys()`, etc.), generate
+    /// the RequestBuilder object which will get fed by subsequent calls.  It will also ensure
+    /// the API Key is filled in prior to everything.
     ///
     fn route_to(&self, op: Ctx) -> RequestBuilder {
         let url = self.endpoint.to_owned();
