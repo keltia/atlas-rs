@@ -120,8 +120,6 @@ pub struct Client {
     pub(crate) api_key: Option<String>,
     /// API endpoint, overriden during tests
     pub(crate) endpoint: Url,
-    /// Default Probe ID
-    pub(crate) default_probe: u32,
     /// Area type for restricting the scope
     pub(crate) area_type: String,
     /// Value for the area type
@@ -177,7 +175,6 @@ impl Client {
         Client {
             api_key: None,
             endpoint: endp,
-            default_probe: 0,
             area_type: "area".to_string(),
             area_value: "WW".to_string(),
             is_oneoff: true,
@@ -331,7 +328,6 @@ impl Client {
 /// let c = ClientBuilder::new()
 ///             .api_key("FOO")
 ///             .onoff(true)
-///             .default_probe(666)
 ///             .want_af(AF::V4)
 ///             .build()?;
 ///
@@ -413,23 +409,6 @@ impl ClientBuilder {
     pub fn endpoint(mut self, v: &str) -> Self {
         let endp = Url::parse(v).unwrap();
         self.cl.endpoint = endp;
-        self
-    }
-
-    /// Sets the default probe ID
-    ///
-    /// Example:
-    ///
-    /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
-    ///
-    /// let c = ClientBuilder::new()
-    ///     .default_probe(666)
-    /// # ;
-    /// ```
-    ///
-    pub fn default_probe(mut self, v: u32) -> Self {
-        self.cl.default_probe = v;
         self
     }
 
@@ -585,7 +564,6 @@ mod tests {
         // Check all defaults
         assert!(c.api_key.is_none());
         assert_eq!(ENDPOINT.to_string(), c.endpoint.as_str());
-        assert_eq!(0, c.default_probe);
         assert_eq!("area".to_string(), c.area_type);
         assert_eq!("WW".to_string(), c.area_value);
         assert!(c.is_oneoff);
@@ -607,7 +585,6 @@ mod tests {
         // Check all defaults
         assert_eq!("key".to_string(), cb.api_key.unwrap());
         assert_eq!(ENDPOINT, cb.endpoint.as_str());
-        assert_eq!(0, cb.default_probe);
         assert_eq!("area".to_string(), cb.area_type);
         assert_eq!("WW".to_string(), cb.area_value);
         assert!(cb.is_oneoff);
