@@ -141,7 +141,7 @@ impl RequestBuilder {
         T: de::DeserializeOwned + Display,
     {
         // Get the parameter
-        let add = get_ops_url(&self.ctx, Op::Get, data);
+        let add = get_ops_url(&self.ctx, Op::Get, data.into());
 
         let opts = self.c.opts.iter();
 
@@ -180,15 +180,15 @@ impl RequestBuilder {
     /// # use atlas_rs::core::probes::Probe;
     ///
     /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
+    /// let query = vec!["country_code=fr"];
     ///
-    ///
-    /// let res: Vec<Probe> = c.probe().list(0).unwrap()
+    /// let res: Vec<Probe> = c.probe().list(query).unwrap()
     /// # ;
     /// ```
     ///
-    pub fn list<T>(&mut self, data: impl Into<Param> + Display) -> Result<Vec<T>, APIError>
-    where
-        T: de::DeserializeOwned + std::fmt::Display + std::fmt::Debug,
+    pub fn list<T>(&mut self, data: impl Into<Param>) -> Result<Vec<T>, APIError>
+        where
+            T: de::DeserializeOwned + std::fmt::Display + std::fmt::Debug,
     {
         self.paged = true;
         // Main routing
