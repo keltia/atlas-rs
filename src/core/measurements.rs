@@ -19,7 +19,7 @@ use std::fmt::{Display, Formatter};
 use serde::{Deserialize, Serialize};
 
 // Our crates
-use crate::common::Routing;
+use crate::param::Param;
 use crate::request::Op;
 
 // -------------------------------------------------------------------------
@@ -37,10 +37,10 @@ impl Display for Measurement {
     }
 }
 
-impl<T: Display> Routing<T> for Measurement {
+impl Measurement {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, uuid: T) -> String {
+    pub fn set_url(op: Op, uuid: Param) -> String {
         match op {
             Op::Create => unimplemented!(),
             Op::Delete => unimplemented!(),

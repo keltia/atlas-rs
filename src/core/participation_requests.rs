@@ -13,7 +13,7 @@ use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 
 // Our crates
-use crate::common::Routing;
+use crate::param::Param;
 use crate::request::Op;
 
 // -------------------------------------------------------------------------
@@ -33,10 +33,10 @@ pub struct ParticipationRequests {
     pub created_at: u32,
 }
 
-impl<T: Display> Routing<T> for ParticipationRequests {
+impl ParticipationRequests {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, data: T) -> String {
+    pub fn set_url(op: Op, data: Param) -> String {
         match op {
             Op::Get => format!("/participation-requests/{}/", data), // /list
             _ => panic!("not possible"),

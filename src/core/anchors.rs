@@ -15,8 +15,8 @@ use std::fmt::{Display, Formatter};
 use serde::{Deserialize, Serialize};
 
 // Our crates
-use crate::common::Routing;
 use crate::core::probes::Geometry;
+use crate::param::Param;
 use crate::request::Op;
 
 // -------------------------------------------------------------------------
@@ -78,10 +78,10 @@ impl Display for Anchor {
     }
 }
 
-impl<T: Display> Routing<T> for Anchor {
+impl Anchor {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, id: T) -> String {
+    pub fn set_url(op: Op, id: Param) -> String {
         match op {
             Op::Get => format!("/anchors/{}/", id), // /get
             Op::List => "/anchors/".to_string(),    // /list

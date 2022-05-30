@@ -35,7 +35,7 @@ use serde::{Deserialize, Serialize};
 // Our crates
 //
 use crate::client::Client;
-use crate::common::Routing;
+use crate::param::Param;
 use crate::request::Op;
 
 // -------------------------------------------------------------------------
@@ -265,10 +265,10 @@ impl Client {
     }
 }
 
-impl<T: Display> Routing<T> for Probe {
+impl Probe {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, p: T) -> String {
+    pub fn set_url(op: Op, p: Param) -> String {
         match op {
             Op::List => "/probes/".to_string(),      // /list
             Op::Get => format!("/probes/{}/", p),    // /get

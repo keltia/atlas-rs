@@ -14,7 +14,7 @@ use std::fmt::{Display, Formatter};
 use serde::{Deserialize, Serialize};
 
 // Our own crates
-use crate::common::Routing;
+use crate::param::Param;
 use crate::request::Op;
 
 // -------------------------------------------------------------------------
@@ -47,10 +47,10 @@ impl Display for AnchorMeasurement {
     }
 }
 
-impl<T: Display> Routing<T> for AnchorMeasurement {
+impl AnchorMeasurement {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, uuid: T) -> String {
+    pub fn set_url(op: Op, uuid: Param) -> String {
         match op {
             Op::Get => format!("/anchor-measurements/{}/", uuid), // /get
             Op::List => "/anchor-measurements/".to_string(),      // /list

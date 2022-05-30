@@ -25,7 +25,6 @@ use serde::de;
 // Our internal crates.
 //
 use crate::client::{Client, Ctx};
-use crate::common::Routing;
 use crate::core::{
     anchor_measurements::AnchorMeasurement, anchors::Anchor, credits::Credits, keys::Key,
     measurements::Measurement, participation_requests::ParticipationRequests, probes::Probe,
@@ -64,7 +63,7 @@ pub enum Op {
 
 // Dispatch table for the various operations in the different contexts.
 //
-fn get_ops_url<T: Display>(ctx: &Ctx, op: Op, p: T) -> String {
+fn get_ops_url(ctx: &Ctx, op: Op, p: Param) -> String {
     match ctx {
         Ctx::AnchorMeasurements => AnchorMeasurement::set_url(op, p),
         Ctx::Anchors => Anchor::set_url(op, p),

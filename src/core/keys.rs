@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 
 // Our crates
 use crate::client::Client;
-use crate::common::Routing;
+use crate::param::Param;
 use crate::request::Op;
 
 // -------------------------------------------------------------------------
@@ -158,10 +158,10 @@ impl Client {
     }
 }
 
-impl<T: Display> Routing<T> for Key {
+impl Key {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, uuid: T) -> String {
+    pub fn set_url(op: Op, uuid: Param) -> String {
         match op {
             Op::Permissions => "/keys/permissions/".to_string(), // /permissions
             Op::Targets => format!("/keys/permissions/{}/targets/", uuid), // /get targets

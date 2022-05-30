@@ -14,18 +14,6 @@ use serde::{Deserialize, Serialize};
 // Our crates
 use crate::client::Client;
 use crate::errors::APIError;
-use crate::request::Op;
-
-/// This trait enables routing for types based on the allowed operations
-///
-pub trait Routing<T>
-where
-    T: std::fmt::Display,
-{
-    /// Returns the proper URL for the given operation
-    ///
-    fn set_url(op: Op, p: T) -> String;
-}
 
 /// When asking for a list of S, this generic struct is used for pagination
 ///

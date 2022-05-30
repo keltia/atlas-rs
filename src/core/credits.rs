@@ -20,8 +20,8 @@ use std::fmt::{Display, Formatter};
 // External crates
 use serde::{Deserialize, Serialize};
 
-use crate::common::Routing;
 // Our crates
+use crate::param::Param;
 use crate::request::Op;
 
 // -------------------------------------------------------------------------
@@ -216,10 +216,10 @@ pub struct ExpenseItems {
     pub total_estimated_daily_expenditure: u32,
 }
 
-impl<T: Display> Routing<T> for Credits {
+impl Credits {
     /// Generate the proper URL for the service we want in the given category
     ///
-    fn set_url(op: Op, _nothing: T) -> String {
+    pub fn set_url(op: Op, _nothing: Param) -> String {
         match op {
             Op::Info => "/credits/".to_string(),                      // /get
             Op::Incomes => "/credits/incomes/".to_string(),           // /get
