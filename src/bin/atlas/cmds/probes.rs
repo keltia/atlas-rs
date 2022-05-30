@@ -33,6 +33,9 @@ pub(crate) fn cmd_probes(ctx: &Context, opts: ProbeOpts) {
             let p: Probe = ctx.c.probe().get(pn).unwrap();
             println!("Probe {} is:\n{:?}", pn, p);
         }
-        ProbeSubCommand::List(_opts) => unimplemented!(),
+        ProbeSubCommand::List(opts) => {
+            let p: Vec<Probe> = ctx.c.probe().list(opts.q).unwrap();
+            dbg!(&p);
+        }
     }
 }
