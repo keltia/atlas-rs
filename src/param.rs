@@ -1,5 +1,16 @@
 //! Module to manage API calls parameters and conversions.
 //!
+//! This is used as an easier interface to the different argument an API call
+//! can take and conversion between these and our common type `Param`.
+//!
+//! For the moment are define:
+//!
+//! - u32
+//! - i32
+//! - u64
+//! - string
+//! - Vec<string>
+//!
 
 use std::fmt::{Display, Formatter};
 
@@ -10,6 +21,8 @@ use serde::Serialize;
 ///
 #[derive(Clone, Debug, Serialize)]
 pub enum Param {
+    /// Represents a n array of strings (i.e. "country=fr", "area=WW")
+    A(Vec<String>),
     /// Represents the most usual 32-bit integer
     I(i32),
     /// Represents an unsigned 32-bit integer
@@ -18,6 +31,8 @@ pub enum Param {
     L(i64),
     /// Represents the string pointer aka `str`
     S(String),
+    /// Nothing
+    None,
 }
 
 impl Display for Param {
@@ -33,6 +48,42 @@ impl Display for Param {
 impl From<&str> for Param {
     fn from(s: &str) -> Self {
         Param::S(s.to_string())
+    }
+}
+
+/// From array of &str to Param
+///
+impl<const N: usize> From<[&str; N]> for Param {
+    fn from(arr: [&str; N]) -> Self {
+        let mut v = Vec::new();
+        for s in arr.iter() {
+            v.push(s.to_string())
+        }
+        Param::A(v)
+    }
+}
+
+/// From array of &str to Param
+///
+impl From<Vec<&str>> for Param {
+    fn from(arr: Vec<&str>) -> Self {
+        let mut v = Vec::new();
+        for s in arr.iter() {
+            v.push(s.to_string())
+        }
+        Param::A(v)
+    }
+}
+
+/// From array of &str to Param
+///
+impl From<Vec<String>> for Param {
+    fn from(arr: Vec<String>) -> Self {
+        let mut v = Vec::new();
+        for s in arr.iter() {
+            v.push(s.to_string())
+        }
+        Param::A(v)
     }
 }
 
@@ -101,5 +152,21 @@ impl<'a> From<Param> for i64 {
             Param::L(v) => v,
             _ => 0,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn take_arr_param(a: Param) -> Param {
+        a
+    }
+
+    #[test]
+    fn test_param_from_array() {
+        let pl = take_arr_param(["foo", "bar", "baz"].into());
+
+        dbg!(&pl);
     }
 }
