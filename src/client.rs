@@ -116,31 +116,34 @@ impl Default for Ctx {
 ///
 #[derive(Clone, Debug)]
 pub struct Client {
-    /// Mandatory
+    /// API Key for most calls
     pub(crate) api_key: Option<String>,
-
-    /// Optional
+    /// API endpoint, overriden during tests
     pub(crate) endpoint: Url,
+    /// Default Probe ID
     pub(crate) default_probe: u32,
+    /// Area type for restricting the scope
     pub(crate) area_type: String,
+    /// Value for the area type
     pub(crate) area_value: String,
+    /// Recurring or not?
     pub(crate) is_oneoff: bool,
+    /// How many probes do we want
     pub(crate) pool_size: usize,
+    /// IPv4, IPv6, both?
     pub(crate) want_af: AF,
+    /// Verbose mode
     pub(crate) verbose: bool,
+    /// Do we want specific probes types?
     pub(crate) tags: String,
-
     /// Default options
     pub(crate) opts: Options,
-
     /// Internal state, http client
     pub(crate) agent: Option<reqwest::blocking::Client>,
 }
 
-/// Default values for Client
-///
 impl Default for Client {
-    /// Defines all the default values
+    /// Defines all the default values for Client
     fn default() -> Self {
         Client::new()
     }
