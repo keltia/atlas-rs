@@ -173,7 +173,7 @@ impl Config {
 /// base directory.
 ///
 #[cfg(unix)]
-pub fn default_file() -> Result<String> {
+pub fn default_file() -> Result<PathBuf> {
     let homedir = home_dir().unwrap();
 
     let def: PathBuf = [
@@ -184,7 +184,7 @@ pub fn default_file() -> Result<String> {
     ]
     .iter()
     .collect();
-    Ok(def.to_str().unwrap().to_string())
+    Ok(def)
 }
 
 /// Returns the path of the default config file.  Here we use the standard %LOCALAPPDATA%
@@ -238,9 +238,7 @@ mod tests {
         let h = h + "/.config/atlas-rs/config.toml";
         let h = PathBuf::from(h);
 
-        let sh = h.to_str().unwrap().to_string();
-
-        assert_eq!(sh, default_file().unwrap());
+        assert_eq!(h, default_file().unwrap());
         Ok(())
     }
 
