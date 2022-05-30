@@ -549,8 +549,8 @@ impl ClientBuilder {
     ///
     pub fn opt(&self, k: &str, v: &str) -> Self {
         let mut cl = self.cl.clone();
-        let o = Options::from([(k, v)]);
-        cl.opts.merge(&o);
+
+        cl.opts[k] = v.to_string();
         ClientBuilder { cl }
     }
 
