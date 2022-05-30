@@ -21,4 +21,7 @@ pub(crate) struct ListOpts {
     /// Print debug info
     #[clap(short)]
     pub(crate) debug: bool,
+    /// Query parameters
+    #[clap(short)]
+    pub(crate) q: Vec<String>,
 }
