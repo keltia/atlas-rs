@@ -625,9 +625,11 @@ mod tests {
         let c = ClientBuilder::new()
             .api_key("key")
             .with(&h)
-            .build()
-            .unwrap();
+            .build();
+        assert!(c.is_ok());
+        let c = c.unwrap();
         assert_eq!(h, c.opts);
+        assert_eq!("key", c.api_key.unwrap())
     }
 
     #[test]
