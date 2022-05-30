@@ -18,7 +18,7 @@ use std::fmt::Display;
 
 // External crates
 //
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use itertools::Itertools;
 use serde::de;
 
@@ -78,6 +78,22 @@ fn get_ops_url(ctx: &Ctx, op: Op, p: Param) -> String {
 
 // ------------------------------------------------------------
 
+/// When asking for a list of S, this generic struct is used for pagination
+///
+#[derive(Serialize, Deserialize, Debug)]
+pub struct List<S> {
+    /// How many results in this block
+    pub count: u32,
+    /// URL to fetch the next block
+    pub next: String,
+    /// URL to fetch previous block
+    pub previous: String,
+    /// Current key block
+    pub data: Vec<S>,
+}
+
+// ------------------------------------------------------------
+
 // RequestBuilder itself
 
 /// This is the chaining struct, containing all the state we are interesting in passing around.
@@ -110,13 +126,35 @@ impl RequestBuilder {
         }
     }
 
+    /// Makes it easy to specify options
+    ///
+    /// Example:
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// # use atlas_rs::core::probes::Probe;
+    ///
+    /// let c = Client::new();
+    ///
+    /// let res: Vec<Probe> = c.probe()
+    ///                        .with([("opt1", "foo"), ("opt2", "bar")])
+    ///                        .list(0u32)
+    ///                        .unwrap()
+    /// # ;
+    /// ```
+    ///
+    pub fn with(mut self, opts: impl Into<Options>) -> Self {
+        self.c.opts.merge(&opts.into());
+        self
+    }
+
     // ------------------------------------------------------------------------------------
     /// Establish the final URL before call()
     ///
     /// These methods expect to be called by one of the main "categories" methods like
-    /// `probes()` or `keys()`.  That way, context is established znd propagated.
+    /// `probes()` or `keys()`.  That way, context is established and propagated.
     ///
-    /// In essence, these is the main router.  See [./APIDESIGN.md] for the list of methods
+    /// In essence, these is the main router.  See [APIDESIGN.md](./APIDESIGN.md) for the list of methods
     /// and which is called in which context.
     ///
     /// Some calls have a parameter (type is `Param`) and it gets converted into the proper
@@ -191,8 +229,20 @@ impl RequestBuilder {
             T: de::DeserializeOwned + std::fmt::Display + std::fmt::Debug,
     {
         self.paged = true;
-        // Main routing
 
+        let rawlist: List<T> = match self.fetch_one_page(data, page) {
+            Ok(list) => list,
+            Err(e) => return Err(APIError::from(e))
+        };
+
+        if rawlist.count == 0 {
+            return Err(APIError::new(
+                400,
+                "Bad",
+                e.to_string().as_str(),
+                "fetch_one_page",
+            );
+        }
         // Get the parameter
         let add = get_ops_url(&self.ctx, Op::List, data.into());
 
@@ -222,6 +272,79 @@ impl RequestBuilder {
         let r: Vec<T> = serde_json::from_str(&txt)?;
         println!("after r={:?}", r);
         Ok(r)
+    }
+
+    /// Implement a generic fetch_one_page() function
+    ///
+    /// Example:
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// # use atlas_rs::common::List;
+    /// # use atlas_rs::core::probes::Probe;
+    ///
+    /// # let c = Client::new();
+    /// # let url = "https://foo.example.net/".to_string();
+    ///
+    /// let rawlist: List<Probe> = c.fetch_one_page(url, 1).unwrap();
+    /// if rawlist.next.is_empty() {
+    /// #
+    /// }
+    /// ```
+    ///
+    fn fetch_one_page<T>(&mut self, data: Param, page: usize) -> Result<List<T>, APIError>
+        where
+            T: de::DeserializeOwned,
+    {
+        // Get the parameter, add our page stuff
+        //
+        let add = get_ops_url(&self.ctx, Op::List, data.into());
+        let add = format!("{}&page={}", add, page);
+
+        let mut opts = self.c.opts.iter();
+
+        // Setup URL with potential parameters like `key`.
+        let url = reqwest::Url::parse_with_params(
+            format!("{}{}", self.r.url().as_str(), add).as_str(),
+            opts,
+        )
+            .unwrap();
+
+        self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
+        let resp = self
+            .c
+            .agent
+            .as_ref()
+            .unwrap()
+            .get(self.r.url().as_str())
+            .send()?;
+
+        let resp = match resp {
+            Ok(resp) => resp,
+            Err(e) => {
+                let aerr = APIError::new(
+                    e.status().unwrap().as_u16(),
+                    "Bad",
+                    e.to_string().as_str(),
+                    "fetch_one_page",
+                );
+                return Err(aerr);
+            }
+        };
+
+        // Try to see if we got an error
+        match resp.status() {
+            reqwest::StatusCode::OK => {
+                // We could use Response::json() here but it consumes the body.
+                let r = resp.text()?;
+                println!("p={}", r);
+                let p: List<T> = serde_json::from_str(&r)?;
+                Ok(p)
+            }
+            _ => {
+                let aerr = resp.json::<APIError>()?;
+                Err(aerr)
+            }
+        }
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -271,28 +394,6 @@ impl RequestBuilder {
         let r: T = serde_json::from_str(&txt)?;
         println!("after r={}", r);
         Ok(r)
-    }
-
-    /// Makes it easy to specify options
-    ///
-    /// Example:
-    ///
-    /// ```no_run
-    /// # use atlas_rs::client::Client;
-    /// # use atlas_rs::core::probes::Probe;
-    ///
-    /// let c = Client::new();
-    ///
-    /// let res: Vec<Probe> = c.probe()
-    ///                        .with([("opt1", "foo"), ("opt2", "bar")])
-    ///                        .list(0u32)
-    ///                        .unwrap()
-    /// # ;
-    /// ```
-    ///
-    pub fn with(mut self, opts: impl Into<Options>) -> Self {
-        self.c.opts.merge(&opts.into());
-        self
     }
 }
 
