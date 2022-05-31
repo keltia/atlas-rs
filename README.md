@@ -75,27 +75,50 @@ And finally two for convenience:
  
 ## Installation
 
-This will be available as a crate on [crates.io](https://crates.io/atlas-rs) when it can be released, there are still many incomplete parts.
+This will be available as a crate on [crates.io](https://crates.io/atlas-rs) when it can be released, there are still
+many incomplete parts.
 
 ## Documentation
 
 All the documentation on the API itself is available through Rust builtin doc system and will be visible at
 [atlas-rs page on docs.rs](https://docs.rs/atlas-rs).
 
-## Proxy features
-
- **NOTE**: System proxies are enabled by default.
-
- System proxies look in environment variables to set HTTP or HTTPS proxies.
-
- `HTTP_PROXY` or `http_proxy` provide http proxies for http connections while
- `HTTPS_PROXY` or `https_proxy` provide HTTPS proxies for HTTPS connections.
- `ALL_PROXY` or `all_proxy`is a "catch-all" setting for all protocols.
- `NO_PROXY` or `no_proxy` can prevent using any of the proxies.
-
 ## CLI utility
 
 The `atlas` command is a command-line client for the Rust API.
+
+It can be used to exercise various aspects of the API (I use it to test my implementation).
+
+```text
+atlas 0.4.0
+Ollivier Robert <roberto@keltia.net>
+Rust CLI for RIPE Atlas.
+
+USAGE:
+    atlas [OPTIONS] <SUBCOMMAND>
+
+OPTIONS:
+    -c, --config <CONFIG>    configuration file
+    -D, --debug              debug mode
+    -h, --help               Print help information
+    -v, --verbose            Verbose mode
+    -V, --version            Print version information
+
+SUBCOMMANDS:
+    credits        Dislays informations about credits [aliases: c]
+    dns            DNS-related measurements
+    help           Print this message or the help of the given subcommand(s)
+    http           HTTP-related measurements
+    ip             Displays the default probe IPs
+    key            Key management [aliases: keys, k]
+    measurement    Create, starts, displays measurements [aliases: m]
+    ntp            NTP-related measurements
+    ping           ICMP-related measurements
+    probe          Get informations about probes [aliases: probes, p]
+    tls-cert       Certificate info management [aliases: cert]
+    traceroute     Traceroute from probes [aliases: tracert]
+    version        Display the full version stuff
+```
 
 ### Configuration
 
@@ -103,7 +126,8 @@ The `atlas` utility uses a configuration file in the [TOML] file format.
 
 On Unix, it is located in `$HOME/.config/ripe-atlas/config.toml` and in `%LOCALAPPDATA%\RIPE-ATLAS` on Windows.
 
-There are only a few parameters for now, the most important one being your API Key for authenticate against the RIPE API endpoint.  You can now specify the default probe set (and override it from the CLI):
+There are only a few parameters for now, the most important one being your API Key for authenticate against the RIPE API
+endpoint. You can now specify the default probe set (and override it from the CLI):
 
 ```toml
     # Default configuration file
@@ -120,21 +144,37 @@ There are only a few parameters for now, the most important one being your API K
 
 Everything is a string except for `pool_size` and `default_probe` which are integers.
 
-Be aware that if you ask for an IPv6 object (like a domain or machine name), the API will refuse your request if the IPv6 version of that object does not exist.
+Be aware that if you ask for an IPv6 object (like a domain or machine name), the API will refuse your request if the
+IPv6 version of that object does not exist.
 
 Most of the API calls require use of an API key and in some cases, not using one will mask a few fields in results.
 
-**NOTE**: If you don't have a configuration file, some defaults will be picked but as above, many calls **require** an API key.
+**NOTE**: If you don't have a configuration file, some defaults will be picked but as above, many calls **require** an
+API key.
 
 ### Important note
 
-Not all parameters specified for the different commands are implemented, as you can see in the [REST API Reference], there are *a lot* of different parameters like all the `id__{gt,gte,lt,lte,in}` stuff.  See TODO :)
+Not all parameters specified for the different commands are implemented, as you can see in the [REST API Reference],
+there are *a lot* of different parameters like all the `id__{gt,gte,lt,lte,in}` stuff. See TODO :)
+
+## Proxy features
+
+**NOTE**: System proxies are enabled by default.
+
+System proxies look in environment variables to set HTTP or HTTPS proxies.
+
+`HTTP_PROXY` or `http_proxy` provide http proxies for http connections while
+`HTTPS_PROXY` or `https_proxy` provide HTTPS proxies for HTTPS connections.
+`ALL_PROXY` or `all_proxy`is a "catch-all" setting for all protocols.
+`NO_PROXY` or `no_proxy` can prevent using any of the proxies.
 
 ## TODO
 
-It is not currently completely usable, only a few parts have been implemented (notable part of the `Probes` API) to validate our design (see [APIDESIGN.md](./APIDESIGN.md) for my musings about issues).
+It is not currently completely usable, only a few parts have been implemented (notable part of the `Probes` API) to
+validate our design (see [APIDESIGN.md](./APIDESIGN.md) for my musings about issues).
 
 - Implement a good way to pass arguments to various calls besides the `opts` HashMap.
+- ~~Implement generic pagination~~
 - Complete the various implementations for the "core" features like `Measurements` and `Probes`.
 - Add many many more tests
 - Refactor to get as much idiomatic Rust as possible
