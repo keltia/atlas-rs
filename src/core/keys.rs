@@ -29,7 +29,7 @@ use crate::request::Op;
 
 /// This is the structure describing an API key with its validity, entitlements, etc.
 ///
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Key {
     /// Main ID is an uuid
     pub uuid: String,
@@ -63,7 +63,7 @@ impl Display for Key {
 // -------------------------------------------------------------------------
 
 /// Each permission is for a given target
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Target {
     #[serde(rename = "type")]
     pub ttype: String,
@@ -71,25 +71,10 @@ pub struct Target {
 }
 
 /// This is to describe all the entitlements of a given key
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Grant {
     pub permission: String,
     pub target: Option<Target>,
-}
-
-// -------------------------------------------------------------------------
-
-/// When asking for a list of keys, this struct is used for pagination
-#[derive(Serialize, Deserialize, Debug)]
-pub struct KeyList {
-    /// How many results in this block
-    pub count: u32,
-    /// URL to fetch the next block
-    pub next: String,
-    /// URL to fetch previous block
-    pub previous: String,
-    /// Current key block
-    pub keys: Vec<Key>,
 }
 
 // -------------------------------------------------------------------------
@@ -100,10 +85,10 @@ impl Key {
     pub fn set_url(op: Op, uuid: Param) -> String {
         match op {
             Op::Permissions => "/keys/permissions/".to_string(), // /permissions
-            Op::Targets => format!("/keys/permissions/{}/targets/", uuid), // /get targets
-            Op::Get => format!("/keys/{}/", uuid),               // /get
-            Op::Set => format!("/keys/{}/", uuid),               // /set
-            Op::Delete => format!("/keys/{}/", uuid),            // /delete
+            Op::Targets => format!("/keys/permissions/{}/targets/", String::from(uuid)), // /get targets
+            Op::Get => format!("/keys/{}/", String::from(uuid)),               // /get
+            Op::Set => format!("/keys/{}/", String::from(uuid)),               // /set
+            Op::Delete => format!("/keys/{}/", String::from(uuid)),            // /delete
             Op::List => "/keys/".to_string(),                    // /list
             Op::Create => "/keys/".to_string(),                  // /create
             _ => panic!("not possible"),
