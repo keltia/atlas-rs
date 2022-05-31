@@ -227,8 +227,8 @@ impl RequestBuilder {
     /// ```
     ///
     pub fn list<P: Into<Param>, T>(&mut self, data: P) -> Result<Vec<T>, APIError>
-        where
-            T: de::DeserializeOwned + Display + std::fmt::Debug + Clone,
+    where
+        T: de::DeserializeOwned + Display + std::fmt::Debug + Clone,
     {
         self.paged = true;
 
@@ -247,7 +247,7 @@ impl RequestBuilder {
             format!("{}{}", self.r.url().as_str(), add).as_str(),
             opts,
         )
-            .unwrap();
+        .unwrap();
 
         // Get data / opts for 1st call
         //
@@ -316,8 +316,8 @@ impl RequestBuilder {
     /// ```
     ///
     fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
-        where
-            T: de::DeserializeOwned,
+    where
+        T: de::DeserializeOwned,
     {
         // Call the service
         //

@@ -51,4 +51,3 @@ impl Display for ParticipationRequests {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
 }
-

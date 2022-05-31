@@ -273,13 +273,11 @@ impl Probe {
             // Get the parameter as a vec of string, transforming into string
             Op::List => {
                 let qs = match p {
-                    Param::A(v) => {
-                        v.join("&")
-                    }
+                    Param::A(v) => v.join("&"),
                     _ => unimplemented!(),
                 };
                 format!("{}?{}", "/probes/", qs)
-            }      // /list
+            } // /list
             Op::Get => format!("/probes/{}/", p),    // /get
             Op::Set => format!("/probes/{}/", p),    // /set
             Op::Update => format!("/probes/{}/", p), // /update
