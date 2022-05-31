@@ -37,8 +37,6 @@ use crate::request::Op;
 
 // -------------------------------------------------------------------------
 
-// -------------------------------------------------------------------------
-
 /// Geolocation as reported by the probe
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Geometry {
