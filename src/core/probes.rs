@@ -55,7 +55,7 @@ pub struct Geometry {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Status {
     /// Date
-    pub since: String,
+    pub since: Option<String>,
     /// Status ID
     pub id: u32,
     /// Status: connected, etc.
@@ -89,9 +89,9 @@ pub struct Probe {
     /// ISO 3166 Country Code
     pub country_code: String,
     /// Free text description
-    pub description: String,
+    pub description: Option<String>,
     /// First connection
-    pub first_connected: u32,
+    pub first_connected: Option<u32>,
     /// Approx Position
     pub geometry: Geometry,
     /// Probe ID
@@ -101,7 +101,7 @@ pub struct Probe {
     /// Is it public?
     pub is_public: bool,
     /// POSIX time since last connect
-    pub last_connected: u32,
+    pub last_connected: Option<u32>,
     /// IPv4 Network Prefix
     pub prefix_v4: Option<String>,
     /// IPv6 Network Prefix
@@ -109,7 +109,7 @@ pub struct Probe {
     /// Probe Status
     pub status: Status,
     /// Integer time
-    pub status_since: u32,
+    pub status_since: Option<u32>,
     /// System and User tags
     pub tags: Vec<Tag>,
     /// Total uptime
