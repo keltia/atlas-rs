@@ -1,31 +1,6 @@
 # API Design
 
-## Usual way (aka feature `flat_api`)
-
-This way has the inconvenient of "polluting" client as everything done through methods
-on the `Client`struct (like we do in Go.).  Next issue is passing options (same thing as in `ripe-atlas`).
-
-```rs
-let cl = Client::new(Config{});
-
-various parameter are set from the `Config` struct
-
-...
-
-let p = cl.get_probe(666);
-
-...
-
-let m = cl.NTP(host);     
-
-...
-
-let p = cl.get_probe(666)
-            .with(opts)
-            .call();       
-```
-
-## Yet another one (like reqwest)
+## Chosen approach (like reqwest)
 
 ```rs
 let c = Client::new("FOO");      // defaults
@@ -35,9 +10,9 @@ let c = ClientBuilder::new().key("FOO")
             .default_probe(666)
             .build();
 
-let p = c.probe().get(666).call();
+let p = c.probe().get(666);
 
-let pl = c.probe().list(opts).call();     // or c.probe().list().with(opts).call();
+let pl = c.probe().list(opts);     // or c.probe().list().with(opts);
 
 // there c.<category>() returns a RequestBuilder and .call() returns a Response.
 ```
@@ -63,10 +38,7 @@ Client.probe()      -> RequestBuilder
 
 RequestBuilder() -> RequestBuilder
 
-except
-
-.call() -> reqwest::Response
-
+get/info/delete/etc.() -> reqwest::Response
 
 Atlas API
 
@@ -74,45 +46,41 @@ Atlas API
 
 ### List of operations per category
 
-          ----- /anchor-measurement     ----- /list  ----- List<AM>
-                                        ----- /get   ----- AM
-
-          ----- /anchors                ----- /list  ----- List<A>
-                                        ----- /get   ----- A
-
-          ----- /credits                ----- /get
-                                        ----- /get   ----- /incomes
-                                                           /expenses
-                                                           /transfers
-                                                           /transactions
-                                                           /members
-                                                           /members      ----- /claim
-
-          ----- /keys                   ----- /permissions
-                                        ----- /permissions ----- P     ---- /targets
-                                        ----- /get
-                                        ----- /set
-                                        ----- /delete
-                                        ----- /list
-                                        ----- /create
-
-          ----- /measurements           ----- /list
-                                        ----- /create
-                                        ----- /get
-                                        ----- /update
-                                        ----- /delete
-
-          ----- /participation-requests ----- /list
-
-          ----- /probes                 ----- /get
-                                        ----- /list
-                                        ----- /set
-                                        ----- /update
-                                        ----- P             ----- /measurements
-                                        ----- /archive
-                                        ----- /rankings
-                                        ----- /tags
-                                        ----- /tags         ----- /slugs
+...
+----- /anchor-measurement ----- /list ----- List<AM>
+----- /get ----- AM
+----- /anchors ----- /list ----- List<A>
+----- /get ----- A
+----- /credits ----- /info                                             **DONE**
+----- /get ----- /incomes
+/expenses
+/transfers
+/transactions
+/members
+/members ----- /claim
+----- /keys ----- /permissions
+----- /permissions ----- P ---- /targets
+----- /get                                              **DONE**
+----- /set
+----- /delete
+----- /list
+----- /create
+----- /measurements ----- /list
+----- /create
+----- /get
+----- /update
+----- /delete
+----- /participation-requests ----- /list
+----- /probes ----- /get                                              **DONE**
+----- /list                                             **DONE**
+----- /set
+----- /update
+----- P ----- /measurements
+----- /archive
+----- /rankings
+----- /tags
+----- /tags ----- /slugs
+...
 
 ### Per context/cmd:
 
@@ -131,7 +99,8 @@ Atlas API
 
 ### Call tree
 
-    client.rs                  anchor.rs/.../probe.rs           request.rs
+...
+client.rs anchor.rs/.../probe.rs request.rs
 
     c = Client::new()
     c = ClientBuilder::new()
@@ -168,4 +137,7 @@ Atlas API
     fn list<T>() -> Callable<Vec<T>> {
     Callable { /* ... */ }
     }
+
+...
+
     
