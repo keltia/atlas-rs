@@ -55,7 +55,6 @@
 use clap::{crate_name, crate_version};
 
 pub mod client;
-pub mod common;
 pub mod core;
 pub mod errors;
 pub mod option;
