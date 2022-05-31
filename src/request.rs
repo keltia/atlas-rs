@@ -380,35 +380,7 @@ impl RequestBuilder {
     where
         T: de::DeserializeOwned + std::fmt::Display,
     {
-        // Get the parameter
-        let add = get_ops_url(&self.ctx, Op::Info, Param::None);
-
-        let opts = self.c.opts.iter();
-
-        // Setup URL with potential parameters like `key`.
-        let url = reqwest::Url::parse_with_params(
-            format!("{}{}", self.r.url().as_str(), add).as_str(),
-            opts,
-        )
-        .unwrap();
-
-        self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
-        let resp = self
-            .c
-            .agent
-            .as_ref()
-            .unwrap()
-            .get(self.r.url().as_str())
-            .send()?;
-
-        println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
-
-        let txt = resp.text()?;
-        println!("after text={}", txt);
-
-        let r: T = serde_json::from_str(&txt)?;
-        println!("after r={}", r);
-        Ok(r)
+        self.get(Param::None)
     }
 }
 
