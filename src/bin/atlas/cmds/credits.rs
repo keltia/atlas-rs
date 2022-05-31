@@ -49,8 +49,14 @@ pub(crate) struct TransfOpts {
 pub(crate) fn cmd_credits(ctx: &Context, opts: CredOpts) {
     match opts.subcmd {
         CreditSubCommand::Info(_opts) => {
-            let cred: Credits = ctx.c.credits().info().unwrap();
-            println!("Credits are {:?}", &cred);
+            let c: Credits = match ctx.c.credits().info() {
+                Ok(c) => c,
+                Err(e) => {
+                    println!("Error: {:#?}", e);
+                    return;
+                }
+            };
+            println!("Credits are:\n{:?}", c);
         }
         CreditSubCommand::Income(_opts) => (),
         CreditSubCommand::Transactions(_opts) => (),
