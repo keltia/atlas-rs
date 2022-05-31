@@ -302,22 +302,26 @@ impl RequestBuilder {
     ///
     /// Example:
     /// ```no_run
-    /// # use atlas_rs::client::Client;
-    /// # use atlas_rs::request::List;
+    /// # use atlas_rs::client::{Client, Ctx};
+    /// # use atlas_rs::request::{List, RequestBuilder};
     /// # use atlas_rs::core::probes::Probe;
-    ///
+    /// #
     /// # let c = Client::new();
-    /// # let url = "https://foo.example.net/".to_string();
+    /// # let ctx = Ctx::None;
     ///
-    /// let rawlist: List<Probe> = c.fetch_one_page(url, 1).unwrap();
-    /// if rawlist.next.is_empty() {
+    /// let url = reqwest::Url::parse("https://foo.example.net/").unwrap();
+    /// let r = reqwest::blocking::Request::new(reqwest::Method::GET, url.clone());
+    /// let rq = RequestBuilder::new(ctx, c, r);
+    ///
+    /// let rawlist: List<Probe> = rq.fetch_one_page(url).unwrap();
+    /// if rawlist.next.is_some() {
     /// #
     /// }
     /// ```
     ///
-    fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
-    where
-        T: de::DeserializeOwned,
+    pub fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
+        where
+            T: de::DeserializeOwned,
     {
         // Call the service
         //
