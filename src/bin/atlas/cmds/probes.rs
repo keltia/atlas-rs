@@ -30,7 +30,14 @@ pub(crate) fn cmd_probes(ctx: &Context, opts: ProbeOpts) {
         ProbeSubCommand::Info(opts) => {
             let pn = opts.id.unwrap_or_else(|| ctx.cfg.default_probe.unwrap());
 
-            let p: Probe = ctx.c.probe().get(pn).unwrap();
+            let p: Probe = match ctx.c.probe().get(pn) {
+                Ok(p) => p,
+                Err(e) => {
+                    println!("Probe {} not found!", pn);
+                    println!("Error: {:#?}", e);
+                    return
+                }
+            };
             println!("Probe {} is:\n{:?}", pn, p);
         }
         ProbeSubCommand::List(opts) => {
