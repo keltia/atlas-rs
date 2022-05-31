@@ -34,8 +34,14 @@ pub(crate) fn cmd_probes(ctx: &Context, opts: ProbeOpts) {
             println!("Probe {} is:\n{:?}", pn, p);
         }
         ProbeSubCommand::List(opts) => {
-            let p: Vec<Probe> = ctx.c.probe().list(opts.q).unwrap();
-            dbg!(&p);
+            let p: Vec<Probe> = match ctx.c.probe().list(opts.q) {
+                Ok(p) => p,
+                Err(e) => {
+                    println!("Error: {:#?}", e);
+                    vec![]
+                }
+            };
+            println!("{} probes found!", p.len());
         }
     }
 }
