@@ -6,7 +6,6 @@
 
 // External crates
 use lazy_regex::regex;
-use serde::{Deserialize, Serialize};
 
 // Our crates
 
