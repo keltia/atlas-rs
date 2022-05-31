@@ -19,7 +19,7 @@ use serde::Serialize;
 /// This enum is for passing the right kind of parameter to `get()`,
 /// there might be a better way for this.
 ///
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, PartialEq)]
 pub enum Param {
     /// Represents a n array of strings (i.e. "country=fr", "area=WW")
     A(Vec<String>),
@@ -168,5 +168,22 @@ mod tests {
         let pl = take_arr_param(["foo", "bar", "baz"].into());
 
         dbg!(&pl);
+    }
+
+    #[test]
+    fn test_u32_param() {
+        let p = 27u32;
+
+        let s = Param::from(p);
+        let t = Param::U(27);
+        assert_eq!(t, s);
+    }
+
+    #[test]
+    fn test_param_u32() {
+        let p = Param::U(28);
+
+        let s = u32::from(p);
+        assert_eq!(28, s);
     }
 }
