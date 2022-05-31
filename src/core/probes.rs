@@ -278,7 +278,7 @@ impl Probe {
                     }
                     _ => unimplemented!(),
                 };
-                format!("{}?{}", "/probes/".to_string(), qs)
+                format!("{}?{}", "/probes/", qs)
             }      // /list
             Op::Get => format!("/probes/{}/", p),    // /get
             Op::Set => format!("/probes/{}/", p),    // /set

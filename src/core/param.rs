@@ -89,7 +89,7 @@ impl From<Vec<String>> for Param {
 
 /// From Param to String
 ///
-impl<'a> From<Param> for String {
+impl From<Param> for String {
     fn from(p: Param) -> Self {
         match p {
             Param::S(s) => s,
@@ -100,7 +100,7 @@ impl<'a> From<Param> for String {
 
 /// From u32 to Param
 ///
-impl<'a> From<u32> for Param {
+impl From<u32> for Param {
     fn from(p: u32) -> Self {
         Param::U(p)
     }
@@ -108,7 +108,7 @@ impl<'a> From<u32> for Param {
 
 /// From Param to u32
 ///
-impl<'a> From<Param> for u32 {
+impl From<Param> for u32 {
     fn from(p: Param) -> Self {
         match p {
             Param::U(v) => v,
@@ -119,7 +119,7 @@ impl<'a> From<Param> for u32 {
 
 /// From i64 to Param
 ///
-impl<'a> From<i64> for Param {
+impl From<i64> for Param {
     fn from(p: i64) -> Self {
         Param::L(p)
     }
@@ -127,7 +127,7 @@ impl<'a> From<i64> for Param {
 
 /// From i32 to Param
 ///
-impl<'a> From<i32> for Param {
+impl From<i32> for Param {
     fn from(p: i32) -> Self {
         Param::I(p)
     }
@@ -135,7 +135,7 @@ impl<'a> From<i32> for Param {
 
 /// From Param to i32
 ///
-impl<'a> From<Param> for i32 {
+impl From<Param> for i32 {
     fn from(p: Param) -> Self {
         match p {
             Param::I(v) => v,
@@ -146,7 +146,7 @@ impl<'a> From<Param> for i32 {
 
 /// From Param to i64
 ///
-impl<'a> From<Param> for i64 {
+impl From<Param> for i64 {
     fn from(p: Param) -> Self {
         match p {
             Param::L(v) => v,

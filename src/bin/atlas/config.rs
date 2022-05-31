@@ -63,7 +63,7 @@ const CONFIG: &str = "config.toml";
 const BASEDIR: &str = ".config";
 
 /// Default set of probes to be used for queries
-#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct ProbeSet {
     /// How many probes do we want
     pub pool_size: Option<usize>,
@@ -80,7 +80,7 @@ pub struct ProbeSet {
 ///
 /// NOTE: I never used it but it is part of the API.
 ///
-#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct Measurements {
     /// RIPE Account ID to be billed for subsequent queries
     pub bill_to: String,

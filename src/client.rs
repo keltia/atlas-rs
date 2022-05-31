@@ -52,7 +52,7 @@ const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
 // ---------------------------------------------------------------------------
 
 /// Represents all possible INET Address Family values
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum AF {
     /// Only IPv4 target
     V4,

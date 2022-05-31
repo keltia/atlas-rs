@@ -269,7 +269,7 @@ impl RequestBuilder {
 
         // Get first results in
         //
-        for e in rawlist.results.iter().to_owned() {
+        for e in rawlist.results.iter() {
             res.push(e.clone());
         }
 
@@ -287,7 +287,7 @@ impl RequestBuilder {
                     Err(e) => return Err(e),
                 };
                 // Get more results in
-                for e in rawlist.results.iter().to_owned() {
+                for e in rawlist.results.iter() {
                     res.push(e.clone());
                 }
                 nxt = rawlist.next;
