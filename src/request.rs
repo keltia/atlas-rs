@@ -18,9 +18,11 @@ use std::fmt::Display;
 
 // External crates
 //
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use itertools::Itertools;
+use reqwest::Url;
 use serde::de;
+use serde::Deserialize;
 
 // Our internal crates.
 //
@@ -32,7 +34,6 @@ use crate::core::{
 };
 use crate::errors::APIError;
 use crate::option::Options;
-use crate::param::Param;
 
 // ------------------------------------------------------------
 
@@ -81,16 +82,16 @@ fn get_ops_url(ctx: &Ctx, op: Op, p: Param) -> String {
 
 /// When asking for a list of S, this generic struct is used for pagination
 ///
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct List<S> {
     /// How many results in this block
     pub count: u32,
     /// URL to fetch the next block
-    pub next: String,
+    pub next: Option<String>,
     /// URL to fetch previous block
-    pub previous: String,
+    pub previous: Option<String>,
     /// Current key block
-    pub data: Vec<S>,
+    pub results: Vec<S>,
 }
 
 // ------------------------------------------------------------
@@ -225,54 +226,76 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn list<T>(&mut self, data: impl Into<Param>) -> Result<Vec<T>, APIError>
+    pub fn list<P: Into<Param>, T>(&mut self, data: P) -> Result<Vec<T>, APIError>
         where
-            T: de::DeserializeOwned + std::fmt::Display + std::fmt::Debug,
+            T: de::DeserializeOwned + Display + std::fmt::Debug + Clone,
     {
         self.paged = true;
 
-        let rawlist: List<T> = match self.fetch_one_page(data, page) {
-            Ok(list) => list,
-            Err(e) => return Err(APIError::from(e))
-        };
+        // We will append all results here.
+        //
+        let mut res = Vec::<T>::new();
 
-        if rawlist.count == 0 {
-            return Err(APIError::new(
-                400,
-                "Bad",
-                e.to_string().as_str(),
-                "fetch_one_page",
-            );
-        }
-        // Get the parameter
+        // Get the parameters, add our page stuff
+        //
         let add = get_ops_url(&self.ctx, Op::List, data.into());
-
         let opts = self.c.opts.iter();
 
         // Setup URL with potential parameters like `key`.
+        //
         let url = reqwest::Url::parse_with_params(
             format!("{}{}", self.r.url().as_str(), add).as_str(),
             opts,
         )
-        .unwrap();
+            .unwrap();
 
-        self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
-        let resp = self
-            .c
-            .agent
-            .as_ref()
-            .unwrap()
-            .get(self.r.url().as_str())
-            .send()?;
+        // Get data / opts for 1st call
+        //
+        let rawlist: List<T> = match self.fetch_one_page(url) {
+            Ok(list) => list,
+            Err(e) => return Err(e),
+        };
 
-        println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
+        // Exit early with error if nothing
+        //
+        if rawlist.count == 0 {
+            return Err(APIError::new(
+                400,
+                "Bad Call",
+                "no data returned on pagination",
+                "fetch_one_page",
+            ));
+        }
 
-        let txt = resp.text()?;
-        println!("after text={}", txt);
+        // Get first results in
+        //
+        for e in rawlist.results.iter().to_owned() {
+            res.push(e.clone());
+        }
 
-        let r: Vec<T> = serde_json::from_str(&txt)?;
-        println!("after r={:?}", r);
-        Ok(r)
+        // Is there anything else?
+        //
+        if rawlist.next.is_some() {
+            let mut nxt = rawlist.next;
+            //let pn = get_page_num(nxt.as_ref().unwrap().to_owned());
+            while nxt.is_some() {
+                //let page = pn;
+                let url = Url::parse(&nxt.unwrap()).unwrap();
+
+                let rawlist: List<T> = match self.fetch_one_page(url) {
+                    Ok(list) => list,
+                    Err(e) => return Err(e),
+                };
+                // Get more results in
+                for e in rawlist.results.iter().to_owned() {
+                    res.push(e.clone());
+                }
+                nxt = rawlist.next;
+            }
+        }
+
+        println!("after res={:?}", res);
+        Ok(res)
     }
 
     /// Implement a generic fetch_one_page() function
@@ -280,7 +303,7 @@ impl RequestBuilder {
     /// Example:
     /// ```no_run
     /// # use atlas_rs::client::Client;
-    /// # use atlas_rs::common::List;
+    /// # use atlas_rs::request::List;
     /// # use atlas_rs::core::probes::Probe;
     ///
     /// # let c = Client::new();
@@ -292,59 +315,46 @@ impl RequestBuilder {
     /// }
     /// ```
     ///
-    fn fetch_one_page<T>(&mut self, data: Param, page: usize) -> Result<List<T>, APIError>
+    fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
         where
             T: de::DeserializeOwned,
     {
-        // Get the parameter, add our page stuff
+        // Call the service
         //
-        let add = get_ops_url(&self.ctx, Op::List, data.into());
-        let add = format!("{}&page={}", add, page);
-
-        let mut opts = self.c.opts.iter();
-
-        // Setup URL with potential parameters like `key`.
-        let url = reqwest::Url::parse_with_params(
-            format!("{}{}", self.r.url().as_str(), add).as_str(),
-            opts,
-        )
-            .unwrap();
-
-        self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
+        let req = reqwest::blocking::Request::new(self.r.method().clone(), url);
         let resp = self
             .c
             .agent
             .as_ref()
             .unwrap()
-            .get(self.r.url().as_str())
-            .send()?;
+            .get(req.url().as_str())
+            .send();
 
-        let resp = match resp {
-            Ok(resp) => resp,
-            Err(e) => {
-                let aerr = APIError::new(
-                    e.status().unwrap().as_u16(),
-                    "Bad",
-                    e.to_string().as_str(),
-                    "fetch_one_page",
-                );
-                return Err(aerr);
+        match resp {
+            Ok(resp) => {
+                // Try to see if we got an error
+                //
+                match resp.status() {
+                    reqwest::StatusCode::OK => {
+                        // We could use Response::json() here but it consumes the body.
+                        //
+                        let r = resp.text()?;
+                        println!("p={}", r);
+                        let p: List<T> = serde_json::from_str(&r)?;
+                        Ok(p)
+                    }
+                    _ => {
+                        let aerr = resp.json::<APIError>()?;
+                        Err(aerr)
+                    }
+                }
             }
-        };
-
-        // Try to see if we got an error
-        match resp.status() {
-            reqwest::StatusCode::OK => {
-                // We could use Response::json() here but it consumes the body.
-                let r = resp.text()?;
-                println!("p={}", r);
-                let p: List<T> = serde_json::from_str(&r)?;
-                Ok(p)
-            }
-            _ => {
-                let aerr = resp.json::<APIError>()?;
-                Err(aerr)
-            }
+            Err(e) => Err(APIError::new(
+                e.status().unwrap().as_u16(),
+                "Bad",
+                e.to_string().as_str(),
+                "fetch_one_page",
+            )),
         }
     }
 
