@@ -176,9 +176,12 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn get<T>(&mut self, data: impl Into<Param> + Display + std::fmt::Debug) -> Result<T, APIError>
-        where
-            T: de::DeserializeOwned + Display,
+    pub fn get<T>(
+        &mut self,
+        data: impl Into<Param> + Display + std::fmt::Debug,
+    ) -> Result<T, APIError>
+    where
+        T: de::DeserializeOwned + Display,
     {
         // Setup everything
         //
@@ -188,11 +191,9 @@ impl RequestBuilder {
 
         // Setup URL with potential parameters like `key`.
         //
-        let url = Url::parse_with_params(
-            format!("{}{}", &self.r.url().as_str(), add).as_str(),
-            opts,
-        )
-            .unwrap();
+        let url =
+            Url::parse_with_params(format!("{}{}", &self.r.url().as_str(), add).as_str(), opts)
+                .unwrap();
 
         self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
         let resp = self
@@ -244,11 +245,9 @@ impl RequestBuilder {
 
         // Setup URL with potential parameters like `key`.
         //
-        let url = Url::parse_with_params(
-            format!("{}{}", &self.r.url().as_str(), add).as_str(),
-            opts,
-        )
-            .unwrap();
+        let url =
+            Url::parse_with_params(format!("{}{}", &self.r.url().as_str(), add).as_str(), opts)
+                .unwrap();
 
         // Get data / opts for 1st call
         //
@@ -321,8 +320,8 @@ impl RequestBuilder {
     /// ```
     ///
     pub fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
-        where
-            T: de::DeserializeOwned,
+    where
+        T: de::DeserializeOwned,
     {
         // Call the service
         //

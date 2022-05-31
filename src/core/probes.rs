@@ -152,13 +152,13 @@ impl Probe {
                 };
                 format!("{}?{}", "/probes/", qs)
             } // /list
-            Op::Get => format!("/probes/{}/", u32::from(p)),    // /get
-            Op::Set => format!("/probes/{}/", u32::from(p)),    // /set
+            Op::Get => format!("/probes/{}/", u32::from(p)), // /get
+            Op::Set => format!("/probes/{}/", u32::from(p)), // /set
             Op::Update => format!("/probes/{}/", u32::from(p)), // /update
             Op::Measurement => format!("/probes/{}/measurements/", u32::from(p)), // P/measurements
-            Op::Archive => "/probes/archive/".to_string(), // /archive
+            Op::Archive => "/probes/archive/".to_string(),   // /archive
             Op::Rankings => "/probes/rankings/".to_string(), // rankings
-            Op::Tags => "/probes/tags/".to_string(), // /tags/
+            Op::Tags => "/probes/tags/".to_string(),         // /tags/
             Op::Slugs => format!("/probes/tags/{}/slugs", u32::from(p)), // /tags/T/slugs/
             _ => panic!("not possible"),
         }

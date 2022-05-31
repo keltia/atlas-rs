@@ -46,7 +46,7 @@ pub(crate) fn cmd_keys(ctx: &Context, opts: KeyOpts) {
                 Err(e) => {
                     println!("Key {} not found!", uuid);
                     println!("Error: {:#?}", e);
-                    return
+                    return;
                 }
             };
             println!("Key {} is:\n{:?}", uuid, k);
@@ -60,6 +60,6 @@ pub(crate) fn cmd_keys(ctx: &Context, opts: KeyOpts) {
                 }
             };
             println!("{} key found!", p.len());
-        },
+        }
     }
 }

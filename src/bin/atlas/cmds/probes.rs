@@ -35,7 +35,7 @@ pub(crate) fn cmd_probes(ctx: &Context, opts: ProbeOpts) {
                 Err(e) => {
                     println!("Probe {} not found!", pn);
                     println!("Error: {:#?}", e);
-                    return
+                    return;
                 }
             };
             println!("Probe {} is:\n{:?}", pn, p);

@@ -86,11 +86,11 @@ impl Key {
         match op {
             Op::Permissions => "/keys/permissions/".to_string(), // /permissions
             Op::Targets => format!("/keys/permissions/{}/targets/", String::from(uuid)), // /get targets
-            Op::Get => format!("/keys/{}/", String::from(uuid)),               // /get
-            Op::Set => format!("/keys/{}/", String::from(uuid)),               // /set
-            Op::Delete => format!("/keys/{}/", String::from(uuid)),            // /delete
-            Op::List => "/keys/".to_string(),                    // /list
-            Op::Create => "/keys/".to_string(),                  // /create
+            Op::Get => format!("/keys/{}/", String::from(uuid)),                         // /get
+            Op::Set => format!("/keys/{}/", String::from(uuid)),                         // /set
+            Op::Delete => format!("/keys/{}/", String::from(uuid)),                      // /delete
+            Op::List => "/keys/".to_string(),                                            // /list
+            Op::Create => "/keys/".to_string(),                                          // /create
             _ => panic!("not possible"),
         }
     }
