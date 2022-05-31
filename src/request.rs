@@ -176,21 +176,23 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn get<T>(&mut self, data: impl Into<Param> + Display) -> Result<T, APIError>
-    where
-        T: de::DeserializeOwned + Display,
+    pub fn get<T>(&mut self, data: impl Into<Param> + Display + std::fmt::Debug) -> Result<T, APIError>
+        where
+            T: de::DeserializeOwned + Display,
     {
-        // Get the parameter
+        // Setup everything
+        //
         let add = get_ops_url(&self.ctx, Op::Get, data.into());
-
+        dbg!(&add);
         let opts = self.c.opts.iter();
 
         // Setup URL with potential parameters like `key`.
-        let url = reqwest::Url::parse_with_params(
-            format!("{}{}", self.r.url().as_str(), add).as_str(),
+        //
+        let url = Url::parse_with_params(
+            format!("{}{}", &self.r.url().as_str(), add).as_str(),
             opts,
         )
-        .unwrap();
+            .unwrap();
 
         self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
         let resp = self
@@ -236,18 +238,17 @@ impl RequestBuilder {
         //
         let mut res = Vec::<T>::new();
 
-        // Get the parameters, add our page stuff
-        //
         let add = get_ops_url(&self.ctx, Op::List, data.into());
+        dbg!(&add);
         let opts = self.c.opts.iter();
 
         // Setup URL with potential parameters like `key`.
         //
-        let url = reqwest::Url::parse_with_params(
-            format!("{}{}", self.r.url().as_str(), add).as_str(),
+        let url = Url::parse_with_params(
+            format!("{}{}", &self.r.url().as_str(), add).as_str(),
             opts,
         )
-        .unwrap();
+            .unwrap();
 
         // Get data / opts for 1st call
         //
