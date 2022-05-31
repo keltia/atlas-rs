@@ -32,17 +32,8 @@
 
 //! ## History
 //!
-//! It was originally a port of my [Go] library called [ripe-atlas] (see the `flat-api`
-//! features below) in the process of learning [Rust] but it evolved very fast into a more
-//! proper idiomatic Rust library.
-//!
-//! ## Optional Features
-//!
-//! The following are a list of [Cargo features][cargo-features] that can be
-//! enabled or disabled:
-//!
-//! - **flat-api**: Provides the flatter API calls (aka `c.get_probe(n)`, etc.)
-//! - **alt-api**: Provides an alternate set of API calls (`Probe::get(cl, n)`, etc.)
+//! It was originally a port of my [Go] library called [ripe-atlas] in the process of learning
+//! [Rust] but it evolved very fast into a more properly idiomatic Rust library.
 //!
 //! [cargo-features]: https://doc.rust-lang.org/stable/cargo/reference/manifest.html#the-features-section
 //! [Go]: https://golang.org/

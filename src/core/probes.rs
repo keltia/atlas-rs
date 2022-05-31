@@ -26,15 +26,12 @@
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
-#[cfg(feature = "flat-api")]
-use reqwest::StatusCode;
 // External crates
 //
 use serde::{Deserialize, Serialize};
 
 // Our crates
 //
-use crate::client::Client;
 use crate::core::param::Param;
 use crate::request::Op;
 
@@ -143,127 +140,6 @@ pub struct ProbeList {
 }
 
 // -------------------------------------------------------------------------
-
-/// Methods associated with probes.
-///
-impl Probe {
-    /// Alternate API for probes
-    ///
-    /// Example:
-    /// ```no_run
-    /// # use atlas_rs::core::probes::Probe;
-    /// # use atlas_rs::client::ClientBuilder;
-    ///
-    /// let c = ClientBuilder::new().api_key("the-key")?;
-    /// let p = Probe::get(cl, 666)?;
-    /// ```
-    ///
-    #[cfg(feature = "alt-api")]
-    pub fn get(cl: &Client, pn: u32) -> Result<Self, APIError> {
-        Ok(cl.probe().get(pn).call()?)
-    }
-
-    /// Alternate API for probes
-    ///
-    /// Example:
-    /// ```no_run
-    /// # use atlas_rs::core::probes::Probe;
-    /// # use atlas_rs::client::ClientBuilder;
-    ///
-    /// let c = ClientBuilder::new().api_key("the-key")?;
-    /// let p = Probe::list(cl, opts)?;
-    /// ```
-    ///
-    #[cfg(feature = "alt-api")]
-    pub fn list(cl: &Client, opts: &HashMap<&str, &str>) -> Result<List<Self>, APIError> {
-        Ok(cl.get_probes(opts)?)
-    }
-}
-
-// -------------------------------------------------------------------------
-
-/// Main API methods for `Probe` type
-///
-/// This is the code enabled by the `flat-api` feature.
-///
-/// XXX May just disappear as I do not see this as real idiomatic Rust code.
-///
-impl Client {
-    /// Get information on a specific probe by ID
-    ///
-    /// Examples:
-    ///
-    /// ```no_run
-    ///  # use atlas_rs::client::ClientBuilder;
-    ///  # use atlas_rs::core::probes::Probe;
-    ///
-    ///     let cl = ClientBuilder::new().api_key("foo").verbose(true);
-    ///     let pi = cl.get_probe(666)?;
-    ///
-    ///     println!("Probe ID {}: {}", 666, pi.description);
-    ///  ```
-    ///
-    #[cfg(feature = "flat-api")]
-    pub fn get_probe(&self, id: u32) -> Result<Probe, APIError> {
-        let opts = &self.opts.clone();
-        let url = format!("{}/probes/{}/", self.endpoint, id);
-        let url = add_opts(&url, opts);
-
-        let resp = self.agent.as_ref().unwrap().get(&url).send();
-
-        let resp = match resp {
-            Ok(resp) => resp,
-            Err(e) => {
-                let aerr = APIError::new(
-                    e.status().unwrap().as_u16(),
-                    "Bad",
-                    e.to_string().as_str(),
-                    "get_probe",
-                );
-                return Err(aerr);
-            }
-        };
-
-        // Try to see if we got an error
-        match resp.status() {
-            StatusCode::OK => {
-                // We could use Response::json() here but it consumes the body.
-                let r = resp.text()?;
-                println!("p={}", r);
-                let p: Probe = serde_json::from_str(&r)?;
-                Ok(p)
-            }
-            _ => {
-                let aerr = resp.json::<APIError>()?;
-                Err(aerr)
-            }
-        }
-    }
-
-    /// Get information about a set of probes according to parameters
-    ///
-    #[cfg(feature = "flat-api")]
-    pub fn get_probes(&self, opts: &HashMap<&str, &str>) -> Result<List<Probe>, APIError> {
-        let gopts = &self.opts.clone();
-        let url = format!("{}/probes/", &self.endpoint);
-
-        // Add global options
-        let url = add_opts(&url, gopts);
-        // Add our specific ones, like page=NN
-        let url = add_opts(&url, opts);
-
-        let res: List<Probe> = self.fetch_one_page(&url, 1)?;
-
-        if res.count == 0 {
-            return Err(APIError::new(500, "Empty list", "nothing", "get_probes"));
-        }
-
-        if res.next.is_empty() {
-            // We have no pagination
-        }
-        Ok(res)
-    }
-}
 
 impl Probe {
     /// Generate the proper URL for the service we want in the given category

@@ -10,8 +10,6 @@ keywords = ["atlas", "ripe-atlas", "library", "REST-API", "client-library"]
 description = "Rust library to access RIPE Atlas probes API."
 categories = ["api-bindings" ]
 
-# features = ["flat-api", "alt-api"]
-
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]

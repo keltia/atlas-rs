@@ -16,13 +16,10 @@
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
-#[cfg(feature = "flat-api")]
-use reqwest::StatusCode;
 // External crates
 use serde::{Deserialize, Serialize};
 
 // Our crates
-use crate::client::Client;
 use crate::core::param::Param;
 use crate::request::Op;
 
@@ -96,67 +93,6 @@ pub struct KeyList {
 }
 
 // -------------------------------------------------------------------------
-
-/// Main API methods for `key` type
-impl Client {
-    /// Get information on a specific key by ID
-    ///
-    /// Examples:
-    ///
-    /// ```no_run
-    ///  # use atlas_rs::client::Client;
-    ///  # use atlas_rs::core::keys::Key;
-    ///
-    ///     let cl = Client::new().verbose(true);
-    ///     let pi = cl.get_key("key-id").unwrap();
-    ///
-    ///     println!("key ID {}: {}", pi.uuid, pi.label);
-    ///  ```
-    ///
-    #[cfg(feature = "flat-api")]
-    pub fn get_key(&self, uuid: &str) -> Result<Key, APIError> {
-        let opts = &self.opts.clone();
-        let url = format!("{}/keys/{}/", self.endpoint, uuid);
-        let url = add_opts(&url, opts);
-
-        let resp = self.agent.as_ref().unwrap().get(&url).send();
-
-        let resp = match resp {
-            Ok(resp) => resp,
-            Err(e) => {
-                let aerr = APIError::new(
-                    e.status().unwrap().as_u16(),
-                    "Bad",
-                    e.to_string().as_str(),
-                    "get_key",
-                );
-                return Err(aerr);
-            }
-        };
-
-        // Try to see if we got an error
-        match resp.status() {
-            StatusCode::OK => {
-                // We could use Response::json() here but it consumes the body.
-                let r = resp.text()?;
-                println!("p={}", r);
-                let p: Key = serde_json::from_str(&r)?;
-                Ok(p)
-            }
-            _ => {
-                let aerr = resp.json::<APIError>()?;
-                Err(aerr)
-            }
-        }
-    }
-
-    /// Get information about a set of keys according to parameters
-    ///
-    #[cfg(feature = "flat-api")]
-    pub fn get_keys() -> Result<Vec<Key>, APIError> {
-        unimplemented!()
-    }
-}
 
 impl Key {
     /// Generate the proper URL for the service we want in the given category
