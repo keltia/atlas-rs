@@ -41,9 +41,25 @@ pub(crate) fn cmd_keys(ctx: &Context, opts: KeyOpts) {
         KeySubCommand::Info(opts) => {
             let uuid = opts.uuid.unwrap_or_else(|| ctx.cfg.api_key.clone());
 
-            let k: Key = ctx.c.keys().get(uuid.as_str()).unwrap();
+            let k: Key = match ctx.c.keys().get(uuid.as_str()) {
+                Ok(k) => k,
+                Err(e) => {
+                    println!("Key {} not found!", uuid);
+                    println!("Error: {:#?}", e);
+                    return
+                }
+            };
             println!("Key {} is:\n{:?}", uuid, k);
         }
-        KeySubCommand::List(_opts) => (),
+        KeySubCommand::List(opts) => {
+            let p: Vec<Key> = match ctx.c.keys().list(opts.q) {
+                Ok(p) => p,
+                Err(e) => {
+                    println!("Error: {:#?}", e);
+                    vec![]
+                }
+            };
+            println!("{} key found!", p.len());
+        },
     }
 }
