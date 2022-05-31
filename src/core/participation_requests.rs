@@ -7,7 +7,8 @@
 
 // -------------------------------------------------------------------------
 // Standard library
-use std::fmt::Display;
+use std::fmt;
+use std::fmt::{Display, Formatter};
 
 // External crates
 use serde::{Deserialize, Serialize};
@@ -43,3 +44,11 @@ impl ParticipationRequests {
         }
     }
 }
+
+/// Implement fmt::Display for ParticipationRequests
+impl Display for ParticipationRequests {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", serde_json::to_string(self).unwrap())
+    }
+}
+
