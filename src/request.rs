@@ -27,7 +27,8 @@ use serde::de;
 use crate::client::{Client, Ctx};
 use crate::core::{
     anchor_measurements::AnchorMeasurement, anchors::Anchor, credits::Credits, keys::Key,
-    measurements::Measurement, participation_requests::ParticipationRequests, probes::Probe,
+    measurements::Measurement, param::Param, participation_requests::ParticipationRequests,
+    probes::Probe,
 };
 use crate::errors::APIError;
 use crate::option::Options;

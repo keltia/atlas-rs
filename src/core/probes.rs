@@ -35,7 +35,7 @@ use serde::{Deserialize, Serialize};
 // Our crates
 //
 use crate::client::Client;
-use crate::param::Param;
+use crate::core::param::Param;
 use crate::request::Op;
 
 // -------------------------------------------------------------------------
