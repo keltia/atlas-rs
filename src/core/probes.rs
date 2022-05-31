@@ -154,14 +154,14 @@ impl Probe {
                 };
                 format!("{}?{}", "/probes/", qs)
             } // /list
-            Op::Get => format!("/probes/{}/", p),    // /get
-            Op::Set => format!("/probes/{}/", p),    // /set
-            Op::Update => format!("/probes/{}/", p), // /update
-            Op::Measurement => format!("/probes/{}/measurements/", p), // P/measurements
+            Op::Get => format!("/probes/{}/", u32::from(p)),    // /get
+            Op::Set => format!("/probes/{}/", u32::from(p)),    // /set
+            Op::Update => format!("/probes/{}/", u32::from(p)), // /update
+            Op::Measurement => format!("/probes/{}/measurements/", u32::from(p)), // P/measurements
             Op::Archive => "/probes/archive/".to_string(), // /archive
             Op::Rankings => "/probes/rankings/".to_string(), // rankings
             Op::Tags => "/probes/tags/".to_string(), // /tags/
-            Op::Slugs => format!("/probes/tags/{}/slugs", p), // /tags/T/slugs/
+            Op::Slugs => format!("/probes/tags/{}/slugs", u32::from(p)), // /tags/T/slugs/
             _ => panic!("not possible"),
         }
     }
