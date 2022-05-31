@@ -87,13 +87,13 @@ pub struct Probe {
     /// IPv6 Autonomous System ID
     pub asn_v6: Option<u32>,
     /// ISO 3166 Country Code
-    pub country_code: String,
+    pub country_code: Option<String>,
     /// Free text description
     pub description: Option<String>,
     /// First connection
     pub first_connected: Option<u32>,
     /// Approx Position
-    pub geometry: Geometry,
+    pub geometry: Option<Geometry>,
     /// Probe ID
     pub id: u32,
     /// Is it an Anchor?
