@@ -64,15 +64,15 @@ const BASEDIR: &str = ".config";
 
 /// Default set of probes to be used for queries
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
-pub struct ProbeSet {
+pub(crate) struct ProbeSet {
     /// How many probes do we want
-    pub pool_size: Option<usize>,
+    pub(crate) pool_size: Option<usize>,
     /// Probe type
-    pub ptype: Option<String>,
+    pub(crate) ptype: Option<String>,
     /// Value for probe type
-    pub value: Option<String>,
+    pub(crate) value: Option<String>,
     /// Include/exclude specific tags
-    pub tags: Option<String>,
+    pub(crate) tags: Option<String>,
 }
 
 /// If we want to bill the queries to a specific account (i.e. different from the
@@ -81,9 +81,9 @@ pub struct ProbeSet {
 /// NOTE: I never used it but it is part of the API.
 ///
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
-pub struct Measurements {
+pub(crate) struct Measurements {
     /// RIPE Account ID to be billed for subsequent queries
-    pub bill_to: String,
+    pub(crate) bill_to: String,
 }
 
 /// `Config` struct with one mandatory argument and optional ones.
@@ -91,15 +91,15 @@ pub struct Measurements {
 /// Most API calls need an API key.
 ///
 #[derive(Clone, Debug, Deserialize)]
-pub struct Config {
+pub(crate) struct Config {
     /// API key
-    pub api_key: String,
+    pub(crate) api_key: String,
     /// Default probe ID
-    pub default_probe: Option<u32>,
+    pub(crate) default_probe: Option<u32>,
     /// Default set of probes
-    pub probe_set: Option<ProbeSet>,
+    pub(crate) probe_set: Option<ProbeSet>,
     /// Stuff about billing to a specific account
-    pub measurements: Option<Measurements>,
+    pub(crate) measurements: Option<Measurements>,
 }
 
 /// Here are the "reasonable" defaults.
@@ -133,7 +133,7 @@ impl Config {
     /// let cfg = Config::new();
     /// ```
     ///
-    pub fn new() -> Config {
+    pub(crate) fn new() -> Config {
         Config {
             ..Default::default()
         }
@@ -148,7 +148,7 @@ impl Config {
     /// let cfg = Config::load("./atlas.conf");
     /// ```
     ///
-    pub fn load(fname: &PathBuf) -> Result<Self> {
+    pub(crate) fn load(fname: &PathBuf) -> Result<Self> {
         let content = fs::read_to_string(fname)?;
         //println!("{:?}", content);
         Ok(toml::from_str(&content)?)
@@ -159,7 +159,7 @@ impl Config {
 /// base directory.
 ///
 #[cfg(unix)]
-pub fn default_file() -> Result<PathBuf> {
+pub(crate) fn default_file() -> Result<PathBuf> {
     let homedir = home_dir().unwrap();
 
     let def: PathBuf = [
@@ -168,8 +168,8 @@ pub fn default_file() -> Result<PathBuf> {
         PathBuf::from(crate_name!()),
         PathBuf::from(CONFIG),
     ]
-    .iter()
-    .collect();
+        .iter()
+        .collect();
     Ok(def)
 }
 
@@ -177,7 +177,7 @@ pub fn default_file() -> Result<PathBuf> {
 /// variable to base our directory into.
 ///
 #[cfg(windows)]
-pub fn default_file() -> Result<PathBuf> {
+pub(crate) fn default_file() -> Result<PathBuf> {
     let basedir = env::var("LOCALAPPDATA")?;
 
     let def: PathBuf = [
@@ -185,8 +185,8 @@ pub fn default_file() -> Result<PathBuf> {
         PathBuf::from(crate_name!()),
         PathBuf::from(CONFIG),
     ]
-    .iter()
-    .collect();
+        .iter()
+        .collect();
     Ok(def)
 }
 
