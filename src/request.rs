@@ -2,14 +2,18 @@
 //! involved in method chaining to setup and run an HTTP request through `reqwest`.
 //!
 //! There is the ` Request` struct and its builder counterpart `RequestBuilder`.
-//! See `APIDESIGN.md` for the details list of calls and the contex/category on
-//! each of them.
+//!
+//! See [APIDESIGN.md](./APIDESIGN.md) for the list of methods and which is called in which context.
 //!
 //! The process is always creating a `Client` instance either with `new()` or through
 //! the `ClientBuilder` chain.  Requests are then initiated by calling one of the categories
 //! methods (like `probes()` and `keys()`) followed by the keyword of the action itself (like
-//! `get()` or `list()` to five parameters) with `call()`to finish and do the actual API call.
+//! `get()` or `list()` to fill-in parameters) to finish and do the actual API call.
 //!
+//! Almost everything is done here in `RequestBuilder` through its methods.  Everything that is
+//! in the `core` crate is routing and establishing the URL and gathering the parameters.
+//!
+//! The calls here are generic over the type data you need to be returned like ‘Probe‘, ‘Key`, etc.
 //!
 
 // Std library
@@ -37,7 +41,9 @@ use crate::option::Options;
 
 // ------------------------------------------------------------
 
-/// All operations available
+/// All operations available to the various calls.
+///
+/// The selection of available operations for each type of data is done through the "core" module.
 ///
 #[derive(Debug)]
 pub enum Op {
@@ -156,9 +162,6 @@ impl RequestBuilder {
     /// These methods expect to be called by one of the main "categories" methods like
     /// `probes()` or `keys()`.  That way, context is established and propagated.
     ///
-    /// In essence, these is the main router.  See [APIDESIGN.md](./APIDESIGN.md) for the list of methods
-    /// and which is called in which context.
-    ///
     /// Some calls have a parameter (type is `Param`) and it gets converted into the proper
     /// type automatically depending on the `dispatch` function wants to get.
     ///
@@ -214,7 +217,11 @@ impl RequestBuilder {
         Ok(r)
     }
 
-    /// This is the `list` method which return a set of results.
+    /// This is the `list` method which return a set of results.  The results are automatically
+    /// paginated, returning a different structure with pointers to the previous and next pages.
+    ///
+    /// ‘list()‘ takes a Param which represents a query made with Atlas' specific keywords and
+    /// returns a ‘Vec<T>‘ representing a set of T objects.
     ///
     /// Example:
     ///
@@ -298,7 +305,16 @@ impl RequestBuilder {
         Ok(res)
     }
 
-    /// Implement a generic fetch_one_page() function
+    /// Implement a generic fetch_one_page() function.
+    ///
+    /// The API has complete support for this through a specific structure with previous and next
+    /// pointers, along with the total item count and results which represente the actual data.
+    ///
+    /// You setup the first call as usual inserting your options and stuff and the next ones are
+    /// just reusing the next pointer.
+    ///
+    /// This function just returns a `Vec<T>` where T the type of objects you are getting from the
+    /// calls.
     ///
     /// Example:
     /// ```no_run
@@ -363,6 +379,8 @@ impl RequestBuilder {
     }
 
     /// This is the `info` method close to `get` but without a parameter.
+    ///
+    /// You still get all the parameters from the options.
     ///
     /// Example:
     ///
