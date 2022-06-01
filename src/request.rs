@@ -143,12 +143,12 @@ impl RequestBuilder {
     /// # use atlas_rs::core::probes::Probe;
     ///
     /// let c = Client::new();
+    /// let query = vec!["country_code=fr"];
     ///
     /// let res: Vec<Probe> = c.probe()
     ///                        .with([("opt1", "foo"), ("opt2", "bar")])
-    ///                        .list(0u32)
-    ///                        .unwrap()
-    /// # ;
+    ///                        .list(query)
+    ///                        .unwrap();
     /// ```
     ///
     pub fn with(mut self, opts: impl Into<Options>) -> Self {
