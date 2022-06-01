@@ -14,7 +14,7 @@ let p = c.probe().get(666);
 
 let pl = c.probe().list(opts);     // or c.probe().list().with(opts);
 
-// there c.<category>() returns a RequestBuilder and .call() returns a Response.
+// there c.<category>() returns a RequestBuilder and .get/info/etc. returns a Response.
 ```
 
 We will have
@@ -84,60 +84,43 @@ Atlas API
 
 ### Per context/cmd:
 
-    RequestBuilder
-            list        anchor-measurements/anchors/keys/measurements/participation-requests/probes
-            get         anchor-measurements/anchors/keys/measurements/probes
-            info        credits
-            set         keys/probes
-            permissions keys
-            delete      keys/measurements            
-            create      keys/measurements
-            update      measurements/probes
-            archive     probes
-            rankings    probes
-            tags        probes
+...
+RequestBuilder
+list        anchor-measurements/anchors/keys/measurements/participation-requests/probes
+get         anchor-measurements/anchors/keys/measurements/probes
+info        credits
+set         keys/probes
+permissions keys
+delete      keys/measurements            
+create      keys/measurements
+update      measurements/probes
+archive     probes
+rankings    probes
+tags probes
+...
 
 ### Call tree
 
 ...
 client.rs anchor.rs/.../probe.rs request.rs
-
-    c = Client::new()
-    c = ClientBuilder::new()
-
-    c.anchor()
-    c.anchor_measurement()
-    c.credits()
-    c.keys()
-    c.probe()
-                                                                RequestBuilder()
-                                                                get(N)
-                                                                list()
-                                                                info()
-
-                                  <Type>::dispatch()
-                                                                 with(opts)
-
-                                                                .call()
-
-
-    struct Callable<T> {
-    // ...
-    }
-    impl<T> Callable<T> {
-    pub fn call(self) -> T {
-    todo!()
-    }
-    }
-    
-    fn get<T>() -> Callable<T> {
-    Callable { /* ... */ }
-    }
-    
-    fn list<T>() -> Callable<Vec<T>> {
-    Callable { /* ... */ }
-    }
-
+....
+c = Client::new()
+c = ClientBuilder::new()
+.....
+c.anchor()
+c.anchor_measurement()
+c.credits()
+c.keys()
+c.partitipation_requests()
+c.probe()
+RequestBuilder()
+opt(k, v)
+opts([(k1,v1),(k2,v2)]
+get(N)
+list(Q)
+info()
+delete()
+create()
 ...
 
     
