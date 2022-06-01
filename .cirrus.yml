@@ -10,6 +10,13 @@ test_task:
     - allow_failures: true
       arm_container:
         image: rustlang/rust:nightly
+  env:
+    CARGO_INCREMENTAL: "0"
+    CARGO_NET_RETRY: "10"
+    CI: "1"
+    RUST_BACKTRACE: "short"
+    RUSTFLAGS: "-D warnings -W unreachable-pub -W rust-2021-compatibility"
+    RUSTUP_MAX_RETRIES: "10"
   registry_cache:
     folder: $CARGO_HOME/registry
     fingerprint_script: cat Cargo.lock
