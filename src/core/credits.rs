@@ -163,6 +163,7 @@ pub struct IncomeItems {
 
 /// Data for transferring credits to a specific user
 ///
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Transfer {
     /// How many credits to transfer,
     pub amount: u32,
