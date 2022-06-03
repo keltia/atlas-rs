@@ -258,8 +258,8 @@ impl Credits {
     pub fn set_url(op: Op, _nothing: Param) -> String {
         match op {
             Op::Info => "/credits/".to_string(),                      // /get
-            Op::Incomes => "/credits/incomes/".to_string(),           // /get
-            Op::Expenses => "/credits/expenses/".to_string(),         // /get
+            Op::Incomes => "/credits/income-items/".to_string(),      // /get
+            Op::Expenses => "/credits/expense-items/".to_string(),    // /get
             Op::Transfers => "/credits/transfers/".to_string(),       // /get
             Op::Transactions => "/credits/transactions/".to_string(), // /get
             Op::Members => "/credits/members/".to_string(),           // /get
