@@ -182,7 +182,7 @@ pub struct Member {
     pub can_claim: bool,
     /// The last time that any user claimed credits for this member,
     pub last_claim: String,
-    /// The next time that this member will be eligible for claimimng credits,
+    /// The next time that this member will be eligible for claiming credits,
     pub next_claim: String,
     /// Human-readable name of this member,
     pub name: String,
