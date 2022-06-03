@@ -259,7 +259,35 @@ impl RequestBuilder {
         //
         let mut res = Vec::<T>::new();
 
-        let add = get_ops_url(&self.ctx, Op::List, data.into());
+        // Get the potential "type" option
+        //
+        let tt = &self.c.opts["type"];
+
+        // Keep all options except for "type" as we don't want to send this internal option
+        // along with the query.
+        //
+        let opts = self.c.opts.iter().filter_map(|k| {
+            if k.0 != "type" {
+                Some((k.0.as_str(), k.1.as_str()))
+            } else {
+                None
+            }
+        });
+
+        // Now, check the "type" value
+        //
+        let op = match tt.as_str() {
+            // Credits stuff
+            "expense-items" => Op::Expenses,
+            "income-items" => Op::Incomes,
+            "members" => Op::Members,
+            "transactions" => Op::Transactions,
+            "transfer" => Op::Transfers,
+            //
+            _ => Op::Info,
+        };
+
+        let add = get_ops_url(&self.ctx, op, data.into());
         dbg!(&add);
 
         // Setup URL with potential parameters like `key`.
@@ -415,7 +443,36 @@ impl RequestBuilder {
     {
         // Setup everything
         //
-        let add = get_ops_url(&self.ctx, Op::Info, Param::None);
+
+        // Get the potential "type" option
+        //
+        let tt = &self.c.opts["type"];
+
+        // Keep all options except for "type" as we don't want to send this internal option
+        // along with the query.
+        //
+        let opts = self.c.opts.iter().filter_map(|k| {
+            if k.0 != "type" {
+                Some((k.0.as_str(), k.1.as_str()))
+            } else {
+                None
+            }
+        });
+
+        // Now, check the "type" value
+        //
+        let op = match tt.as_str() {
+            // Credits stuff
+            "expense-items" => Op::Expenses,
+            "income-items" => Op::Incomes,
+            "members" => Op::Members,
+            "transactions" => Op::Transactions,
+            "transfer" => Op::Transfers,
+            //
+            _ => Op::Info,
+        };
+
+        let add = get_ops_url(&self.ctx, op, Param::None);
         dbg!(&add);
 
         // Setup URL with potential parameters like `key`.
