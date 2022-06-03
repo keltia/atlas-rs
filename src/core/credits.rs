@@ -247,7 +247,7 @@ pub struct ExpenseGroup {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ExpenseItems {
     /// Grouped list of expense groups
-    pub groups: Vec<ExpenseGroup>,
+    pub groups: ExpenseGroup,
     /// Total estimated daily expenditure from all expense items
     pub total_estimated_daily_expenditure: u32,
 }
