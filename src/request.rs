@@ -91,7 +91,7 @@ fn get_ops_url(ctx: &Ctx, op: Op, p: Param) -> String {
 #[derive(Deserialize, Debug)]
 pub struct List<S> {
     /// How many results in this block
-    pub count: u32,
+    pub count: Option<u32>,
     /// URL to fetch the next block
     pub next: Option<String>,
     /// URL to fetch previous block
