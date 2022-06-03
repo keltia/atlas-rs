@@ -150,7 +150,7 @@ impl Config {
     ///
     pub(crate) fn load(fname: &PathBuf) -> Result<Self> {
         let content = fs::read_to_string(fname)?;
-        //println!("{:?}", content);
+        dbg!(&content);
         Ok(toml::from_str(&content)?)
     }
 }
