@@ -156,7 +156,7 @@ pub struct MeasurementExpense {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct IncomeItems {
     /// Grouped list of income items
-    pub groups: Vec<IncomeGroups>,
+    pub groups: IncomeGroups,
     /// Total estimated daily income from all income items
     pub total_estimated_daily_income: u32,
 }
