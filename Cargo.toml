@@ -21,7 +21,6 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 anyhow = "1.0"
-chrono = { version = "0.4", features = ["serde", "rustc-serialize"] }
 clap = { version = "3.1", features = ["cargo", "derive"] }
 home = "0.5"
 itertools = "0.10"
