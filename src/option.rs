@@ -113,8 +113,14 @@ impl<const N: usize> From<[(&str, &str); N]> for Options {
     }
 }
 
+impl<'a> From<(&'a str, &'a str)> for Options {
+    fn from(tpl: (&'a str, &'a str)) -> Self {
+        Options::from([tpl])
+    }
+}
+
 impl<'a> FromIterator<(&'a str, &'a str)> for Options {
-    fn from_iter<T: IntoIterator<Item = (&'a str, &'a str)>>(iter: T) -> Self {
+    fn from_iter<T: IntoIterator<Item=(&'a str, &'a str)>>(iter: T) -> Self {
         let mut h = HashMap::new();
         for (k, v) in iter {
             h.insert(k.to_string(), v.to_string());
