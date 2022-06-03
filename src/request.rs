@@ -277,13 +277,16 @@ impl RequestBuilder {
 
         // Exit early with error if nothing
         //
-        if rawlist.count == 0 {
-            return Err(APIError::new(
-                400,
-                "Bad Call",
-                "no data returned on pagination",
-                "fetch_one_page",
-            ));
+        match rawlist.count {
+            Some(count) => if count == 0 {
+                return Err(APIError::new(
+                    400,
+                    "Bad Call",
+                    "no data returned on pagination",
+                    "fetch_one_page",
+                ))
+            }
+            _ => (),
         }
 
         // Get first results in
