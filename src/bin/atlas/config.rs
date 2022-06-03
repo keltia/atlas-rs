@@ -90,7 +90,7 @@ pub(crate) struct Measurements {
 ///
 /// Most API calls need an API key.
 ///
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub(crate) struct Config {
     /// API key
     pub(crate) api_key: String,
