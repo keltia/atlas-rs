@@ -553,4 +553,19 @@ mod tests {
         let url = add_opts(&url, &o);
         assert_eq!("/hello?bar=baz&name=foo", url);
     }
+
+    #[test]
+    fn test_with() {
+        let ctx = Ctx::Credits;
+        let cl = Client::new();
+        let url = Url::parse("http://localhost/").unwrap();
+        let rq = Request::new(reqwest::Method::GET, url);
+        let r = RequestBuilder::new(ctx, cl, rq);
+
+        let r = r.with(("type", "income"));
+        let add = get_ops_url(&ctx, Op::Info, Param::None);
+
+        assert_eq!(reqwest::Method::GET, r.r.method());
+        assert_eq!("/credits/income-items", add);
+    }
 }
