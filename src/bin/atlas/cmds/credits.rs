@@ -21,7 +21,8 @@ pub(crate) enum CreditSubCommand {
     Info(InfoOpts),
     Income(ListOpts),
     Expense(ExpOpts),
-    Transactions(TransOpts),
+    Members(MembOpts),
+    Transactions(ListOpts),
     Transfer(TransfOpts),
 }
 
@@ -33,14 +34,14 @@ pub(crate) struct ExpOpts {
 }
 
 #[derive(Parser)]
-pub(crate) struct TransOpts {
+pub(crate) struct TransfOpts {
     /// Print debug info
     #[clap(short)]
     pub(crate) debug: bool,
 }
 
 #[derive(Parser)]
-pub(crate) struct TransfOpts {
+pub(crate) struct MembOpts {
     /// Print debug info
     #[clap(short)]
     pub(crate) debug: bool,
@@ -58,9 +59,55 @@ pub(crate) fn cmd_credits(ctx: &Context, opts: CredOpts) {
             };
             println!("Credits are:\n{:?}", c);
         }
-        CreditSubCommand::Income(_opts) => (),
-        CreditSubCommand::Transactions(_opts) => (),
-        CreditSubCommand::Transfer(_opts) => (),
-        CreditSubCommand::Expense(_opts) => (),
+        CreditSubCommand::Income(_opts) => {
+            let c: IncomeItems = match ctx.c.credits().with(("type", "income-items")).info() {
+                Ok(c) => c,
+                Err(e) => {
+                    println!("Error: {:#?}", e);
+                    return;
+                }
+            };
+            println!("Credits are:\n{:?}", c);
+        },
+        CreditSubCommand::Transactions(opts) => {
+            let c: Vec<Transaction> = match ctx.c.credits().with(("type", "transactions")).list(opts.q) {
+                Ok(c) => c,
+                Err(e) => {
+                    println!("Error: {:?}", e);
+                    return;
+                }
+            };
+            println!("Credits transactions are:\n{:?}", c);
+        },
+        CreditSubCommand::Transfer(_opts) => {
+            let c: Transfer = match ctx.c.credits().with(("type", "transfer")).info() {
+                Ok(c) => c,
+                Err(e) => {
+                    println!("Error: {:?}", e);
+                    return;
+                }
+            };
+            println!("Credits are:\n{:?}", c);
+        },
+        CreditSubCommand::Expense(_opts) => {
+            let c: ExpenseItems = match ctx.c.credits().with(("type", "expense-items")).info() {
+                Ok(c) => c,
+                Err(e) => {
+                    println!("Error: {:?}", e);
+                    return;
+                }
+            };
+            println!("Credits are:\n{:?}", c);
+        },
+        CreditSubCommand::Members(_opts) => {
+            let c: MemberListing = match ctx.c.credits().with(("type", "members")).info() {
+                Ok(c) => c,
+                Err(e) => {
+                    println!("Error: {:?}", e);
+                    return;
+                }
+            };
+            println!("Credits are:\n{:?}", c);
+        },
     }
 }
