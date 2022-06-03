@@ -150,6 +150,19 @@ impl RequestBuilder {
     ///                        .list(query)
     ///                        .unwrap();
     /// ```
+    /// This can be used to have subcommands like this:
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// # use atlas_rs::core::probes::Probe;
+    ///
+    /// let c = Client::new();
+    /// let query = vec!["country_code=fr"];
+    ///
+    /// let res: Vec<Probe> = c.probe()
+    ///                        .with(("type", "transaction"))
+    ///                        .list(query)
+    ///                        .unwrap();
+    /// ```
     ///
     pub fn with(mut self, opts: impl Into<Options>) -> Self {
         self.c.opts.merge(&opts.into());
