@@ -191,6 +191,8 @@ pub struct Member {
 
 /// Struct to list of members
 ///
+/// XXX This seems to be restricted at the moment.
+///
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MemberListing {
     /// List
