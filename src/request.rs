@@ -18,7 +18,7 @@
 
 // Std library
 //
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 
 // External crates
 //
@@ -250,8 +250,8 @@ impl RequestBuilder {
     /// ```
     ///
     pub fn list<P: Into<Param>, T>(&mut self, data: P) -> Result<Vec<T>, APIError>
-    where
-        T: de::DeserializeOwned + Display + std::fmt::Debug + Clone,
+        where
+            T: de::DeserializeOwned + std::fmt::Debug + Clone,
     {
         self.paged = true;
 
@@ -261,7 +261,6 @@ impl RequestBuilder {
 
         let add = get_ops_url(&self.ctx, Op::List, data.into());
         dbg!(&add);
-        let opts = self.c.opts.iter();
 
         // Setup URL with potential parameters like `key`.
         //
@@ -408,14 +407,13 @@ impl RequestBuilder {
     /// ```
     ///
     pub fn info<T>(mut self) -> Result<T, APIError>
-    where
-        T: de::DeserializeOwned + Display,
+        where
+            T: de::DeserializeOwned + Debug,
     {
         // Setup everything
         //
         let add = get_ops_url(&self.ctx, Op::Info, Param::None);
         dbg!(&add);
-        let opts = self.c.opts.iter();
 
         // Setup URL with potential parameters like `key`.
         //
@@ -435,10 +433,10 @@ impl RequestBuilder {
         println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
 
         let txt = resp.text()?;
-        println!("after text={}", txt);
+        println!("after text={:?}", txt);
 
         let r: T = serde_json::from_str(&txt)?;
-        println!("after r={}", r);
+        println!("after r={:?}", r);
         Ok(r)
     }
 }
