@@ -199,6 +199,39 @@ pub struct MemberListing {
     pub members: Vec<Member>,
 }
 
+/// Struct for transactions
+///
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Transaction {
+    /// ID for the transaction
+    pub id: u32,
+    /// Transaction type (admin, measurement, probe)
+    #[serde(rename = "type")]
+    pub ttype: String,
+    /// Reason for the transaction
+    pub reason: String,
+    /// Longer description
+    pub description: Option<String>,
+    /// Amount of said transaction
+    pub amount: i32,
+    /// Balance before
+    pub balance_before: f32,
+    /// Balance after
+    pub balance_after: f32,
+    /// Date for the transaction
+    pub date: u32,
+    /// Measurement ID (if relevant)
+    pub measurement_id: Option<u32>,
+    /// URL to the measurement
+    pub measurement: Option<String>,
+    /// Number of samples
+    pub samples: Option<u32>,
+    /// Probe ID (if relevant)
+    pub probe_id: Option<u32>,
+    /// URL to  the probe
+    pub probe: Option<String>,
+}
+
 /// Struct representing an expense group.
 ///
 #[derive(Serialize, Deserialize, Debug)]
