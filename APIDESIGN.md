@@ -54,7 +54,7 @@ Atlas API
                                     ----- /get ----- /incomes
                                                      /expenses
                                                      /transfers
-                                                     /transactions
+                                          /list      /transactions
                                                      /members
                                                      /members ----- /claim
     ----- /keys                     ----- /permissions
@@ -83,8 +83,8 @@ Atlas API
 ### Per context/cmd:
 
     RequestBuilder
-            list        anchor-measurements/anchors/keys/measurements/participation-requests/probes
-            get         anchor-measurements/anchors/keys/measurements/probes
+            list        anchor-measurements/anchors/credits/keys/measurements/participation-requests/probes
+            get         anchor-measurements/anchors/credits/keys/measurements/probes
             info        credits
             set         keys/probes
             permissions keys
@@ -114,5 +114,5 @@ Atlas API
                                                                                 get(N)
                                                                                 list(Q)
                                                                                 info()
-                                                                                delete()
-                                                                                create()
+                                                                                delete(T)
+                                                                                create(T)
