@@ -306,12 +306,7 @@ impl Client {
 
         // Ensure api-Key is filled in prior to the calls.
         c.opts["key"] = self.api_key.as_ref().unwrap().clone();
-        RequestBuilder {
-            ctx: op,
-            paged: false,
-            c,
-            r,
-        }
+        RequestBuilder::new(op, c, r)
     }
 }
 
