@@ -2,10 +2,26 @@ use crate::client::Client;
 use crate::core::param::Param;
 use crate::errors::APIError;
 use crate::option::Options;
-use crate::request::{Callable, get_ops_url, List, Op, RequestBuilder, Return};
+use crate::request::{Callable, get_ops_url, Op, RequestBuilder, Return};
 
 use reqwest::{Method, Request, Url};
 use serde::de;
+
+// ------------------------------------------------------------
+
+/// When asking for a list of S, this generic struct is used for pagination
+///
+#[derive(Deserialize, Debug)]
+pub struct List<S> {
+    /// How many results in this block
+    pub count: Option<u32>,
+    /// URL to fetch the next block
+    pub next: Option<String>,
+    /// URL to fetch previous block
+    pub previous: Option<String>,
+    /// Current key block
+    pub results: Vec<S>,
+}
 
 pub struct Paged {
     pub c: Client,

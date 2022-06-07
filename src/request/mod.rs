@@ -109,22 +109,6 @@ fn get_ops_url(ctx: &Ctx, op: Op, p: Param) -> String {
     }
 }
 
-// ------------------------------------------------------------
-
-/// When asking for a list of S, this generic struct is used for pagination
-///
-#[derive(Deserialize, Debug)]
-pub struct List<S> {
-    /// How many results in this block
-    pub count: Option<u32>,
-    /// URL to fetch the next block
-    pub next: Option<String>,
-    /// URL to fetch previous block
-    pub previous: Option<String>,
-    /// Current key block
-    pub results: Vec<S>,
-}
-
 // -----------------
 
 #[derive(Debug)]
