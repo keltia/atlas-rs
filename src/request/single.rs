@@ -1,13 +1,12 @@
 //! Module implementing the `Single` type of requests,
 //!
 
-use reqwest::{Method, Request, Url};
-use serde::de;
+use reqwest::{Method, Url};
 
-use crate::client::Client;
-use crate::core::param::Param;
+use crate::client::{Client, Ctx};
 use crate::errors::APIError;
 use crate::option::Options;
+use crate::param::Param;
 use crate::request::{Callable, get_ops_url, Op, RequestBuilder, Return};
 
 /// Derivative of `RequestBuilder` with a flatter structure

@@ -4,6 +4,5 @@ pub mod anchors;
 pub mod credits;
 pub mod keys;
 pub mod measurements;
-pub mod param;
 pub mod participation_requests;
 pub mod probes;

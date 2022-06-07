@@ -19,30 +19,6 @@
 mod paged;
 mod single;
 
-// Std library
-//
-use std::fmt::{Debug, Display};
-
-// External crates
-//
-use anyhow::Result;
-use itertools::Itertools;
-use reqwest::Url;
-use serde::de;
-use serde::Deserialize;
-
-// Our internal crates.
-//
-use crate::client::{Client, Ctx};
-use crate::core::{
-    anchor_measurements::AnchorMeasurement, anchors::Anchor, credits::Credits, keys::Key,
-    measurements::Measurement, param::Param, participation_requests::ParticipationRequests,
-    probes::Probe,
-};
-use crate::errors::APIError;
-use crate::option::Options;
-use crate::request::{paged::Paged, single::Single};
-
 // ------------------------------------------------------------
 
 /// All operations available to the various calls.

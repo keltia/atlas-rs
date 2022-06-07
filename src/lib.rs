@@ -49,6 +49,7 @@ pub mod client;
 pub mod core;
 pub mod errors;
 pub mod option;
+pub mod param;
 pub mod request;
 
 /// Basic version string for the API.

@@ -14,7 +14,7 @@ use std::fmt::{Display, Formatter};
 use serde::{Deserialize, Serialize};
 
 // Our crates
-use crate::core::param::Param;
+use crate::param::Param;
 use crate::request::Op;
 
 // -------------------------------------------------------------------------
