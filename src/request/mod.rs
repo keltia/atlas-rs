@@ -16,6 +16,9 @@
 //! The calls here are generic over the type data you need to be returned like ‘Probe‘, ‘Key`, etc.
 //!
 
+mod paged;
+mod single;
+
 // Std library
 //
 use std::fmt::{Debug, Display};
@@ -38,34 +41,56 @@ use crate::core::{
 };
 use crate::errors::APIError;
 use crate::option::Options;
+use crate::request::{paged::Paged, single::Single};
 
 // ------------------------------------------------------------
 
 /// All operations available to the various calls.
 ///
 /// The selection of available operations for each type of data is done through the "core" module.
+/// This is a flat list despite not all operations being available to all first level.
 ///
 #[derive(Debug)]
 pub enum Op {
+    /// For Probe
     Archive,
+    /// For Credits>Members
     Claim,
+    /// For Key, Measurement
     Create,
+    /// For Key, Measurement
     Delete,
+    /// Credits
     Expenses,
+    /// Anchor-Measurement, Anchors, Credits, Key, Measurement, Participation_Requests, Probes
     Get,
+    /// Credits
     Incomes,
+    /// Credits
     Info,
+    /// Anchor-Measurement, Anchors, Credits, Key, Measurement, Participation_Requests, Probes
     List,
+    /// Probe
     Measurement,
+    /// Credits
     Members,
+    /// Key
     Permissions,
+    /// Probe
     Rankings,
+    /// Key, Probe
     Set,
+    /// Probe
     Slugs,
+    /// Probe>Tag
     Tags,
+    /// Key>Permissions
     Targets,
+    /// Credits
     Transactions,
+    /// Credits
     Transfers,
+    /// Measurement, Probe
     Update,
 }
 
@@ -100,7 +125,21 @@ pub struct List<S> {
     pub results: Vec<S>,
 }
 
-// ------------------------------------------------------------
+// -----------------
+
+#[derive(Debug)]
+pub enum Return<T> {
+    Single(T),
+    Paged(Vec<T>),
+}
+
+/// This is the trait we need to use for the call() stuff.
+///
+pub trait Callable<T> {
+    /// Main function here
+    ///
+    fn call(self) -> Result<Return<T>, APIError>;
+}
 
 // RequestBuilder itself
 
@@ -192,42 +231,17 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn get<T>(
-        &mut self,
-        data: impl Into<Param> + Display + std::fmt::Debug,
-    ) -> Result<T, APIError>
-    where
-        T: de::DeserializeOwned + Display,
+    pub fn get<P, T>(
+        self,
+        data: P,
+    ) -> Box<dyn Callable<T>>
+        where
+            P: Into<Param> + Display + Debug,
+            T: de::DeserializeOwned + Display,
     {
-        // Setup everything
-        //
-        let add = get_ops_url(&self.ctx, Op::Get, data.into());
-        dbg!(&add);
-        let opts = self.c.opts.iter();
-
-        // Setup URL with potential parameters like `key`.
-        //
-        let url =
-            Url::parse_with_params(format!("{}{}", &self.r.url().as_str(), add).as_str(), opts)
-                .unwrap();
-
-        self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
-        let resp = self
-            .c
-            .agent
-            .as_ref()
-            .unwrap()
-            .get(self.r.url().as_str())
-            .send()?;
-
-        println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
-
-        let txt = resp.text()?;
-        println!("after text={}", txt);
-
-        let r: T = serde_json::from_str(&txt)?;
-        println!("after r={}", r);
-        Ok(r)
+        let mut single = Single::from(self);
+        single.query = data.into();
+        Box::new(single)
     }
 
     /// This is the `list` method which return a set of results.  The results are automatically
@@ -249,176 +263,14 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn list<P: Into<Param>, T>(&mut self, data: P) -> Result<Vec<T>, APIError>
+    pub fn list<P, T>(self, data: P) -> Box<dyn Callable<T>>
         where
+            P: Into<Param>,
             T: de::DeserializeOwned + std::fmt::Debug + Clone,
     {
-        self.paged = true;
-
-        // We will append all results here.
-        //
-        let mut res = Vec::<T>::new();
-
-        // Get the potential "type" option
-        //
-        let tt = &self.c.opts["type"];
-
-        // Keep all options except for "type" as we don't want to send this internal option
-        // along with the query.
-        //
-        let opts = self.c.opts.iter().filter_map(|k| {
-            if k.0 != "type" {
-                Some((k.0.as_str(), k.1.as_str()))
-            } else {
-                None
-            }
-        });
-
-        // Now, check the "type" value
-        //
-        let op = match tt.as_str() {
-            // Credits stuff
-            "expense-items" => Op::Expenses,
-            "income-items" => Op::Incomes,
-            "members" => Op::Members,
-            "transactions" => Op::Transactions,
-            "transfer" => Op::Transfers,
-            //
-            _ => Op::Info,
-        };
-
-        let add = get_ops_url(&self.ctx, op, data.into());
-        dbg!(&add);
-
-        // Setup URL with potential parameters like `key`.
-        //
-        let url =
-            Url::parse_with_params(format!("{}{}", &self.r.url().as_str(), add).as_str(), opts)
-                .unwrap();
-
-        // Get data / opts for 1st call
-        //
-        let rawlist: List<T> = match self.fetch_one_page(url) {
-            Ok(list) => list,
-            Err(e) => return Err(e),
-        };
-
-        // Exit early with error if nothing
-        //
-        match rawlist.count {
-            Some(count) => if count == 0 {
-                return Err(APIError::new(
-                    400,
-                    "Bad Call",
-                    "no data returned on pagination",
-                    "fetch_one_page",
-                ))
-            }
-            _ => (),
-        }
-
-        // Get first results in
-        //
-        for e in rawlist.results.iter() {
-            res.push(e.clone());
-        }
-
-        // Is there anything else?
-        //
-        if rawlist.next.is_some() {
-            let mut nxt = rawlist.next;
-            //let pn = get_page_num(nxt.as_ref().unwrap().to_owned());
-            while nxt.is_some() {
-                //let page = pn;
-                let url = Url::parse(&nxt.unwrap()).unwrap();
-
-                let rawlist: List<T> = match self.fetch_one_page(url) {
-                    Ok(list) => list,
-                    Err(e) => return Err(e),
-                };
-                // Get more results in
-                for e in rawlist.results.iter() {
-                    res.push(e.clone());
-                }
-                nxt = rawlist.next;
-            }
-        }
-
-        println!("after res={:?}", res);
-        Ok(res)
-    }
-
-    /// Implement a generic fetch_one_page() function.
-    ///
-    /// The API has complete support for this through a specific structure with previous and next
-    /// pointers, along with the total item count and results which represente the actual data.
-    ///
-    /// You setup the first call as usual inserting your options and stuff and the next ones are
-    /// just reusing the next pointer.
-    ///
-    /// This function just returns a `Vec<T>` where T the type of objects you are getting from the
-    /// calls.
-    ///
-    /// Example:
-    /// ```no_run
-    /// # use atlas_rs::client::{Client, Ctx};
-    /// # use atlas_rs::request::{List, RequestBuilder};
-    /// # use atlas_rs::core::probes::Probe;
-    /// #
-    /// # let c = Client::new();
-    /// # let ctx = Ctx::None;
-    ///
-    /// let url = reqwest::Url::parse("https://foo.example.net/").unwrap();
-    /// let r = reqwest::blocking::Request::new(reqwest::Method::GET, url.clone());
-    /// let rq = RequestBuilder::new(ctx, c, r);
-    ///
-    /// let rawlist: List<Probe> = rq.fetch_one_page(url).unwrap();
-    /// if rawlist.next.is_some() {
-    /// #
-    /// }
-    /// ```
-    ///
-    pub fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
-    where
-        T: de::DeserializeOwned,
-    {
-        // Call the service
-        //
-        let req = reqwest::blocking::Request::new(self.r.method().clone(), url);
-        let resp = self
-            .c
-            .agent
-            .as_ref()
-            .unwrap()
-            .get(req.url().as_str())
-            .send();
-
-        match resp {
-            Ok(resp) => {
-                // Try to see if we got an error
-                //
-                match resp.status() {
-                    reqwest::StatusCode::OK => {
-                        // We could use Response::json() here but it consumes the body.
-                        //
-                        let r = resp.text()?;
-                        println!("p={}", r);
-                        let p: List<T> = serde_json::from_str(&r)?;
-                        Ok(p)
-                    }
-                    _ => {
-                        let aerr = resp.json::<APIError>()?;
-                        Err(aerr)
-                    }
-                }
-            }
-            Err(e) => Err(APIError::new(
-                e.status().unwrap().as_u16(),
-                "Bad",
-                e.to_string().as_str(),
-                "fetch_one_page",
-            )),
-        }
+        let mut paged = Paged::from(self);
+        paged.query = data.into();
+        Box::new(paged)
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -437,67 +289,11 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn info<T>(mut self) -> Result<T, APIError>
+    pub fn info<T>(mut self) -> Box<dyn Callable<T>>
         where
             T: de::DeserializeOwned + Debug,
     {
-        // Setup everything
-        //
-
-        // Get the potential "type" option
-        //
-        let tt = &self.c.opts["type"];
-
-        // Keep all options except for "type" as we don't want to send this internal option
-        // along with the query.
-        //
-        let opts = self.c.opts.iter().filter_map(|k| {
-            if k.0 != "type" {
-                Some((k.0.as_str(), k.1.as_str()))
-            } else {
-                None
-            }
-        });
-
-        // Now, check the "type" value
-        //
-        let op = match tt.as_str() {
-            // Credits stuff
-            "expense-items" => Op::Expenses,
-            "income-items" => Op::Incomes,
-            "members" => Op::Members,
-            "transactions" => Op::Transactions,
-            "transfer" => Op::Transfers,
-            //
-            _ => Op::Info,
-        };
-
-        let add = get_ops_url(&self.ctx, op, Param::None);
-        dbg!(&add);
-
-        // Setup URL with potential parameters like `key`.
-        //
-        let url =
-            Url::parse_with_params(format!("{}{}", &self.r.url().as_str(), add).as_str(), opts)
-                .unwrap();
-
-        self.r = reqwest::blocking::Request::new(self.r.method().clone(), url);
-        let resp = self
-            .c
-            .agent
-            .as_ref()
-            .unwrap()
-            .get(self.r.url().as_str())
-            .send()?;
-
-        println!("{:?} - {:?}", self.c.opts, self.r.url().as_str());
-
-        let txt = resp.text()?;
-        println!("after text={:?}", txt);
-
-        let r: T = serde_json::from_str(&txt)?;
-        println!("after r={:?}", r);
-        Ok(r)
+        Box::new(Single::from(self))
     }
 }
 
