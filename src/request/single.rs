@@ -1,17 +1,27 @@
+//! Module implementing the `Single` type of requests,
+//!
+
+use reqwest::{Method, Request, Url};
+use serde::de;
+
 use crate::client::Client;
 use crate::core::param::Param;
 use crate::errors::APIError;
 use crate::option::Options;
 use crate::request::{Callable, get_ops_url, Op, RequestBuilder, Return};
 
-use reqwest::{Method, Request, Url};
-use serde::de;
-
+/// Derivative of `RequestBuilder` with a flatter structure
+///
 pub struct Single {
+    /// Options, merge of CLI input and default config.
     pub opts: Options,
+    /// Parameter given to `get()`, will be `Param::None` for `infop()`.
     pub query: Param,
+    /// Cache of the URL method (GET, PUT, etc.)
     pub m: Method,
+    /// Will be used to construct the final URL to call
     pub url: Url,
+    /// HTTP Client
     pub c: Client,
 }
 
@@ -28,6 +38,8 @@ impl Default for Single {
 }
 
 impl Single {
+    /// We need `with()` for both `Single` and `Paged` to be consistent.
+    ///
     pub fn with(mut self, opts: impl Into<Options>) -> Self {
         self.opts.merge(&opts.into());
         self
@@ -35,6 +47,8 @@ impl Single {
 }
 
 impl From<RequestBuilder> for Single {
+    /// Makes chaining easier.
+    ///
     fn from(rb: RequestBuilder) -> Self {
         Single {
             c: rb.c.clone(),
@@ -46,6 +60,8 @@ impl From<RequestBuilder> for Single {
 }
 
 impl<T> Callable<T> for Single {
+    /// Single most important call for the whole structure
+    ///
     fn call(self) -> Result<Return<T>, APIError> {
         // Setup everything
         //
