@@ -33,12 +33,31 @@ except
 then
 
 Client.probe()      -> RequestBuilder
-      .measurement()
+.measurement()
 ...
 
 RequestBuilder() -> RequestBuilder
 
 get/info/delete/etc.() -> reqwest::Response
+
+We use the Builder pattern for Client through ClientBuilder and partially with RequestBuider.
+
+Let rollback and reintroduce call().
+
+We have to kind of Requests:
+
+- Single
+- Paged
+
+Both support the Callable trait and implement call().
+
+Client.(first) -> RequestBuilder -> get(P)  -> Single -> with(O)   -> call()
+-> subcmd()  -> with(O) -> call()
+list(Q) -> Paged -> with(O)   ->call()
+-> subcmd()  -> with(O) -> call()
+info()  -> with(O) -> Single
+-> subcmd() -> with(O) -> Single
+-> subcmd() -> with(O) -> Paged
 
 Atlas API
 
@@ -83,17 +102,18 @@ Atlas API
 ### Per context/cmd:
 
     RequestBuilder
-            list        anchor-measurements/anchors/credits/keys/measurements/participation-requests/probes
-            get         anchor-measurements/anchors/credits/keys/measurements/probes
-            info        credits
-            set         keys/probes
-            permissions keys
-            delete      keys/measurements            
-            create      keys/measurements
-            update      measurements/probes
-            archive     probes
-            rankings    probes
-            tags        probes
+            list         anchor-measurements/anchors/credits/keys/measurements/participation-requests/probes
+            get          anchor-measurements/anchors/credits/keys/measurements/probes
+            info         credits
+            set          keys/probes
+            measurements probes
+            permissions  keys
+            delete       keys/measurements            
+            create       keys/measurements
+            update       measurements/probes
+            archive      probes
+            rankings     probes
+            tags         probes
 
 ### Call tree
 
@@ -108,11 +128,13 @@ Atlas API
         c.keys()
         c.partitipation_requests()
         c.probe()
-                                    RequestBuilder()
-                                                        opt(k, v)
-                                                        opts([(k1,v1),(k2,v2)]
-                                                                                get(N)
-                                                                                list(Q)
-                                                                                info()
-                                                                                delete(T)
-                                                                                create(T)
+                 RequestBuilder()
+                           get(N)
+                           list(Q)
+                           info()
+                           delete(T)
+                           create(T)
+                                          with(k, v)
+                                          with([(k1,v1),(k2,v2)]
+                                                                  call()
+        
