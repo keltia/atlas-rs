@@ -289,7 +289,7 @@ impl Client {
     /// the RequestBuilder object which will get fed by subsequent calls.  It will also ensure
     /// the API Key is filled in prior to everything.
     ///
-    fn route_to(&self, op: Ctx) -> RequestBuilder {
+    fn route_to(&self, ctx: Ctx) -> RequestBuilder {
         let url = self.endpoint.to_owned();
 
         // Default HTTP operation is GET, some will be POST/DELETE but that is handled in the
@@ -306,7 +306,7 @@ impl Client {
 
         // Ensure api-Key is filled in prior to the calls.
         c.opts["key"] = self.api_key.as_ref().unwrap().clone();
-        RequestBuilder::new(op, c, r)
+        RequestBuilder::new(ctx, c, r)
     }
 }
 
