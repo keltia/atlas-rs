@@ -2,6 +2,7 @@ use clap::Parser;
 
 use atlas_rs::core::credits::*;
 
+use crate::cmds::{InfoOpts, ListOpts};
 use crate::cmds::common::{InfoOpts, ListOpts};
 use crate::Context;
 
