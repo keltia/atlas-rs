@@ -51,17 +51,13 @@ We have to kind of Requests:
 
 Both support the Callable trait and implement call().
 
-Client.(first) -> RequestBuilder -> get(P)  -> Single -> with(O)   -> call()
--> subcmd()  -> with(O) -> call()
-list(Q) -> Paged -> with(O)   ->call()
--> subcmd()  -> with(O) -> call()
-info()  -> with(O) -> Single
--> subcmd() -> with(O) -> Single
--> subcmd() -> with(O) -> Paged
-
-Atlas API
-
-/api/v2
+    Client.(first) -> RequestBuilder -> get(P)  -> Single -> with(O)   -> call()
+                                                          -> subcmd()  -> with(O) -> call()
+                                        list(Q) -> Paged -> with(O)    -> call()
+                                                         -> subcmd()  -> with(O) -> call()
+                                        info() -> Single -> with(O) -> Single
+                                               -> subcmd() -> with(O) -> Single
+                                               -> subcmd() -> with(O) -> Paged
 
 ### List of operations per category
 
@@ -114,6 +110,7 @@ Atlas API
             archive      probes
             rankings     probes
             tags         probes
+            targets      keys
 
 ### Call tree
 
