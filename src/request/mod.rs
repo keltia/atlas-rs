@@ -3,7 +3,7 @@
 //!
 //! This is the [builder] pattern with struct `RequestBuilder`.
 //!
-//! See [APIDESIGN.md](./APIDESIGN.md) for the list of methods and which is called in which context.
+//! See [APIDESIGN] for the list of methods and which is called in which context.
 //!
 //! The process is always started by creating a `Client` instance either with `new()` or through
 //! the `ClientBuilder` chain.  Requests are then initiated by calling one of the categories
@@ -16,6 +16,7 @@
 //! The calls here are generic over the type data you need to be returned like `Probe`, `Key`, etc.
 //!
 //! [builder]: https://en.wikipedia.org/wiki/Builder_pattern
+//! [APIDESIGN]: ./APIDESIGN.md
 
 // Std library
 //

@@ -10,7 +10,7 @@
 //! all the other methods are there for configuration everything you want to
 //! change from the default.
 //!
-//! `NOTE` none of the fields are public except within the crate
+//! **NOTE** none of the fields are public except within the crate
 //!
 //! There are several classes of calls in the API:
 //!
