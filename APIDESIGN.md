@@ -2,45 +2,29 @@
 
 ## Chosen approach (like reqwest)
 
-```rs
-let c = Client::new("FOO");      // defaults
-
-let c = ClientBuilder::new().key("FOO")
-            .verbose()
-            .default_probe(666)
-            .build();
-
-let p = c.probe().get(666);
-
-let pl = c.probe().list(opts);     // or c.probe().list().with(opts);
-
-// there c.<category>() returns a RequestBuilder and .get/info/etc. returns a Response.
-```
+We use the Builder pattern for Client through ClientBuilder and partially with RequestBuider.
 
 We will have
 
-Client::new() -> Client (with reasonable defaults)
-Client::builder() -> ClientBuilder
+    Client::new() -> Client (with reasonable defaults)
+    Client::builder() -> ClientBuilder
 
-ClientBuilder::new() -> ClientBuilder
-(all methods)
-.foo(...) -> ClientBuilder
+    ClientBuilder::new() -> ClientBuilder
+    (all methods)
+    .foo(...) -> ClientBuilder
 
 except
 
-.build() -> Client
+    .build() -> Client
 
 then
 
-Client.probe()      -> RequestBuilder
-.measurement()
-...
+    Client.probe()          -> RequestBuilder
+          .measurement()    -> RequestBuilder
+    ...
+    RequestBuilder() -> RequestBuilder
 
-RequestBuilder() -> RequestBuilder
-
-get/info/delete/etc.() -> reqwest::Response
-
-We use the Builder pattern for Client through ClientBuilder and partially with RequestBuider.
+    get/info/delete/etc.() 
 
 Let rollback and reintroduce call().
 
@@ -58,6 +42,21 @@ Both support the Callable trait and implement call().
                                         info() -> Single -> with(O) -> Single
                                                -> subcmd() -> with(O) -> Single
                                                -> subcmd() -> with(O) -> Paged
+
+```rs
+let c = Client::new("FOO");      // defaults
+
+let c = ClientBuilder::new().key("FOO")
+            .verbose()
+            .default_probe(666)
+            .build();
+
+let p = c.probe().get(666);
+
+let pl = c.probe().list(opts);     // or c.probe().list().with(opts);
+
+// there c.<category>() returns a RequestBuilder and .get/info/etc. returns a Response.
+```
 
 ### List of operations per category
 
