@@ -16,12 +16,9 @@ Op:
     - None
   Update:
     - PATCH
-    - Param::None
+    - None
   Create:
     - POST
-    - None
-  Put:
-    - PUT
     - None
 API:
   Anchors:
@@ -45,33 +42,111 @@ API:
     - Incomes:
         - Op::Get
         - Param::None
-    - Expenses
-    - Transfers
-    - Members
-    - Claim
+    - Expenses:
+        - Op::Get
+        - Param::None
+    - Transfers:
+        - Op::Post
+        - Some(Param)
+    - Members:
+        - Op::Get
+        - Param::None
+    - Claim:
+        - Op::Post
+        - Some(Param)
   Keys:
-    - Permissions
-    - Targets
-    - Get
-    - Set
-    - Delete
-    - List
-    - Create
+    - Permissions:
+        - Op::Get
+        - Param::None
+    - Targets:
+        - Op::Get
+        - Some(Param)
+    - Get:
+        - Op::Get
+        - Some(Param)
+    - Set:
+        - Op::Set
+        - Some(Param)
+    - Delete:
+        - Op::Delete
+        - Some(Param)
+    - List:
+        - Op::List
+        - Param::None
+    - Create:
+        - Op::Post
+        - Some(Param)
   Measurements:
-    - List
-    - Create
-    - Get
-    - Update
-    - Delete
+    - List:
+        - Op::List
+        - Some(Param)
+    - Create:
+        - Op::Post
+        - Some(Param)
+    - Get:
+        - Op::Get
+        - Some(Param)
+    - Update:
+        - Op::Update
+        - Some(Param)
+    - Groups:
+        - Get:
+            - Op::Get
+            - Some(Param)
+        - List:
+            - Op::List
+            - Some(Param)
+    - Latest:
+        - Op::Get
+        - Some(Param)
+    - Results:
+        - Op::Get
+        - Some(Param)
+    - My:
+        - Op::List
+        - Param::None
+    - Delete:
+        - Op::Delete
+        - Some(Param)
+    - Tags:
+        - Op::List
+        - Some(Param)
+    - DNS:
+        - Op::List
+        - Some(Param)
+    - HTTP:
+    - NTP:
+    - Ping:
+    - SSLCert:
+    - Traceroute:
+    - Wifi:
   ParticipationsRequests:
-    - List
+    - List:
+        - Op::List
+        - Param::None
   Probes:
-    - Get
-    - List
-    - Set
-    - Update
-    - Measurements
-    - Archive
-    - Rankings
-    - Tags
-    - Slugs
+    - Get:
+        - Op::Get
+        - Some(Param)
+    - List:
+        - Op::List
+        - Some(Param)
+    - Set:
+        - Op::Put
+        - Some(Param)
+    - Update:
+        - Op::Update
+        - Some(Param)
+    - Measurements:
+        - Op::List
+        - Some(Param)
+    - Archive:
+        - Op::Get
+        - Some(Param)
+    - Rankings:
+        - Op::Get
+        - Some(Param)
+    - Tags:
+        - Op::List
+        - Some(Param)
+    - Slugs:
