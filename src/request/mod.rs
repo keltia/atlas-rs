@@ -1,20 +1,21 @@
-//! This is the main set of type and methods implementing the main routing and dispatching
-//! involved in method chaining to setup and run an HTTP request through `reqwest`.
+//! This is the main module with its set of type and methods implementing the main routing
+//! and dispatching involved in method chaining to setup and run an HTTP request through `reqwest`.
 //!
-//! There is the ` Request` struct and its builder counterpart `RequestBuilder`.
+//! This is the [builder] pattern with struct `RequestBuilder`.
 //!
 //! See [APIDESIGN.md](./APIDESIGN.md) for the list of methods and which is called in which context.
 //!
-//! The process is always creating a `Client` instance either with `new()` or through
+//! The process is always started by creating a `Client` instance either with `new()` or through
 //! the `ClientBuilder` chain.  Requests are then initiated by calling one of the categories
 //! methods (like `probes()` and `keys()`) followed by the keyword of the action itself (like
-//! `get()` or `list()` to fill-in parameters) to finish and do the actual API call.
+//! `get()` or `list()` to fill-in parameters). To finish and return results, use `.call()`.
 //!
 //! Almost everything is done here in `RequestBuilder` through its methods.  Everything that is
 //! in the `core` crate is routing and establishing the URL and gathering the parameters.
 //!
-//! The calls here are generic over the type data you need to be returned like ‘Probe‘, ‘Key`, etc.
+//! The calls here are generic over the type data you need to be returned like `Probe`, `Key`, etc.
 //!
+//! [builder]: https://en.wikipedia.org/wiki/Builder_pattern
 
 // Std library
 //

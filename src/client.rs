@@ -4,6 +4,8 @@
 //! The way to configure it is different from the Go way and more in line
 //! with current Rust practices.
 //!
+//! This is using the [builder] pattern with structs `Client` and `ClientBuilder`.
+//!
 //! The only mandatory argument is the API key so it is given to `new()` and
 //! all the other methods are there for configuration everything you want to
 //! change from the default.
@@ -12,15 +14,15 @@
 //!
 //! There are several classes of calls in the API:
 //!
-//! - entities
-//! - protocols
+//! - entities (probes, keys, etc.)
+//! - protocols (ntp, dns, etc.)
 //! - utility functions
 //!
 //! Each class is selected by a method on the `Client` struct such as `probe()` or `measurement()`.
-//! Calling one of these methods sets up the context for further calls with `RequestBuilder`
-//! (or plain `Request`).
+//! Calling one of these methods sets up the context for further calls with `RequestBuilder`.
 //!
 //! Errors are handled in two steps:
+//!
 //! 1. if there is a Transport error (Unknown Host, Unreachable, etc.) call() will return an error
 //! 2. if the API returns an error, we attempt to decode as an APIError. If not, everything is good.
 //!
@@ -30,6 +32,7 @@
 //! to use the blocking client as most of the time this ought to be enough and it is easier.
 //!
 //! [reqwest]: https://crates.io/reqwest/
+//! [builder]: https://en.wikipedia.org/wiki/Builder_pattern
 //!
 
 use std::collections::HashMap;
