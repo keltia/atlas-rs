@@ -28,10 +28,21 @@ then
 
 Let rollback and reintroduce call().
 
-We have to kind of Requests:
+We have two kind of returned data:
 
 - Single
-- Paged
+
+  Information about a single data item
+
+  - Paged
+
+    Information about a list of data items, de-paginated and returned as a single vector
+    (or possibly an iterator).
+
+In `RequestBuilder` we need the following:
+
+- Client (it carries configuration and HTTP client)
+- `reqwest::Client` (for the calls and to reuse it during pagination for example)
 
 Both support the Callable trait and implement call().
 
@@ -113,11 +124,12 @@ let pl = c.probe().list(opts);     // or c.probe().list().with(opts);
 
 ### Call tree
 
-    client.rs anchor.rs/.../probe.rs request.rs
-    ....
         c = Client::new()
         c = ClientBuilder::new()
-    .....
+                .api_key("FOO")
+                .want_af(AF::6)
+                .build()
+    ...
         c.anchor()
         c.anchor_measurement()
         c.credits()
