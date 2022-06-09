@@ -1,18 +1,31 @@
-use crate::client::Client;
-use crate::core::param::Param;
+//! Module implementing the `Paged` type of requests, it basically loops over the results
+//! and returns a single vector.
+//!
+//! TODO: add an iterator.
+//!
+
+use std::fmt::Debug;
+use std::slice::Iter;
+use std::vec::IntoIter;
+
+use reqwest::{Method, Url};
+use serde::de::DeserializeOwned;
+use serde::Deserialize;
+
+use crate::client::{Client, Ctx};
 use crate::errors::APIError;
 use crate::option::Options;
+use crate::param::Param;
 use crate::request::{Callable, get_ops_url, Op, RequestBuilder, Return};
-
-use reqwest::{Method, Request, Url};
-use serde::de;
 
 // ------------------------------------------------------------
 
 /// When asking for a list of S, this generic struct is used for pagination
 ///
-#[derive(Deserialize, Debug)]
-pub struct List<S> {
+#[derive(Clone, Debug)]
+pub struct List<T>
+where T: DeserializeOwned,
+{
     /// How many results in this block
     pub count: Option<u32>,
     /// URL to fetch the next block
@@ -20,20 +33,50 @@ pub struct List<S> {
     /// URL to fetch previous block
     pub previous: Option<String>,
     /// Current key block
-    pub results: Vec<S>,
+    pub results: Vec<T>,
 }
 
+impl List<T> {
+    /// Gets an iterator over the values of the map.
+    #[inline]
+    pub fn iter(&self) -> Iter<'_, T> {
+        self.results.iter()
+    }
+}
+
+impl<'de, T> IntoIterator for &'de List<T>
+where T: DeserializeOwned,
+{
+    type Item = &'de T;
+    type IntoIter = Iter<'de, T>;
+
+    fn into_iter(self) -> Iter<'de, T> {
+        self.results.iter()
+    }
+}
+
+/// Derivative of `RequestBuilder` with a flatter structure
+///
+#[derive(Debug)]
 pub struct Paged {
-    pub c: Client,
+    /// Context is which part of the API we are targetting (`/probe/`, etc.)
+    pub ctx: Ctx,
+    /// Options, merge of CLI input and default config.
     pub opts: Options,
+    /// Parameter given to `get()`, will be `Param::None` for `infop()`.
     pub query: Param,
+    /// Cache of the URL method (GET, PUT, etc.)
     pub m: Method,
+    /// Will be used to construct the final URL to call
     pub url: Url,
+    /// HTTP Client
+    pub c: Client,
 }
 
 impl Default for Paged {
     fn default() -> Self {
         Paged {
+            ctx: Ctx::None,
             c: Client::new(),
             opts: Options::new(),
             query: Param::None,
@@ -43,19 +86,37 @@ impl Default for Paged {
     }
 }
 
-impl From<RequestBuilder> for Paged {
-    fn from(rb: RequestBuilder) -> Self {
-        Paged {
-            c: rb.c.clone(),
-            opts: rb.c.opts.clone(),
-            query: rb.query.clone(),
-            url: rb.url.clone(),
-            ..Default::default()
-        }
-    }
-}
-
 impl Paged {
+    /// Makes it easy to specify options
+    ///
+    /// Example:
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// # use atlas_rs::core::probes::Probe;
+    ///
+    /// let c = Client::new();
+    /// let query = vec!["country_code=fr"];
+    ///
+    /// let res: Vec<Probe> = c.probe()
+    ///                        .with([("opt1", "foo"), ("opt2", "bar")])
+    ///                        .list(query)
+    ///                        .unwrap();
+    /// ```
+    /// This can be used to have subcommands like this:
+    /// ```no_run
+    /// # use atlas_rs::client::Client;
+    /// # use atlas_rs::core::credits::Transaction;
+    ///
+    /// let c = Client::new();
+    /// let query = vec!["country_code=fr"];
+    ///
+    /// let res: Vec<Transaction> = c.credits()
+    ///                              .with(("type", "transaction"))
+    ///                              .list(query)
+    ///                              .unwrap();
+    /// ```
+    ///
     pub fn with(mut self, opts: impl Into<Options>) -> Self {
         self.opts.merge(&opts.into());
         self
@@ -75,8 +136,9 @@ impl Paged {
     /// Example:
     /// ```no_run
     /// # use atlas_rs::client::{Client, Ctx};
-    /// # use atlas_rs::request::{List, RequestBuilder};
     /// # use atlas_rs::core::probes::Probe;
+    /// # use atlas_rs::request::paged::List;
+    /// # use atlas_rs::request::RequestBuilder;
     /// #
     /// # let c = Client::new();
     /// # let ctx = Ctx::None;
@@ -92,12 +154,11 @@ impl Paged {
     /// ```
     ///
     pub fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
-        where
-            T: de::DeserializeOwned,
+    where T: DeserializeOwned,
     {
         // Call the service
         //
-        let req = reqwest::blocking::Request::new(self.r.method().clone(), url);
+        let req = reqwest::blocking::Request::new(self.m.clone(), url);
         let resp = self
             .c
             .agent
@@ -135,13 +196,27 @@ impl Paged {
     }
 }
 
-impl<T> Callable<T> for Paged {
-    fn call(self) -> Result<Return<T>, APIError> {
+impl From<RequestBuilder> for Paged {
+    /// Makes chaining easier.
+    ///
+    fn from(rb: RequestBuilder) -> Self {
+        Paged {
+            c: rb.c.clone(),
+            opts: rb.c.opts.clone(),
+            query: rb.query.clone(),
+            url: rb.r.url().clone(),
+            ..Default::default()
+        }
+    }
+}
 
-        // We will append all results here.
-        //
-        let mut res = Vec::<T>::new();
-
+impl<T> Callable<T> for Paged
+    where T: DeserializeOwned + Debug + Copy,
+{
+    /// Single most important call for the whole structure
+    ///
+    fn call(self) -> Result<Return<T>, APIError>
+    {
         // Get the potential "type" option
         //
         let tt = &self.c.opts["type"];
@@ -170,13 +245,13 @@ impl<T> Callable<T> for Paged {
             _ => Op::Info,
         };
 
-        let add = get_ops_url(&self.ctx, op, data.into());
+        let add = get_ops_url(&self.ctx, op, self.query);
         dbg!(&add);
 
         // Setup URL with potential parameters like `key`.
         //
         let url =
-            Url::parse_with_params(format!("{}{}", &self.r.url().as_str(), add).as_str(), opts)
+            Url::parse_with_params(format!("{}{}", &self.url.as_str(), add).as_str(), opts)
                 .unwrap();
 
         // Get data / opts for 1st call
@@ -200,11 +275,17 @@ impl<T> Callable<T> for Paged {
             _ => (),
         }
 
+        // We will append all results here.
+        //
+        let mut res = Vec::<T>::with_capacity(rawlist.count.unwrap() as usize);
+
         // Get first results in
         //
-        for e in rawlist.results.iter() {
-            res.push(e.clone());
-        }
+        res.extend(rawlist.results.iter().copied());
+
+        //for e in rawlist.results.iter() {
+        //    res.push(e.into());
+        //}
 
         // Is there anything else?
         //
@@ -219,10 +300,11 @@ impl<T> Callable<T> for Paged {
                     Ok(list) => list,
                     Err(e) => return Err(e),
                 };
+                res.extend(rawlist.results.iter().copied());
                 // Get more results in
-                for e in rawlist.results.iter() {
-                    res.push(e.clone());
-                }
+                //for e in rawlist.results.iter() {
+                //    res.push(e.into());
+                //}
                 nxt = rawlist.next;
             }
         }

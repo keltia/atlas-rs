@@ -1,0 +1,77 @@
+---
+# API Description
+# API: array of (Dict(name, Vec<Op>)
+Op:
+  Get:
+    - GET
+    - Single
+  List:
+    - GET
+    - Paged
+  Delete:
+    - DELETE
+    - None
+  Set:
+    - PUT
+    - None
+  Update:
+    - PATCH
+    - Param::None
+  Create:
+    - POST
+    - None
+  Put:
+    - PUT
+    - None
+API:
+  Anchors:
+    - Get:
+        - Op::Get
+        - Some(Param)
+    - List:
+        - Op::List
+        - Some(Param)
+  AnchorMeasurements:
+    - Get:
+        - Op::Get
+        - Some(Param)
+    - List:
+        - Op::List
+        - Some(Param)
+  Credits:
+    - Info:
+        - Op::List
+        - Param::None
+    - Incomes:
+        - Op::Get
+        - Param::None
+    - Expenses
+    - Transfers
+    - Members
+    - Claim
+  Keys:
+    - Permissions
+    - Targets
+    - Get
+    - Set
+    - Delete
+    - List
+    - Create
+  Measurements:
+    - List
+    - Create
+    - Get
+    - Update
+    - Delete
+  ParticipationsRequests:
+    - List
+  Probes:
+    - Get
+    - List
+    - Set
+    - Update
+    - Measurements
+    - Archive
+    - Rankings
+    - Tags
+    - Slugs

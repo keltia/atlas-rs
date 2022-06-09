@@ -16,8 +16,32 @@
 //! The calls here are generic over the type data you need to be returned like ‘Probe‘, ‘Key`, etc.
 //!
 
-mod paged;
-mod single;
+// Std library
+//
+use std::fmt::Debug;
+use std::sync::Arc;
+
+// External crates
+//
+use anyhow::Result;
+use itertools::Itertools;
+use serde::de::DeserializeOwned;
+use serde::Deserialize;
+
+// Our internal crates.
+//
+use crate::client::{Client, Ctx, Operation};
+use crate::core::{
+    anchor_measurements::AnchorMeasurement, anchors::Anchor, credits::Credits, keys::Key,
+    measurements::Measurement, participation_requests::ParticipationRequests, probes::Probe,
+};
+use crate::errors::APIError;
+use crate::option::Options;
+use crate::param::Param;
+use crate::request::{paged::Paged, single::Single};
+
+pub mod paged;
+pub mod single;
 
 // ------------------------------------------------------------
 
@@ -28,6 +52,8 @@ mod single;
 ///
 #[derive(Debug)]
 pub enum Op {
+    /// Null op
+    Null = 0,
     /// For Probe
     Archive,
     /// For Credits>Members
@@ -72,7 +98,7 @@ pub enum Op {
 
 // Dispatch table for the various operations in the different contexts.
 //
-fn get_ops_url(ctx: &Ctx, op: Op, p: Param) -> String {
+pub fn get_ops_url(ctx: &Ctx, op: Op, p: Param) -> String {
     match ctx {
         Ctx::AnchorMeasurements => AnchorMeasurement::set_url(op, p),
         Ctx::Anchors => Anchor::set_url(op, p),
@@ -111,12 +137,14 @@ pub trait Callable<T> {
 pub struct RequestBuilder {
     /// Context is which part of the API we are targetting (`/probe/`, etc.)
     pub ctx: Ctx,
-    /// Do we return paginated results?
-    pub paged: bool,
     /// Client for API calls
     pub c: Client,
     /// Build our request here
     pub r: reqwest::blocking::Request,
+    /// Full operation
+    pub op: Op,
+    /// Query parameters
+    pub query: Param,
 }
 
 /// Add methods for chaining and keeping state.
@@ -127,45 +155,11 @@ impl RequestBuilder {
     pub fn new(ctx: Ctx, c: Client, r: reqwest::blocking::Request) -> Self {
         RequestBuilder {
             ctx,
-            paged: false,
             c,
             r,
+            op: Op::Null,
+            query: Param::None,
         }
-    }
-
-    /// Makes it easy to specify options
-    ///
-    /// Example:
-    ///
-    /// ```no_run
-    /// # use atlas_rs::client::Client;
-    /// # use atlas_rs::core::probes::Probe;
-    ///
-    /// let c = Client::new();
-    /// let query = vec!["country_code=fr"];
-    ///
-    /// let res: Vec<Probe> = c.probe()
-    ///                        .with([("opt1", "foo"), ("opt2", "bar")])
-    ///                        .list(query)
-    ///                        .unwrap();
-    /// ```
-    /// This can be used to have subcommands like this:
-    /// ```no_run
-    /// # use atlas_rs::client::Client;
-    /// # use atlas_rs::core::credits::Transaction;
-    ///
-    /// let c = Client::new();
-    /// let query = vec!["country_code=fr"];
-    ///
-    /// let res: Vec<Transaction> = c.credits()
-    ///                              .with(("type", "transaction"))
-    ///                              .list(query)
-    ///                              .unwrap();
-    /// ```
-    ///
-    pub fn with(mut self, opts: impl Into<Options>) -> Self {
-        self.c.opts.merge(&opts.into());
-        self
     }
 
     // ------------------------------------------------------------------------------------
@@ -191,17 +185,14 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn get<P, T>(
-        self,
-        data: P,
-    ) -> Box<dyn Callable<T>>
-        where
-            P: Into<Param> + Display + Debug,
-            T: de::DeserializeOwned + Display,
+    pub fn get<P, T>(self, data: P) -> Arc<dyn Callable<T>>
+    where
+        P: Into<Param> + Debug,
+        T: DeserializeOwned + Debug + Copy,
     {
         let mut single = Single::from(self);
         single.query = data.into();
-        Box::new(single)
+        Arc::new(single)
     }
 
     /// This is the `list` method which return a set of results.  The results are automatically
@@ -223,14 +214,14 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn list<P, T>(self, data: P) -> Box<dyn Callable<T>>
-        where
-            P: Into<Param>,
-            T: de::DeserializeOwned + std::fmt::Debug + Clone,
+    pub fn list<P, T>(self, data: P) -> Arc<dyn Callable<T>>
+    where
+        P: Into<Param> + Debug,
+        T: DeserializeOwned + Debug + Copy,
     {
         let mut paged = Paged::from(self);
         paged.query = data.into();
-        Box::new(paged)
+        Arc::new(paged)
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -249,11 +240,11 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn info<T>(mut self) -> Box<dyn Callable<T>>
-        where
-            T: de::DeserializeOwned + Debug,
+    pub fn info<T>(mut self) -> Arc<dyn Callable<T>>
+    where
+        T: DeserializeOwned + Debug + Copy,
     {
-        Box::new(Single::from(self))
+        Arc::new(Single::from(self))
     }
 }
 

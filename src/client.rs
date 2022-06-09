@@ -32,6 +32,7 @@
 //! [reqwest]: https://crates.io/reqwest/
 //!
 
+use std::collections::HashMap;
 // Standard library
 use std::time::Duration;
 
@@ -79,6 +80,17 @@ impl Default for Ctx {
     fn default() -> Self {
         Ctx::None
     }
+}
+
+pub enum Operation {
+    Null = 0,
+    Create,
+    Delete,
+    Get,
+    Info,
+    List,
+    Put,
+    Set,
 }
 
 // ---------------------------------------------------------------------------
@@ -301,11 +313,13 @@ impl Client {
             panic!("No API key defined");
         }
 
+        // Clone the client to own it
         let mut c = self.clone();
-        c.opts.merge(&self.opts);
 
         // Ensure api-Key is filled in prior to the calls.
         c.opts["key"] = self.api_key.as_ref().unwrap().clone();
+
+        // Create the base struct
         RequestBuilder::new(ctx, c, r)
     }
 }
