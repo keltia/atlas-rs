@@ -241,8 +241,77 @@ impl RequestBuilder {
     /// ```
     ///
     pub fn info<T>(mut self) -> Arc<dyn Callable<T>>
-    where
-        T: DeserializeOwned + Debug + Copy,
+        where
+            T: DeserializeOwned + Debug + Copy,
+    {
+        Arc::new(Single::from(self))
+    }
+
+    /// This is the `info` method close to `get` but without a parameter.
+    ///
+    /// You still get all the parameters from the options.
+    ///
+    /// Example:
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_rs::core::keys::Key;
+    ///
+    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
+    ///
+    /// let res: Key = c.keys().info().unwrap()
+    /// # ;
+    /// ```
+    ///
+    pub fn update<T>(mut self) -> Arc<dyn Callable<T>>
+        where
+            T: DeserializeOwned + Debug + Copy,
+    {
+        Arc::new(Single::from(self))
+    }
+
+    /// This is the `info` method close to `get` but without a parameter.
+    ///
+    /// You still get all the parameters from the options.
+    ///
+    /// Example:
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_rs::core::keys::Key;
+    ///
+    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
+    ///
+    /// let res: Key = c.keys().info().unwrap()
+    /// # ;
+    /// ```
+    ///
+    pub fn delete<T>(mut self) -> Arc<dyn Callable<T>>
+        where
+            T: DeserializeOwned + Debug + Copy,
+    {
+        Arc::new(Single::from(self))
+    }
+
+    /// This is the `info` method close to `get` but without a parameter.
+    ///
+    /// You still get all the parameters from the options.
+    ///
+    /// Example:
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_rs::core::keys::Key;
+    ///
+    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
+    ///
+    /// let res: Key = c.keys().info().unwrap()
+    /// # ;
+    /// ```
+    ///
+    pub fn post<T>(mut self) -> Arc<dyn Callable<T>>
+        where
+            T: DeserializeOwned + Debug + Copy,
     {
         Arc::new(Single::from(self))
     }
