@@ -6,7 +6,6 @@
 
 use std::fmt::Debug;
 use std::slice::Iter;
-use std::vec::IntoIter;
 
 use reqwest::{Method, Url};
 use serde::de::DeserializeOwned;
@@ -22,10 +21,8 @@ use crate::request::{Callable, get_ops_url, Op, RequestBuilder, Return};
 
 /// When asking for a list of S, this generic struct is used for pagination
 ///
-#[derive(Clone, Debug)]
-pub struct List<T>
-where T: DeserializeOwned,
-{
+#[derive(Clone, Debug, Deserialize)]
+pub struct List<T> {
     /// How many results in this block
     pub count: Option<u32>,
     /// URL to fetch the next block
@@ -36,7 +33,9 @@ where T: DeserializeOwned,
     pub results: Vec<T>,
 }
 
-impl List<T> {
+impl<T> List<T>
+    where T: DeserializeOwned + Debug + Clone,
+{
     /// Gets an iterator over the values of the map.
     #[inline]
     pub fn iter(&self) -> Iter<'_, T> {
@@ -154,7 +153,7 @@ impl Paged {
     /// ```
     ///
     pub fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
-    where T: DeserializeOwned,
+        where T: DeserializeOwned + Debug + Clone,
     {
         // Call the service
         //
@@ -204,14 +203,14 @@ impl From<RequestBuilder> for Paged {
             c: rb.c.clone(),
             opts: rb.c.opts.clone(),
             query: rb.query.clone(),
-            url: rb.r.url().clone(),
+            url: rb.url.clone(),
             ..Default::default()
         }
     }
 }
 
 impl<T> Callable<T> for Paged
-    where T: DeserializeOwned + Debug + Copy,
+    where T: DeserializeOwned + Debug + Clone,
 {
     /// Single most important call for the whole structure
     ///
@@ -245,7 +244,8 @@ impl<T> Callable<T> for Paged
             _ => Op::Info,
         };
 
-        let add = get_ops_url(&self.ctx, op, self.query);
+        let query = self.query.to_owned();
+        let add = get_ops_url(&self.ctx, op, query);
         dbg!(&add);
 
         // Setup URL with potential parameters like `key`.
@@ -309,6 +309,7 @@ impl<T> Callable<T> for Paged
             }
         }
 
+        assert_eq!(rawlist.count.unwrap() as usize, res.len());
         dbg!(&res);
         Ok(Return::Paged(res))
     }

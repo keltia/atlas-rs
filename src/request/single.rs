@@ -2,8 +2,9 @@
 //!
 
 use std::fmt::Debug;
+
 use reqwest::{Method, Url};
-use serde::Deserialize;
+use serde::de::DeserializeOwned;
 
 use crate::client::{Client, Ctx};
 use crate::errors::APIError;
@@ -13,7 +14,7 @@ use crate::request::{Callable, get_ops_url, Op, RequestBuilder, Return};
 
 /// Derivative of `RequestBuilder` with a flatter structure
 ///
-#[derive(Debug, Deserialize)]
+#[derive(Debug)]
 pub struct Single {
     /// Context is which part of the API we are targetting (`/probe/`, etc.)
     pub ctx: Ctx,
@@ -86,14 +87,14 @@ impl From<RequestBuilder> for Single {
         Single {
             c: rb.c.clone(),
             opts: rb.c.opts.clone(),
-            url: rb.r.url().clone(),
+            url: rb.url.clone(),
             ..Default::default()
         }
     }
 }
 
-impl<'a, T> Callable<T> for Single
-    where T: Deserialize<'a> + Debug + Copy,
+impl<T> Callable<T> for Single
+    where T: DeserializeOwned + Debug,
 {
     /// Single most important call for the whole structure
     ///
