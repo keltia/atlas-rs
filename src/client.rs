@@ -35,7 +35,6 @@
 //! [builder]: https://en.wikipedia.org/wiki/Builder_pattern
 //!
 
-use std::collections::HashMap;
 // Standard library
 use std::time::Duration;
 
@@ -83,17 +82,6 @@ impl Default for Ctx {
     fn default() -> Self {
         Ctx::None
     }
-}
-
-pub enum Operation {
-    Null = 0,
-    Create,
-    Delete,
-    Get,
-    Info,
-    List,
-    Put,
-    Set,
 }
 
 // ---------------------------------------------------------------------------
@@ -309,7 +297,7 @@ impl Client {
 
         // Default HTTP operation is GET, some will be POST/DELETE but that is handled in the
         // next call in the chain.
-        let r = reqwest::blocking::Request::new(reqwest::Method::GET, url);
+        let kw = reqwest::Method::GET;
 
         // Enforce API key usage
         if self.api_key.is_none() {
@@ -323,7 +311,7 @@ impl Client {
         c.opts["key"] = self.api_key.as_ref().unwrap().clone();
 
         // Create the base struct
-        RequestBuilder::new(ctx, c, r)
+        RequestBuilder::new(ctx, c, kw, url)
     }
 }
 
