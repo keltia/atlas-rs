@@ -280,11 +280,9 @@ impl<T> Callable<T> for Paged
 
         // Get first results in
         //
-        res.extend(rawlist.results.iter().copied());
-
-        //for e in rawlist.results.iter() {
-        //    res.push(e.into());
-        //}
+        for elem in rawlist.results.iter() {
+            res.push(elem.clone());
+        }
 
         // Is there anything else?
         //
@@ -299,11 +297,11 @@ impl<T> Callable<T> for Paged
                     Ok(list) => list,
                     Err(e) => return Err(e),
                 };
-                res.extend(rawlist.results.iter().copied());
+
                 // Get more results in
-                //for e in rawlist.results.iter() {
-                //    res.push(e.into());
-                //}
+                for e in rawlist.results.iter() {
+                    res.push(e.clone());
+                }
                 nxt = rawlist.next;
             }
         }
