@@ -21,7 +21,6 @@
 // Std library
 //
 use std::fmt::Debug;
-use std::sync::Arc;
 
 // External crates
 //
@@ -194,7 +193,7 @@ impl RequestBuilder {
     {
         let mut single = Single::from(self);
         single.query = data.into();
-        Arc::new(single)
+        single
     }
 
     /// This is the `list` method which return a set of results.  The results are automatically
@@ -223,7 +222,7 @@ impl RequestBuilder {
     {
         let mut paged = Paged::from(self);
         paged.query = data.into();
-        Arc::new(paged)
+        paged
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -246,7 +245,7 @@ impl RequestBuilder {
         where
             T: DeserializeOwned + Debug + Copy,
     {
-        Arc::new(Single::from(self))
+        Single::from(self)
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -269,7 +268,7 @@ impl RequestBuilder {
         where
             T: DeserializeOwned + Debug + Copy,
     {
-        Arc::new(Single::from(self))
+        Single::from(self)
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -292,7 +291,7 @@ impl RequestBuilder {
         where
             T: DeserializeOwned + Debug + Copy,
     {
-        Arc::new(Single::from(self))
+        Single::from(self)
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -315,7 +314,7 @@ impl RequestBuilder {
         where
             T: DeserializeOwned + Debug + Copy,
     {
-        Arc::new(Single::from(self))
+        Single::from(self)
     }
 }
 
