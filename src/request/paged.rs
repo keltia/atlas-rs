@@ -143,10 +143,9 @@ impl Paged {
     /// # let ctx = Ctx::None;
     ///
     /// let url = reqwest::Url::parse("https://foo.example.net/").unwrap();
-    /// let r = reqwest::blocking::Request::new(reqwest::Method::GET, url.clone());
-    /// let rq = RequestBuilder::new(ctx, c, r);
+    /// let rq = RequestBuilder::new(ctx, c, reqwest::Method::GET, url);
     ///
-    /// let rawlist: List<Probe> = rq.fetch_one_page(url).unwrap();
+    /// let rawlist: List<Probe> = rq.fetch_one_page(url.as_str()).unwrap();
     /// if rawlist.next.is_some() {
     /// #
     /// }
