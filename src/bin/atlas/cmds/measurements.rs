@@ -3,7 +3,6 @@
 use clap::Parser;
 
 use crate::cmds::{InfoOpts, ListOpts};
-use crate::cmds::common::{InfoOpts, ListOpts};
 
 /// Measurements options
 ///

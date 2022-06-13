@@ -3,7 +3,6 @@ use clap::Parser;
 use atlas_rs::core::probes::*;
 
 use crate::cmds::{InfoOpts, ListOpts};
-use crate::cmds::common::{InfoOpts, ListOpts};
 use crate::Context;
 
 /// Probe options
