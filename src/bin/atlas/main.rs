@@ -3,6 +3,8 @@
 //! It is a way to both demonstrate the use of the API and a testing tool.
 //!
 
+extern crate core;
+
 // External crates
 //
 use anyhow::Result;

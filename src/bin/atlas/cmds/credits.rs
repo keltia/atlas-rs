@@ -1,6 +1,8 @@
 use clap::Parser;
 
 use atlas_rs::core::credits::*;
+use atlas_rs::errors::APIError;
+use atlas_rs::request::{Callable, Return};
 
 use crate::cmds::{InfoOpts, ListOpts};
 use crate::Context;
@@ -50,8 +52,13 @@ pub(crate) struct MembOpts {
 pub(crate) fn cmd_credits(ctx: &Context, opts: CredOpts) {
     match opts.subcmd {
         CreditSubCommand::Info(_opts) => {
-            let c: Credits = match ctx.c.credits().info() {
-                Ok(c) => c,
+            let c: Result<Return<Credits>, APIError> = ctx.c.credits().info().call();
+
+            let c = match c {
+                Ok(c) => match c {
+                    Return::Single(c) => c,
+                    _ => panic!("bad call"),
+                },
                 Err(e) => {
                     println!("Error: {:#?}", e);
                     return;
@@ -60,8 +67,13 @@ pub(crate) fn cmd_credits(ctx: &Context, opts: CredOpts) {
             println!("Credits are:\n{:?}", c);
         }
         CreditSubCommand::Income(_opts) => {
-            let c: IncomeItems = match ctx.c.credits().with(("type", "income-items")).info() {
-                Ok(c) => c,
+            let c: Result<Return<IncomeItems>, APIError> = ctx.c.credits().info().with(("type", "income-items")).call();
+
+            let c = match c {
+                Ok(c) => match c {
+                    Return::Single(c) => c,
+                    _ => panic!("bad call"),
+                },
                 Err(e) => {
                     println!("Error: {:#?}", e);
                     return;

@@ -1,6 +1,8 @@
 use clap::Parser;
 
 use atlas_rs::core::keys::*;
+use atlas_rs::errors::APIError;
+use atlas_rs::request::{Callable, Return};
 
 use crate::cmds::ListOpts;
 use crate::Context;
@@ -41,8 +43,13 @@ pub(crate) fn cmd_keys(ctx: &Context, opts: KeyOpts) {
         KeySubCommand::Info(opts) => {
             let uuid = opts.uuid.unwrap_or_else(|| ctx.cfg.api_key.clone());
 
-            let k: Key = match ctx.c.keys().get(uuid.as_str()) {
-                Ok(k) => k,
+            let k: Result<Return<Key>, APIError> = ctx.c.keys().get(uuid.as_str()).call();
+
+            let k = match k {
+                Ok(k) => match k {
+                    Return::Single(k) => k,
+                    _ => panic!("bad call"),
+                },
                 Err(e) => {
                     println!("Key {} not found!", uuid);
                     println!("Error: {:#?}", e);
@@ -52,14 +59,19 @@ pub(crate) fn cmd_keys(ctx: &Context, opts: KeyOpts) {
             println!("Key {} is:\n{:?}", uuid, k);
         }
         KeySubCommand::List(opts) => {
-            let p: Vec<Key> = match ctx.c.keys().list(opts.q) {
-                Ok(p) => p,
+            let vk: Result<Return<Key>, APIError> = ctx.c.keys().list(opts.q).call();
+
+            let vk = match vk {
+                Ok(vk) => match vk {
+                    Return::Paged(vk) => vk,
+                    _ => panic!("bad call"),
+                },
                 Err(e) => {
                     println!("Error: {:#?}", e);
                     vec![]
                 }
             };
-            println!("{} key found!", p.len());
+            println!("{} keys found!", vk.len());
         }
     }
 }
