@@ -138,8 +138,10 @@ pub struct RequestBuilder {
     pub ctx: Ctx,
     /// Client for API calls
     pub c: Client,
+    /// Method to use for the HTTP call
+    pub kw: reqwest::Method,
     /// Build our request here
-    pub r: reqwest::blocking::Request,
+    pub url: reqwest::Url,
     /// Full operation
     pub op: Op,
     /// Query parameters
@@ -151,11 +153,12 @@ pub struct RequestBuilder {
 impl RequestBuilder {
     /// Create an empty struct RequestBuilder
     ///
-    pub fn new(ctx: Ctx, c: Client, r: reqwest::blocking::Request) -> Self {
+    pub fn new(ctx: Ctx, c: Client, kw: reqwest::Method, url: reqwest::Url) -> Self {
         RequestBuilder {
             ctx,
             c,
-            r,
+            kw,
+            url,
             op: Op::Null,
             query: Param::None,
         }
@@ -357,7 +360,7 @@ mod tests {
         let r = RequestBuilder::new(ctx, cl, rq);
 
         assert!(!r.paged);
-        assert_eq!(reqwest::Method::GET, r.r.method());
+        assert_eq!(reqwest::Method::GET, r.url.method());
     }
 
     #[test]
@@ -374,8 +377,7 @@ mod tests {
         let ctx = Ctx::Credits;
         let cl = Client::new();
         let url = Url::parse("http://localhost/").unwrap();
-        let rq = Request::new(reqwest::Method::GET, url);
-        let r = RequestBuilder::new(ctx, cl, rq);
+        let r = RequestBuilder::new(ctx, cl, reqwest::Method::GET, url);
 
         let r = r.with(("type", "income"));
         let add = get_ops_url(&ctx, Op::Info, Param::None);
