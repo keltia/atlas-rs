@@ -27,7 +27,6 @@ use std::fmt::Debug;
 use anyhow::Result;
 use itertools::Itertools;
 use serde::de::DeserializeOwned;
-use serde::Deserialize;
 
 // Our internal crates.
 //
@@ -187,10 +186,9 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn get<P, T>(self, data: P) -> Arc<dyn Callable<T>>
-    where
-        P: Into<Param> + Debug,
-        T: DeserializeOwned + Debug + Copy,
+    pub fn get<P>(self, data: P) -> Single
+        where
+            P: Into<Param> + Debug,
     {
         let mut single = Single::from(self);
         single.query = data.into();
@@ -216,10 +214,9 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn list<P, T>(self, data: P) -> Arc<dyn Callable<T>>
-    where
-        P: Into<Param> + Debug,
-        T: DeserializeOwned + Debug + Copy,
+    pub fn list<P>(self, data: P) -> Paged
+        where
+            P: Into<Param> + Debug,
     {
         let mut paged = Paged::from(self);
         paged.query = data.into();
@@ -242,9 +239,9 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn info<T>(mut self) -> Arc<dyn Callable<T>>
+    pub fn info<T>(self) -> Single
         where
-            T: DeserializeOwned + Debug + Copy,
+            T: DeserializeOwned + Debug,
     {
         Single::from(self)
     }
@@ -265,9 +262,9 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn update<T>(mut self) -> Arc<dyn Callable<T>>
+    pub fn update<T>(self) -> Single
         where
-            T: DeserializeOwned + Debug + Copy,
+            T: DeserializeOwned + Debug,
     {
         Single::from(self)
     }
@@ -288,9 +285,9 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn delete<T>(mut self) -> Arc<dyn Callable<T>>
+    pub fn delete<T>(self) -> Single
         where
-            T: DeserializeOwned + Debug + Copy,
+            T: DeserializeOwned + Debug,
     {
         Single::from(self)
     }
@@ -311,9 +308,9 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn post<T>(mut self) -> Arc<dyn Callable<T>>
+    pub fn post<T>(self) -> Single
         where
-            T: DeserializeOwned + Debug + Copy,
+            T: DeserializeOwned + Debug,
     {
         Single::from(self)
     }
