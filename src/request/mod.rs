@@ -123,8 +123,6 @@ pub enum Return<T> {
 /// This is the trait we need to use for the call() stuff.
 ///
 pub trait Callable<T> {
-    /// Main function here
-    ///
     fn call(self) -> Result<Return<T>, APIError>;
 }
 
