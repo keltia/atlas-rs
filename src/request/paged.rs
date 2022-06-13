@@ -43,7 +43,7 @@ impl<T> List<T>
     }
 }
 
-impl<'de, T> IntoIterator for &'de List<T>
+/*impl<'de, T> IntoIterator for &'de List<T>
 where T: DeserializeOwned,
 {
     type Item = &'de T;
@@ -52,7 +52,7 @@ where T: DeserializeOwned,
     fn into_iter(self) -> Iter<'de, T> {
         self.results.iter()
     }
-}
+}*/
 
 /// Derivative of `RequestBuilder` with a flatter structure
 ///
