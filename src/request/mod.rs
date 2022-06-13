@@ -179,10 +179,11 @@ impl RequestBuilder {
     /// ```no_run
     /// # use atlas_rs::client::ClientBuilder;
     /// # use atlas_rs::core::probes::Probe;
+    /// # use atlas_rs::request::*;
     ///
     /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
     ///
-    /// let res: Probe = c.probe().get(666).unwrap()
+    /// let res = c.probe().get(666).call().unwrap()
     /// # ;
     /// ```
     ///
@@ -206,11 +207,12 @@ impl RequestBuilder {
     /// ```no_run
     /// # use atlas_rs::client::ClientBuilder;
     /// # use atlas_rs::core::probes::Probe;
+    /// # use atlas_rs::request::*;
     ///
     /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
     /// let query = vec!["country_code=fr"];
     ///
-    /// let res: Vec<Probe> = c.probe().list(query).unwrap()
+    /// let res = c.probe().list(query).call().unwrap()
     /// # ;
     /// ```
     ///
