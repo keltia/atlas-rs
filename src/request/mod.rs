@@ -31,7 +31,7 @@ use serde::Deserialize;
 
 // Our internal crates.
 //
-use crate::client::{Client, Ctx, Operation};
+use crate::client::{Client, Ctx};
 use crate::core::{
     anchor_measurements::AnchorMeasurement, anchors::Anchor, credits::Credits, keys::Key,
     measurements::Measurement, participation_requests::ParticipationRequests, probes::Probe,
