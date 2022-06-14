@@ -35,6 +35,12 @@ pub enum Param {
     None,
 }
 
+impl Default for Param {
+    fn default() -> Self {
+        Param::None
+    }
+}
+
 impl Display for Param {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
