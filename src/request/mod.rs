@@ -50,7 +50,7 @@ pub mod single;
 /// The selection of available operations for each type of data is done through the "core" module.
 /// This is a flat list despite not all operations being available to all first level.
 ///
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum Op {
     /// Null op
     Null = 0,
