@@ -221,6 +221,8 @@ impl RequestBuilder {
     {
         let mut paged = Paged::from(self);
         paged.query = data.into();
+        paged.op = Op::List;
+        dbg!(&paged);
         paged
     }
 
@@ -240,11 +242,10 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn info<T>(self) -> Single
-        where
-            T: DeserializeOwned + Debug,
-    {
-        Single::from(self)
+    pub fn info(self) -> Single {
+        let mut req = Single::from(self);
+        req.op = Op::Info;
+        req
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -263,11 +264,10 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn update<T>(self) -> Single
-        where
-            T: DeserializeOwned + Debug,
-    {
-        Single::from(self)
+    pub fn update(self) -> Single {
+        let mut req = Single::from(self);
+        req.op = Op::Update;
+        req
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -286,11 +286,10 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn delete<T>(self) -> Single
-        where
-            T: DeserializeOwned + Debug,
-    {
-        Single::from(self)
+    pub fn delete(self) -> Single {
+        let mut req = Single::from(self);
+        req.op = Op::Delete;
+        req
     }
 
     /// This is the `info` method close to `get` but without a parameter.
@@ -309,11 +308,10 @@ impl RequestBuilder {
     /// # ;
     /// ```
     ///
-    pub fn post<T>(self) -> Single
-        where
-            T: DeserializeOwned + Debug,
-    {
-        Single::from(self)
+    pub fn post(self) -> Single {
+        let mut req = Single::from(self);
+        req.op = Op::Update;
+        req
     }
 }
 

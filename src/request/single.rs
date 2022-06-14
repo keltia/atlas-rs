@@ -6,7 +6,7 @@ use std::fmt::Debug;
 use reqwest::{Method, Url};
 use serde::de::DeserializeOwned;
 
-use crate::client::{Client, Ctx};
+use crate::client::{Client, Ctx, ENDPOINT};
 use crate::errors::APIError;
 use crate::option::Options;
 use crate::param::Param;
@@ -28,6 +28,8 @@ pub struct Single {
     pub url: Url,
     /// HTTP Client
     pub c: Client,
+    /// API Operation
+    pub op: Op,
 }
 
 impl Default for Single {
@@ -38,7 +40,8 @@ impl Default for Single {
             opts: Options::new(),
             query: Param::None,
             m: Method::GET,
-            url: "".parse().unwrap(),
+            url: ENDPOINT.parse().unwrap(),
+            op: Op::Null,
         }
     }
 }
@@ -85,10 +88,13 @@ impl From<RequestBuilder> for Single {
     ///
     fn from(rb: RequestBuilder) -> Self {
         Single {
+            ctx: rb.ctx.clone(),
             c: rb.c.clone(),
             opts: rb.c.opts.clone(),
             url: rb.url.clone(),
-            ..Default::default()
+            m: rb.kw.clone(),
+            query: rb.query.clone(),
+            op: rb.op,
         }
     }
 }

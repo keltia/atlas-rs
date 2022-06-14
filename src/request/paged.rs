@@ -11,7 +11,7 @@ use reqwest::{Method, Url};
 use serde::de::DeserializeOwned;
 use serde::Deserialize;
 
-use crate::client::{Client, Ctx};
+use crate::client::{Client, Ctx, ENDPOINT};
 use crate::errors::APIError;
 use crate::option::Options;
 use crate::param::Param;
@@ -70,6 +70,8 @@ pub struct Paged {
     pub url: Url,
     /// HTTP Client
     pub c: Client,
+    /// API Operation
+    pub op: Op,
 }
 
 impl Default for Paged {
@@ -80,7 +82,8 @@ impl Default for Paged {
             opts: Options::new(),
             query: Param::None,
             m: Method::GET,
-            url: "".parse().unwrap(),
+            url: ENDPOINT.parse().unwrap(),
+            op: Op::Null,
         }
     }
 }
@@ -201,11 +204,13 @@ impl From<RequestBuilder> for Paged {
     fn from(rb: RequestBuilder) -> Self {
         dbg!(&rb);
         Paged {
+            ctx: rb.ctx.clone(),
             c: rb.c.clone(),
             opts: rb.c.opts.clone(),
             query: rb.query.clone(),
             url: rb.url.clone(),
-            ..Default::default()
+            m: rb.kw.clone(),
+            op: rb.op,
         }
     }
 }
@@ -217,6 +222,8 @@ impl<T> Callable<T> for Paged
     ///
     fn call(self) -> Result<Return<T>, APIError>
     {
+        let mut op = self.op.clone();
+
         // Get the potential "type" option
         //
         let tt = &self.c.opts["type"];
