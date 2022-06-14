@@ -15,7 +15,7 @@ use crate::client::{Client, Ctx, ENDPOINT};
 use crate::errors::APIError;
 use crate::option::Options;
 use crate::param::Param;
-use crate::request::{Callable, get_ops_url, Op, RequestBuilder, Return};
+use crate::request::{get_ops_url, Callable, Op, RequestBuilder, Return};
 
 // ------------------------------------------------------------
 
@@ -34,7 +34,8 @@ pub struct List<T> {
 }
 
 impl<T> List<T>
-    where T: DeserializeOwned + Debug + Clone,
+    where
+        T: DeserializeOwned + Debug + Clone,
 {
     /// Gets an iterator over the values of the map.
     #[inline]
@@ -156,7 +157,8 @@ impl Paged {
     /// ```
     ///
     pub fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
-        where T: DeserializeOwned + Debug + Clone,
+        where
+            T: DeserializeOwned + Debug + Clone,
     {
         // Call the service
         //
@@ -216,12 +218,12 @@ impl From<RequestBuilder> for Paged {
 }
 
 impl<T> Callable<T> for Paged
-    where T: DeserializeOwned + Debug + Clone,
+    where
+        T: DeserializeOwned + Debug + Clone,
 {
     /// Single most important call for the whole structure
     ///
-    fn call(self) -> Result<Return<T>, APIError>
-    {
+    fn call(self) -> Result<Return<T>, APIError> {
         let mut op = self.op.clone();
 
         // Get the potential "type" option
@@ -259,9 +261,8 @@ impl<T> Callable<T> for Paged
 
         // Setup URL with potential parameters like `key`.
         //
-        let url =
-            Url::parse_with_params(format!("{}{}", &self.url.as_str(), add).as_str(), opts)
-                .unwrap();
+        let url = Url::parse_with_params(format!("{}{}", &self.url.as_str(), add).as_str(), opts)
+            .unwrap();
 
         // Get data / opts for 1st call
         //
@@ -273,13 +274,15 @@ impl<T> Callable<T> for Paged
         // Exit early with error if nothing
         //
         match rawlist.count {
-            Some(count) => if count == 0 {
-                return Err(APIError::new(
-                    400,
-                    "Bad Call",
-                    "no data returned on pagination",
-                    "fetch_one_page",
-                ))
+            Some(count) => {
+                if count == 0 {
+                    return Err(APIError::new(
+                        400,
+                        "Bad Call",
+                        "no data returned on pagination",
+                        "fetch_one_page",
+                    ));
+                }
             }
             _ => (),
         }
@@ -321,4 +324,3 @@ impl<T> Callable<T> for Paged
         Ok(Return::Paged(res))
     }
 }
-
