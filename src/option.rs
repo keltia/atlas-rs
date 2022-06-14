@@ -59,7 +59,7 @@ impl Options {
 
     /// Check is given option exist
     #[inline]
-    pub fn contains_key(self, s: &str) -> bool {
+    pub fn contains_key(&self, s: &str) -> bool {
         self.0.contains_key(s)
     }
 
@@ -153,7 +153,8 @@ impl Index<&str> for Options {
     ///
     #[inline]
     fn index(&self, index: &str) -> &Self::Output {
-        &self.0[&index.to_string()]
+        let me = self.0.get(index);
+        me.unwrap()
     }
 }
 
@@ -201,6 +202,14 @@ mod tests {
         let o = Options::from([("foo", "bar")]);
 
         assert_eq!("bar", o["foo"]);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_index_nok() {
+        let o = Options::from([("foo", "bar")]);
+
+        assert!(o["baz"].is_empty());
     }
 
     #[test]
