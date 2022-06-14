@@ -190,6 +190,7 @@ impl RequestBuilder {
         where
             P: Into<Param> + Debug,
     {
+        dbg!(&self);
         let mut single = Single::from(self);
         single.query = data.into();
         single

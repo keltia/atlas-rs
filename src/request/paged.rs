@@ -118,6 +118,7 @@ impl Paged {
     ///
     pub fn with(mut self, opts: impl Into<Options>) -> Self {
         self.opts.merge(&opts.into());
+        dbg!(&self);
         self
     }
 
@@ -198,6 +199,7 @@ impl From<RequestBuilder> for Paged {
     /// Makes chaining easier.
     ///
     fn from(rb: RequestBuilder) -> Self {
+        dbg!(&rb);
         Paged {
             c: rb.c.clone(),
             opts: rb.c.opts.clone(),
