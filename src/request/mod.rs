@@ -353,11 +353,9 @@ mod tests {
         let ctx = Ctx::None;
         let cl = Client::new();
         let url = Url::parse("http://localhost/").unwrap();
-        let rq = Request::new(reqwest::Method::GET, url);
-        let r = RequestBuilder::new(ctx, cl, rq);
+        let r = RequestBuilder::new(ctx, cl, reqwest::Method::GET, url);
 
-        assert!(!r.paged);
-        assert_eq!(reqwest::Method::GET, r.url.method());
+        assert_eq!(reqwest::Method::GET, r.kw);
     }
 
     #[test]
@@ -376,10 +374,10 @@ mod tests {
         let url = Url::parse("http://localhost/").unwrap();
         let r = RequestBuilder::new(ctx, cl, reqwest::Method::GET, url);
 
-        let r = r.with(("type", "income"));
+        //let r = r.with(("type", "income"));
         let add = get_ops_url(&ctx, Op::Info, Param::None);
 
-        assert_eq!(reqwest::Method::GET, r.r.method());
+        assert_eq!(reqwest::Method::GET, r.kw);
         //assert_eq!("/credits/income-items", add);
     }
 }
