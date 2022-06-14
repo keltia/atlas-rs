@@ -50,7 +50,7 @@ use crate::request::RequestBuilder;
 // ---------------------------------------------------------------------------
 
 /// We target the v2 API (not sure if it needs to be public)
-const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
+pub(crate) const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
 
 // ---------------------------------------------------------------------------
 
