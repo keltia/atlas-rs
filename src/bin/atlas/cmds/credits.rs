@@ -79,11 +79,16 @@ pub(crate) fn cmd_credits(ctx: &Context, opts: CredOpts) {
                     return;
                 }
             };
-            println!("Credits are:\n{:?}", c);
+            println!("Credits incomes are:\n{:?}", c);
         },
         CreditSubCommand::Transactions(opts) => {
-            let c: Vec<Transaction> = match ctx.c.credits().with(("type", "transactions")).list(opts.q) {
-                Ok(c) => c,
+            let c: Result<Return<Transaction>, APIError> = ctx.c.credits().list(opts.q).with(("type", "transactions")).call();
+
+            let c = match c {
+                Ok(c) => match c {
+                    Return::Paged(c) => c,
+                    _ => panic!("bad call"),
+                },
                 Err(e) => {
                     println!("Error: {:?}", e);
                     return;
@@ -92,28 +97,42 @@ pub(crate) fn cmd_credits(ctx: &Context, opts: CredOpts) {
             println!("Credits transactions are:\n{:?}", c);
         },
         CreditSubCommand::Transfer(_opts) => {
-            let c: Transfer = match ctx.c.credits().with(("type", "transfer")).info() {
-                Ok(c) => c,
+            let c: Result<Return<Transfer>, APIError> = ctx.c.credits().info().with(("type", "transfer")).call();
+
+            let c = match c {
+                Ok(c) => match c {
+                    Return::Single(c) => c,
+                    _ => panic!("bad call"),
+                },
                 Err(e) => {
                     println!("Error: {:?}", e);
                     return;
                 }
             };
-            println!("Credits are:\n{:?}", c);
+            println!("Credits transfert are:\n{:?}", c);
         },
         CreditSubCommand::Expense(_opts) => {
-            let c: ExpenseItems = match ctx.c.credits().with(("type", "expense-items")).info() {
-                Ok(c) => c,
+            let c: Result<Return<ExpenseItems>, APIError> = ctx.c.credits().info().with(("type", "expense-items")).call();
+
+            let c = match c {
+                Ok(c) => match c {
+                    Return::Single(c) => c,
+                    _ => panic!("bad call"),
+                },
                 Err(e) => {
-                    println!("Error: {:?}", e);
+                    println!("Error: {:#?}", e);
                     return;
                 }
             };
             println!("Credits are:\n{:?}", c);
         },
         CreditSubCommand::Members(_opts) => {
-            let c: MemberListing = match ctx.c.credits().with(("type", "members")).info() {
-                Ok(c) => c,
+            let c: Result<Return<MemberListing>, APIError> = ctx.c.credits().info().with(("type", "members")).call();
+            let c = match c {
+                Ok(c) => match c {
+                    Return::Single(c) => c,
+                    _ => panic!("bad call"),
+                },
                 Err(e) => {
                     println!("Error: {:?}", e);
                     return;
