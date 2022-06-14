@@ -226,7 +226,21 @@ impl<T> Callable<T> for Paged
 
         // Get the potential "type" option
         //
-        let tt = &self.c.opts["type"];
+        dbg!(&self.opts);
+        if self.opts.contains_key("type") {
+            // Now, check the "type" value
+            //
+            op = match self.opts["type"].as_str() {
+                // Credits stuff
+                "expense-items" => Op::Expenses,
+                "income-items" => Op::Incomes,
+                "members" => Op::Members,
+                "transactions" => Op::Transactions,
+                "transfer" => Op::Transfers,
+                //
+                _ => Op::Info,
+            };
+        }
 
         // Keep all options except for "type" as we don't want to send this internal option
         // along with the query.
@@ -238,19 +252,6 @@ impl<T> Callable<T> for Paged
                 None
             }
         });
-
-        // Now, check the "type" value
-        //
-        let op = match tt.as_str() {
-            // Credits stuff
-            "expense-items" => Op::Expenses,
-            "income-items" => Op::Incomes,
-            "members" => Op::Members,
-            "transactions" => Op::Transactions,
-            "transfer" => Op::Transfers,
-            //
-            _ => Op::Info,
-        };
 
         let query = self.query.to_owned();
         let add = get_ops_url(&self.ctx, op, query);
@@ -285,7 +286,7 @@ impl<T> Callable<T> for Paged
 
         // We will append all results here.
         //
-        let mut res = Vec::<T>::with_capacity(rawlist.count.unwrap() as usize);
+        let mut res = Vec::new();
 
         // Get first results in
         //
