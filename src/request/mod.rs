@@ -26,6 +26,7 @@ use std::fmt::Debug;
 //
 use anyhow::Result;
 use itertools::Itertools;
+use reqwest::{Method, Url};
 
 // Our internal crates.
 //
@@ -146,21 +147,20 @@ pub struct RequestBuilder {
     pub query: Param,
 }
 
-/// Add methods for chaining and keeping state.
-///
-impl RequestBuilder {
-    /// Create an empty struct RequestBuilder
+impl Default for RequestBuilder {
+    /// Have some reasonable default
     ///
-    pub fn new(ctx: Ctx, c: Client, kw: reqwest::Method, url: reqwest::Url) -> Self {
+    fn default() -> Self {
         RequestBuilder {
-            ctx,
-            c,
-            kw,
-            url,
+            ctx: Ctx::None,
+            c: Client::new(),
+            kw: Method::GET,
+            url: Url::parse("https://locahost").unwrap(),
             op: Op::Null,
             query: Param::None,
         }
     }
+}
 
 /// Define the `keyword` macro that generate the code and documentation for our first
 /// action calls like `get()` and `list()`.  That way we don't have to repeat everything.
@@ -239,9 +239,10 @@ macro_rules! action_keyword {
     }};
 }
 
-    /// This is the `info` method close to `get` but without a parameter.
-    ///
-    /// You still get all the parameters from the options.
+/// Add methods for chaining and keeping state.
+///
+impl RequestBuilder {
+    /// Create an empty struct RequestBuilder
     ///
     pub fn new(ctx: Ctx, c: Client, kw: Method, url: reqwest::Url) -> Self {
         RequestBuilder {
