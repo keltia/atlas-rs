@@ -179,14 +179,8 @@ impl Default for RequestBuilder {
 #[macro_export]
 macro_rules! action_keyword {
     ($name:ident, $op:ident, $ret:ty) => {
-    /// These methods expect to be called by one of the main "categories" methods like
-    /// `probes()` or `keys()`.  That way, context is established and propagated.
-    ///
-    /// Some calls have a parameter (type is `Param`) and it gets converted into the proper
-    /// type automatically depending on the `dispatch` function wants to get.
-    ///
     #[doc = concat!("This is the `", stringify!($name), "()` method for `", stringify!($ret), "`")]
-    /// results and **no** parameter.
+    /// results and no parameter.
     ///
     /// ```no_run
     /// # use atlas_rs::client::ClientBuilder;
@@ -205,20 +199,8 @@ macro_rules! action_keyword {
         req
     }};
     ($name:ident, $op:ident, $ret:ty, $data:ident) => {
-    /// These methods expect to be called by one of the main "categories" methods like
-    /// `probes()` or `keys()`.  That way, context is established and propagated.
-    ///
-    /// Some calls have a parameter of type [`Param`] and it gets converted into the proper
-    /// type automatically depending on the
-    #[doc = concat!("`", stringify!($name), "()`")]
-    /// function wants to get.
-    ///
     #[doc = concat!("This is the `", stringify!($name), "()` method for `", stringify!($ret), "`")]
-    /// results and **a** parameter
-    ///
-    /// Look for the [`Param`] enum for description of the various parameter types.
-    ///
-    /// [`Param`]: crate::param::Param
+    /// results and a parameter(see [`Param`]).
     ///
     /// ```no_run
     /// # use atlas_rs::client::ClientBuilder;
@@ -243,7 +225,18 @@ macro_rules! action_keyword {
     }};
 }
 
-/// Add methods for chaining and keeping state.
+/// Methods for chaining and keeping state.
+///
+/// These methods expect to be called by one of the main "categories" methods like
+/// `probes()` or `keys()`.  That way, context is established and propagated with all
+/// necessary parameters.
+///
+/// Some calls have a parameter (type is `Param`) and it gets converted into the proper
+/// type automatically depending on what the function wants to get.
+///
+/// Look for the [`Param`] enum for description of the various parameter types.
+///
+/// [`Param`]: crate::param::Param
 ///
 impl RequestBuilder {
     /// Create an empty struct RequestBuilder
