@@ -162,158 +162,112 @@ impl RequestBuilder {
         }
     }
 
-    // ------------------------------------------------------------------------------------
-    /// Establish the final URL before call()
-    ///
+/// Define the `keyword` macro that generate the code and documentation for our first
+/// action calls like `get()` and `list()`.  That way we don't have to repeat everything.
+///
+/// It takes the following mandatory arguments:
+/// - `name` is the name of the call
+/// - `op`  is the member of the `Op` enum like `Op::List`  without the prefix
+/// - `ret` is the return type, either `Single` or `Paged`
+///
+/// If `data` is also present, it will insert the definition of a single parameter of type `Param`.
+///
+#[macro_export]
+macro_rules! action_keyword {
+    ($name:ident, $op:ident, $ret:ty) => {
     /// These methods expect to be called by one of the main "categories" methods like
     /// `probes()` or `keys()`.  That way, context is established and propagated.
     ///
     /// Some calls have a parameter (type is `Param`) and it gets converted into the proper
     /// type automatically depending on the `dispatch` function wants to get.
     ///
-    /// This is the `get` method for single results and a parameter.
-    ///
-    /// Example:
-    ///
-    /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
-    /// # use atlas_rs::core::probes::Probe;
-    /// # use atlas_rs::request::*;
-    ///
-    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
-    ///
-    /// let res = c.probe().get(666).call().unwrap()
-    /// # ;
-    /// ```
-    ///
-    pub fn get<P>(self, data: P) -> Single
-        where
-            P: Into<Param> + Debug,
-    {
-        dbg!(&self);
-        let mut single = Single::from(self);
-        single.query = data.into();
-        single
-    }
-
-    /// This is the `list` method which return a set of results.  The results are automatically
-    /// paginated, returning a different structure with pointers to the previous and next pages.
-    ///
-    /// ‘list()‘ takes a Param which represents a query made with Atlas' specific keywords and
-    /// returns a ‘Vec<T>‘ representing a set of T objects.
-    ///
-    /// Example:
+    #[doc = concat!("This is the `", stringify!($name), "()` method for `", stringify!($ret), "`")]
+    /// results and **no** parameter.
     ///
     /// ```no_run
     /// # use atlas_rs::client::ClientBuilder;
     /// # use atlas_rs::core::probes::Probe;
+    /// # use atlas_rs::errors::APIError;
     /// # use atlas_rs::request::*;
     ///
     /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
-    /// let query = vec!["country_code=fr"];
     ///
-    /// let res = c.probe().list(query).call().unwrap()
-    /// # ;
+    #[doc = concat!("let res: Result<Return<Probe>, APIError> = c.probe().", stringify!($name), "().call();")]
+    ///
     /// ```
+    pub fn $name(self) -> $ret {
+        let mut req = <$ret>::from(self);
+        req.op = Op::$op;
+        req
+    }};
+    ($name:ident, $op:ident, $ret:ty, $data:ident) => {
+    /// These methods expect to be called by one of the main "categories" methods like
+    /// `probes()` or `keys()`.  That way, context is established and propagated.
     ///
-    pub fn list<P>(self, data: P) -> Paged
+    /// Some calls have a parameter of type [`Param`] and it gets converted into the proper
+    /// type automatically depending on the
+    #[doc = concat!("`", stringify!($name), "()`")]
+    /// function wants to get.
+    ///
+    #[doc = concat!("This is the `", stringify!($name), "()` method for `", stringify!($ret), "`")]
+    /// results and **a** parameter
+    ///
+    /// Look for the [`Param`] enum for description of the various parameter types.
+    ///
+    /// [`Param`]: crate::param::Param
+    ///
+    /// ```no_run
+    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_rs::core::probes::Probe;
+    /// # use atlas_rs::errors::APIError;
+    /// # use atlas_rs::request::*;
+    ///
+    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
+    ///
+    #[doc = concat!("let res: Result<Return<Probe>, APIError> = c.probe().", stringify!($name), "(", stringify!($data), ").call();")]
+    ///
+    /// ```
+
+    pub fn $name<P>(self, $data: P) -> $ret
         where
             P: Into<Param> + Debug,
     {
-        let mut paged = Paged::from(self);
-        paged.query = data.into();
-        paged.op = Op::List;
-        dbg!(&paged);
-        paged
-    }
+        let mut req = <$ret>::from(self);
+        req.query = $data.into();
+        req.op = Op::$op;
+        req
+    }};
+}
 
     /// This is the `info` method close to `get` but without a parameter.
     ///
     /// You still get all the parameters from the options.
     ///
-    /// Example:
-    ///
-    /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
-    /// # use atlas_rs::core::keys::Key;
-    ///
-    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
-    ///
-    /// let res: Key = c.keys().info().unwrap()
-    /// # ;
-    /// ```
-    ///
-    pub fn info(self) -> Single {
-        let mut req = Single::from(self);
-        req.op = Op::Info;
-        req
+    pub fn new(ctx: Ctx, c: Client, kw: Method, url: reqwest::Url) -> Self {
+        RequestBuilder {
+            ctx,
+            c,
+            kw,
+            url,
+            ..RequestBuilder::default()
+        }
     }
 
-    /// This is the `info` method close to `get` but without a parameter.
+    // ------------------------------------------------------------------------------------
+    /// These invocations of the `keyword` macro generate the function body and its
+    /// documentation.
     ///
-    /// You still get all the parameters from the options.
-    ///
-    /// Example:
-    ///
-    /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
-    /// # use atlas_rs::core::keys::Key;
-    ///
-    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
-    ///
-    /// let res: Key = c.keys().info().unwrap()
-    /// # ;
-    /// ```
-    ///
-    pub fn update(self) -> Single {
-        let mut req = Single::from(self);
-        req.op = Op::Update;
-        req
-    }
+    action_keyword!(get, Get, Single, data);
 
-    /// This is the `info` method close to `get` but without a parameter.
-    ///
-    /// You still get all the parameters from the options.
-    ///
-    /// Example:
-    ///
-    /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
-    /// # use atlas_rs::core::keys::Key;
-    ///
-    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
-    ///
-    /// let res: Key = c.keys().info().unwrap()
-    /// # ;
-    /// ```
-    ///
-    pub fn delete(self) -> Single {
-        let mut req = Single::from(self);
-        req.op = Op::Delete;
-        req
-    }
+    action_keyword!(list, List, Paged, data);
 
-    /// This is the `info` method close to `get` but without a parameter.
-    ///
-    /// You still get all the parameters from the options.
-    ///
-    /// Example:
-    ///
-    /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
-    /// # use atlas_rs::core::keys::Key;
-    ///
-    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
-    ///
-    /// let res: Key = c.keys().info().unwrap()
-    /// # ;
-    /// ```
-    ///
-    pub fn post(self) -> Single {
-        let mut req = Single::from(self);
-        req.op = Op::Update;
-        req
-    }
+    action_keyword!(info, Info, Single);
+
+    action_keyword!(update, Update, Single, data);
+
+    action_keyword!(delete, Delete, Single, data);
+
+    action_keyword!(post, Update, Single, data);
 }
 
 /// Take an url and a set of options to add to the parameters
