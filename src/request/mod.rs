@@ -252,9 +252,9 @@ impl RequestBuilder {
     }
 
     // ------------------------------------------------------------------------------------
-    /// These invocations of the `keyword` macro generate the function body and its
-    /// documentation.
-    ///
+    // These invocations of the `action_keyword` macro generate the function body and its
+    // documentation.
+    //
     action_keyword!(get, Get, Single, data);
 
     action_keyword!(list, List, Paged, data);
