@@ -2,7 +2,7 @@
 
 ## Chosen approach (like reqwest)
 
-We use the Builder pattern for Client through ClientBuilder and partially with RequestBuider.
+We use the Builder pattern for `Client` through `ClientBuilder` and partially with `RequestBuider`.
 
 We will have
 
@@ -26,7 +26,7 @@ then
 
     get/info/delete/etc.() 
 
-Let rollback and reintroduce call().
+Let rollback and reintroduce `call()`.
 
 We have two kind of returned data:
 
@@ -41,16 +41,22 @@ We have two kind of returned data:
 
 In `RequestBuilder` we need the following:
 
-- Client (it carries configuration and HTTP client)
+- `Client` (it carries configuration and HTTP client)
 - `reqwest::Client` (for the calls and to reuse it during pagination for example)
+- the current context (first level)
+- the operation itself
+- the url (which gets augmented by each call)
+- the method.
 
-Both support the Callable trait and implement call().
+Some of these are in inner structures but it is easier to extract what we need.
 
-    Client.(first) -> RequestBuilder -> get(P)  -> Single -> with(O)   -> call()
-                                                          -> subcmd()  -> with(O) -> call()
-                                        list(Q) -> Paged -> with(O)    -> call()
+Both support the `Callable` trait and implement `call()`.
+
+    Client.(first) -> RequestBuilder -> get(P)  -> Single -> with(O)  -> call()
+                                                          -> subcmd() -> with(O) -> call()
+                                        list(Q) -> Paged -> with(O)   -> call()
                                                          -> subcmd()  -> with(O) -> call()
-                                        info() -> Single -> with(O) -> Single
+                                        info() -> Single   -> with(O) -> Single
                                                -> subcmd() -> with(O) -> Single
                                                -> subcmd() -> with(O) -> Paged
 
@@ -64,7 +70,7 @@ let c = ClientBuilder::new().key("FOO")
 
 let p = c.probe().get(666);
 
-let pl = c.probe().list(opts);     // or c.probe().list().with(opts);
+let pl : Result<Return<Probe>, APIError> = c.probe().list(opts).call();
 
 // there c.<category>() returns a RequestBuilder and .get/info/etc. returns a Response.
 ```
