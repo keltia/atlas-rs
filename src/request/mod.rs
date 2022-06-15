@@ -115,8 +115,12 @@ pub fn get_ops_url(ctx: &Ctx, op: Op, p: Param) -> String {
 
 #[derive(Debug)]
 pub enum Return<T> {
+    /// This gets deserialize as a single struct T
     Single(T),
+    /// This generate a `Vec` of struct T
     Paged(Vec<T>),
+    /// This is no result
+    Null,
 }
 
 /// This is the trait we need to use for the call() stuff.
