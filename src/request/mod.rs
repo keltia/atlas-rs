@@ -298,8 +298,8 @@ pub fn add_opts(url: &str, opts: &Options) -> String {
 mod tests {
     use reqwest::blocking::Request;
     use reqwest::Url;
-    use crate::client::ENDPOINT;
 
+    use crate::client::ENDPOINT;
     use crate::option::Options;
 
     use super::*;
