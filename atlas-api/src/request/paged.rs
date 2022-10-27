@@ -95,8 +95,8 @@ impl Paged {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::Client;
-    /// # use atlas_rs::core::probes::Probe;
+    /// # use atlas_api::client::Client;
+    /// use atlas_api::core::probes::Probe;
     ///
     /// let c = Client::new();
     /// let query = vec!["country_code=fr"];
@@ -108,8 +108,8 @@ impl Paged {
     /// ```
     /// This can be used to have subcommands like this:
     /// ```no_run
-    /// # use atlas_rs::client::Client;
-    /// # use atlas_rs::core::credits::Transaction;
+    /// # use atlas_api::client::Client;
+    /// # use atlas_api::core::credits::Transaction;
     ///
     /// let c = Client::new();
     /// let query = vec!["country_code=fr"];
@@ -139,10 +139,10 @@ impl Paged {
     ///
     /// Example:
     /// ```no_run
-    /// # use atlas_rs::client::{Client, Ctx};
-    /// # use atlas_rs::core::probes::Probe;
-    /// # use atlas_rs::request::paged::List;
-    /// # use atlas_rs::request::RequestBuilder;
+    /// # use atlas_api::client::{Client, Ctx};
+    /// # use atlas_api::core::probes::Probe;
+    /// # use atlas_api::request::paged::List;
+    /// # use atlas_api::request::RequestBuilder;
     /// #
     /// # let c = Client::new();
     /// # let ctx = Ctx::None;
