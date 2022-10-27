@@ -101,7 +101,7 @@ fn main() -> Result<()> {
         // extra utility command
         SubCommand::Ip(opts) => cmd_ip(&ctx, opts),
         SubCommand::Version => {
-            let v = atlas_rs::version();
+            let v = atlas_api::version();
 
             println!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
             std::process::exit(0);
