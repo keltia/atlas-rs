@@ -9,9 +9,11 @@
 [![SemVer](http://img.shields.io/SemVer/2.0.0.png)](https://semver.org/spec/v2.0.0.html)
 [![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/keltia/ripe-atlas/master/LICENSE)
 
-`atlas-rs` is a [Rust] library to access the RIPE Atlas [REST API].  It is a rewrite in Rust of my Go library called [ripe-atlas](https://github.com/keltia/ripe-atlas).
+`atlas-rs` is a [Rust] library to access the RIPE Atlas [REST API]. It is a rewrite in Rust of my Go library
+called [ripe-atlas](https://github.com/keltia/ripe-atlas).
 
-It features a simple CLI-based tool called `atlas` which serve both as a collection of use-cases for the library and an easy way to use it.
+It features a simple CLI-based tool called `atlas-cli` which serve both as a collection of use-cases for the library and
+an easy way to use it.
 
 **Work in progress, still incomplete**
 
@@ -85,44 +87,41 @@ All the documentation on the API itself is available through Rust builtin doc sy
 
 ## CLI utility
 
-The `atlas` command is a command-line client for the Rust API.
+The `atlas-cli` command is a command-line client for the Rust API.
 
 It can be used to exercise various aspects of the API (I use it to test my implementation).
 
 ```text
-atlas 0.4.0
-Ollivier Robert <roberto@keltia.net>
 Rust CLI for RIPE Atlas.
 
-USAGE:
-    atlas [OPTIONS] <SUBCOMMAND>
+Usage: atlas-cli [OPTIONS] <COMMAND>
 
-OPTIONS:
-    -c, --config <CONFIG>    configuration file
-    -D, --debug              debug mode
-    -h, --help               Print help information
-    -v, --verbose            Verbose mode
-    -V, --version            Print version information
+Commands:
+  credits      Dislays informations about credits [aliases: c]
+  key          Key management [aliases: keys, k]
+  measurement  Create, starts, displays measurements [aliases: m]
+  probe        Get informations about probes [aliases: probes, p]
+  dns          DNS-related measurements
+  http         HTTP-related measurements
+  ntp          NTP-related measurements
+  ping         ICMP-related measurements
+  tls-cert     Certificate info management [aliases: cert]
+  traceroute   Traceroute from probes [aliases: tracert]
+  version      Display the full version stuff
+  ip           Displays the default probe IPs
+  help         Print this message or the help of the given subcommand(s)
 
-SUBCOMMANDS:
-    credits        Dislays informations about credits [aliases: c]
-    dns            DNS-related measurements
-    help           Print this message or the help of the given subcommand(s)
-    http           HTTP-related measurements
-    ip             Displays the default probe IPs
-    key            Key management [aliases: keys, k]
-    measurement    Create, starts, displays measurements [aliases: m]
-    ntp            NTP-related measurements
-    ping           ICMP-related measurements
-    probe          Get informations about probes [aliases: probes, p]
-    tls-cert       Certificate info management [aliases: cert]
-    traceroute     Traceroute from probes [aliases: tracert]
-    version        Display the full version stuff
+Options:
+  -c, --config <CONFIG>  configuration file
+  -D, --debug            debug mode
+  -v, --verbose          Verbose mode
+  -h, --help             Print help information
+  -V, --version          Print version information
 ```
 
 ### Configuration
 
-The `atlas` utility uses a configuration file in the [TOML] file format.
+The `atlas-cli` utility uses a configuration file in the [TOML] file format.
 
 On Unix, it is located in `$HOME/.config/ripe-atlas/config.toml` and in `%LOCALAPPDATA%\RIPE-ATLAS` on Windows.
 
@@ -171,7 +170,7 @@ System proxies look in environment variables to set HTTP or HTTPS proxies.
 ## TODO
 
 It is not currently completely usable, only a few parts have been implemented (notable part of the `Probes` API) to
-validate our design (see [APIDESIGN.md](./APIDESIGN.md) for my musings about issues).
+validate our design (see [APIDESIGN.md](atlas-api/APIDESIGN.md) for my musings about issues).
 
 - Implement a good way to pass arguments to various calls besides the `opts` HashMap.
 - ~~Implement generic pagination~~
