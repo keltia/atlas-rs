@@ -1,0 +1,39 @@
+[package]
+name = "atlas-cli"
+version = "0.3.0"
+edition = "2021"
+authors = ["Ollivier Robert <roberto@keltia.net>"]
+repository = "https://github.com/keltia/atlas-rs"
+license = "MIT"
+readme = "README.md"
+keywords = ["atlas", "ripe-atlas", "REST-API", "CLI app"]
+description = "Rust library to access RIPE Atlas probes API."
+categories = ["command-line-utilities" ]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[badges]
+maintenance = { status = "actively-developed" }
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0"
+atlas-api = { path = "../atlas-api", version = "0.3.0" }
+clap = { version = "4", features = ["cargo", "derive"] }
+home = "0.5"
+itertools = "0.10"
+lazy-regex = "2.3"
+log = { version = "0.4.17", features = ["std", "serde"] }
+regex = "1.5"
+reqwest = { version = "0.11", features = ["socks", "blocking", "gzip", "json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+stderrlog = "0.5.3"
+toml = "0.5"
+
+[dev-dependencies]
+rstest = "0.13"
+assert_cmd = "2.0"

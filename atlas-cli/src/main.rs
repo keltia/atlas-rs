@@ -14,7 +14,7 @@ use stderrlog::LogLevelNum::Trace;
 
 // API-related ones.
 //
-use atlas_rs::client::{Client, ClientBuilder};
+use atlas_api::client::{Client, ClientBuilder};
 use cli::{Opts, SubCommand, NAME, VERSION};
 use config::{default_file, Config};
 

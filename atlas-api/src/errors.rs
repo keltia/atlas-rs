@@ -59,7 +59,7 @@ impl APIError {
     ///
     /// Examples:
     /// ```no_run
-    /// use atlas_rs::errors::APIError;
+    /// use atlas_api::errors::APIError;
     ///
     /// let e = APIError::new(501, "NotFound", "some error", "get_probe");
     /// ```

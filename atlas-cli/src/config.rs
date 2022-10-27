@@ -204,7 +204,7 @@ mod tests {
 
     #[test]
     fn test_load_ok() {
-        let c = Config::load(&PathBuf::from("src/bin/atlas/config.toml")).unwrap();
+        let c = Config::load(&PathBuf::from("config.toml")).unwrap();
 
         assert_eq!("no-way-i-tell-you", c.api_key);
         assert_eq!(Some(666), c.default_probe);
