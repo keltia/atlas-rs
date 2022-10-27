@@ -9,6 +9,8 @@ extern crate core;
 //
 use anyhow::Result;
 use clap::Parser;
+use log::warn;
+use stderrlog::LogLevelNum::Trace;
 
 // API-related ones.
 //
@@ -61,8 +63,15 @@ pub struct Context {
 fn main() -> Result<()> {
     let opts: Opts = Opts::parse();
 
+    // Prepare logging.
+    //
+    stderrlog::new()
+        .module(module_path!())
+        .verbosity(Trace)
+        .init()?;
+
     if opts.debug {
-        println!("DEBUG MODE");
+        warn!("DEBUG MODE");
     }
 
     // Handle configuration loading & defaults
