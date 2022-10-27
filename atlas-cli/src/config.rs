@@ -24,7 +24,7 @@
 //!
 //! Examples:
 //! ```
-//! use atlas_rs::config::Config;
+//! use crate::config::Config;
 //!
 //! let cfg = Config::new();  // will contain the defaults values from here.
 //!
@@ -34,7 +34,7 @@
 //! or
 //!
 //! ```
-//! use atlas_rs::config::Config;
+//! use crate::config::Config;
 //!
 //! let cfg = Config::load("./atlas.toml").unwrap();
 //!
@@ -51,9 +51,10 @@ use std::path::PathBuf;
 // External crates
 use anyhow::Result;
 use clap::crate_name;
+use serde::Deserialize;
+
 #[cfg(unix)]
 use home::home_dir;
-use serde::Deserialize;
 
 /// Default configuration filename
 const CONFIG: &str = "config.toml";

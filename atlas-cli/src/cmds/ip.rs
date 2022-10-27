@@ -1,8 +1,8 @@
 use clap::Parser;
 
-use atlas_rs::core::probes::Probe;
-use atlas_rs::errors::APIError;
-use atlas_rs::request::{Callable, Return};
+use atlas_api::core::probes::Probe;
+use atlas_api::errors::APIError;
+use atlas_api::request::{Callable, Return};
 
 use crate::Context;
 
