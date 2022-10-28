@@ -92,9 +92,9 @@ impl Default for Ctx {
 ///
 /// Examples:
 /// ```no_run
-/// # fn main() -> Result<(), atlas_rs::errors::APIError> {
-/// use atlas_rs::client::Client;
-/// use atlas_rs::core::probes::Probe;
+/// # fn main() -> Result<(), atlas_api::errors::APIError> {
+/// use atlas_api::client::Client;
+/// use atlas_api::core::probes::Probe;
 ///
 /// let c = Client::new();
 ///
@@ -104,9 +104,9 @@ impl Default for Ctx {
 /// ```
 /// or
 /// ```no_run
-/// # fn main() -> Result<(), atlas_rs::errors::APIError> {
-/// use atlas_rs::client::Client;
-/// use atlas_rs::core::credits::Credits;
+/// # fn main() -> Result<(), atlas_api::errors::APIError> {
+/// use atlas_api::client::Client;
+/// use atlas_api::core::credits::Credits;
 ///
 /// let c = Client::new();
 ///
@@ -166,7 +166,7 @@ impl Client {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::Client;
+    /// # use atlas_api::client::Client;
     ///
     /// let c = Client::new();
     /// ```
@@ -194,7 +194,7 @@ impl Client {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::Client;
+    /// # use atlas_api::client::Client;
     ///
     /// let c = Client::builder();
     /// ```
@@ -322,10 +322,10 @@ impl Client {
 ///
 /// Examples:
 /// ```no_run
-/// # fn main() -> Result<(), atlas_rs::errors::APIError> {
-/// use atlas_rs::param::Param;
-/// use atlas_rs::core::probes::Probe;
-/// use atlas_rs::client::{AF, ClientBuilder};
+/// # fn main() -> Result<(), atlas_api::errors::APIError> {
+/// use atlas_api::param::Param;
+/// use atlas_api::core::probes::Probe;
+/// use atlas_api::client::{AF, ClientBuilder};
 ///
 /// let c = ClientBuilder::new()
 ///             .api_key("FOO")
@@ -363,7 +363,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::client::ClientBuilder;
     /// let c = ClientBuilder::new();
     /// ```
     ///
@@ -385,7 +385,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///         .api_key("FOO");
@@ -401,7 +401,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///     .endpoint("https://example.com/v1")
@@ -419,7 +419,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///     .area_type("area")
@@ -436,7 +436,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///     .area_value("WW")
@@ -453,7 +453,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///     .onoff(true)
@@ -470,7 +470,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///     .pool_size(20)
@@ -487,7 +487,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///     .verbose(true)
@@ -504,7 +504,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::{AF, ClientBuilder};
+    /// # use atlas_api::client::{AF, ClientBuilder};
     ///
     /// let c = ClientBuilder::new()
     ///     .want_af(AF::V6)
@@ -523,7 +523,7 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///     .tags("ftth !cable")
@@ -540,8 +540,8 @@ impl ClientBuilder {
     /// Example:
     ///
     /// ```no_run
-    /// # use atlas_rs::option::Options;
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::option::Options;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///     .opt("is_anchor", "true")
@@ -560,8 +560,8 @@ impl ClientBuilder {
     ///
     /// Example
     /// ```no_run
-    /// # use atlas_rs::option::Options;
-    /// # use atlas_rs::client::ClientBuilder;
+    /// # use atlas_api::option::Options;
+    /// # use atlas_api::client::ClientBuilder;
     ///
     /// let c = ClientBuilder::new()
     ///     .opts([("is_anchor", "true"), ("country", "fr")])
