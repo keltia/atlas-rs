@@ -1,19 +1,19 @@
 <!-- omit in TOC -->
-# Atlas-rs
+# Atlas-cli
 
 [![CircleCI](https://circleci.com/gh/keltia/atlas-rs/tree/main.svg?style=shield)](https://circleci.com/gh/keltia/atlas-rs/tree/main)
 [![dependency status](https://deps.rs/repo/github/keltia/atlas-rs/status.svg)](https://deps.rs/repo/github/keltia/atlas-rs)
-[![](https://img.shields.io/crates/v/atlas-rs.svg)](https://crates.io/crates/atlas-rs)
-[![Docs](https://docs.rs/atlas-rs/badge.svg)](https://docs.rs/atlas-rs)
+[![](https://img.shields.io/crates/v/atlas-cli.svg)](https://crates.io/crates/atlas-cli)
+[![Docs](https://docs.rs/atlas-cli/badge.svg)](https://docs.rs/atlas-cli)
 
 [![SemVer](http://img.shields.io/SemVer/2.0.0.png)](https://semver.org/spec/v2.0.0.html)
-[![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/keltia/ripe-atlas/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/keltia/atlas-rs/atlas-cli/main/LICENSE)
 
-`atlas-rs` is a [Rust] library to access the RIPE Atlas [REST API]. It is a rewrite in Rust of my Go library
+This crate features a simple CLI-based tool called `atlas-cli` which serve both as a collection of use-cases for the
+library and an easy way to use it.
+
+The `atlas-api` crate is the library part to access the RIPE Atlas [REST API]. It is a rewrite in Rust of my Go library
 called [ripe-atlas](https://github.com/keltia/ripe-atlas).
-
-It features a simple CLI-based tool called `atlas-cli` which serve both as a collection of use-cases for the library and
-an easy way to use it.
 
 **Work in progress, still incomplete**
 
@@ -21,14 +21,18 @@ an easy way to use it.
 - [Installation](#installation)
 - [Documentation](#documentation)
 - [CLI Utility](#cli-utility)
-    - [Configuration](#configuration)
+  - [Configuration](#configuration)
 - [TODO](#todo)
 - [Official documentation](#official-documentation)
 - [Contributing](#contributing)
 
 ## Features
 
-I am trying to implement the full REST API in Rust.  The API itself is not particularly complex but the settings and parameters are.
+I am trying to implement the full REST API in Rust. The API itself is not particularly complex but the settings and
+parameters are. The CLI part tries to implement as any API calls as possible in an easy-to-use utility.
+
+See the API [README.md](https://github.com/keltia/atlas-rs/atlas-api/README.md) for the details on what is currently
+available in the API and usable in `atlas-cli`.
 
 The following topic are available:
 
@@ -77,13 +81,13 @@ And finally two for convenience:
  
 ## Installation
 
-This will be available as a crate on [crates.io](https://crates.io/atlas-rs) when it can be released, there are still
+This will be available as a crate on [crates.io](https://crates.io/atlas-cli) when it can be released, there are still
 many incomplete parts.
 
 ## Documentation
 
 All the documentation on the API itself is available through Rust builtin doc system and will be visible at
-[atlas-rs page on docs.rs](https://docs.rs/atlas-rs).
+[atlas-api page on docs.rs](https://docs.rs/atlas-api).
 
 ## CLI utility
 
@@ -170,7 +174,7 @@ System proxies look in environment variables to set HTTP or HTTPS proxies.
 ## TODO
 
 It is not currently completely usable, only a few parts have been implemented (notable part of the `Probes` API) to
-validate our design (see [APIDESIGN.md](atlas-api/APIDESIGN.md) for my musings about issues).
+validate our design (see [APIDESIGN.md](../atlas-api/APIDESIGN.md) for my musings about issues).
 
 - Implement a good way to pass arguments to various calls besides the `opts` HashMap.
 - ~~Implement generic pagination~~
@@ -191,9 +195,10 @@ Metadata API (probes, keys, credits) and Measurement Results API.
 
 I use the [Git Flow] system to manage development & release branches, hotfix, etc.  Most of the development is done on the `develop` branch, merged in `main` for each release. At the moment, there are no feature branches, all dev is on `develop`, merged from time to time with a tag on `main`.
 
-If you want to contribute, please fork the project, fetch/sync the `develop` branch and submit pull requests based on it.  Or open a ticket with a patch from the `develop` branch.
+If you want to contribute, please fork the project, fetch/sync the `develop` branch and submit pull requests based on
+it. Or open a ticket with a patch from the `develop` branch.
 
-Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for some simple rules.
+Please see [CONTRIBUTING.md](../CONTRIBUTING.md) for some simple rules.
 
 [Main RIPE Atlas site]: https://atlas.ripe.net/
 [REST API Documentation]: https://atlas.ripe.net/docs/api/v2/manual/
