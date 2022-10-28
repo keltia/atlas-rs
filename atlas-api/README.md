@@ -8,7 +8,7 @@
 [![Docs](https://docs.rs/atlas-api/badge.svg)](https://docs.rs/atlas-api)
 
 [![SemVer](http://img.shields.io/SemVer/2.0.0.png)](https://semver.org/spec/v2.0.0.html)
-[![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/keltia/atlas-api/main/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/keltia/atlas-rs/atlas-api/main/LICENSE)
 
 `atlas-api` is a [Rust] library to access the RIPE Atlas [REST API]. It is a rewrite in Rust of my Go library
 called [ripe-atlas](https://github.com/keltia/ripe-atlas).
@@ -141,16 +141,14 @@ it. Or open a ticket with a patch from the `develop` branch.
 
 Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for some simple rules.
 
-[Main RIPE Atlas site]: https://atlas.ripe.net/
+[Git Flow]: https://jeffkreeftmeijer.com/git-flow/
 
+[Main RIPE Atlas site]: https://atlas.ripe.net/
 [REST API Documentation]: https://atlas.ripe.net/docs/api/v2/manual/
 
 [REST API Reference]: https://atlas.ripe.net/docs/api/v2/reference/
 
-[Git Flow]: https://jeffkreeftmeijer.com/git-flow/
+[REST API]: https://en.wikipedia.org/wiki/REST_API
 
 [Rust]: https://rust-lang.org/
-
 [TOML]: https://github.com/naoina/toml
-
-[REST API]: https://en.wikipedia.org/wiki/REST_API
