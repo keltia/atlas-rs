@@ -37,11 +37,11 @@ macro_rules! action_keyword {
     /// ```no_run
     /// # use atlas_api::client::ClientBuilder;
     /// # use atlas_api::core::probes::Probe;
-    /// # use atlas_api::errors::APIError;
+    /// # use atlas_api::errors::APIError;use atlas_api::param::Param;
     /// # use atlas_api::request::*;
     ///
-    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
-    ///
+    /// # let data = Param::None;
+    /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();    ///
     #[doc = concat!("let res: Result<Return<Probe>, APIError> = c.probe().", stringify!($name), "(", stringify!($data), ").call();")]
     ///
     /// ```
