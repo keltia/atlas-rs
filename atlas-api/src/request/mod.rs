@@ -216,7 +216,6 @@ impl RequestBuilder {
 ///
 /// Example!
 /// ```no_run
-/// # use atlas_api::option::Options;
 /// # use atlas_api::request::add_opts;
 /// # use atlas_api::option::Options;
 ///
