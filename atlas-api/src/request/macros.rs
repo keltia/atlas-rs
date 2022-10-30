@@ -15,10 +15,10 @@ macro_rules! action_keyword {
     /// results and no parameter.
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
-    /// # use atlas_rs::core::probes::Probe;
-    /// # use atlas_rs::errors::APIError;
-    /// # use atlas_rs::request::*;
+    /// # use atlas_api::client::ClientBuilder;
+    /// # use atlas_api::core::probes::Probe;
+    /// # use atlas_api::errors::APIError;
+    /// # use atlas_api::request::*;
     ///
     /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
     ///
@@ -35,10 +35,10 @@ macro_rules! action_keyword {
     /// results and a parameter(see [`Param`]).
     ///
     /// ```no_run
-    /// # use atlas_rs::client::ClientBuilder;
-    /// # use atlas_rs::core::probes::Probe;
-    /// # use atlas_rs::errors::APIError;
-    /// # use atlas_rs::request::*;
+    /// # use atlas_api::client::ClientBuilder;
+    /// # use atlas_api::core::probes::Probe;
+    /// # use atlas_api::errors::APIError;
+    /// # use atlas_api::request::*;
     ///
     /// let mut c = ClientBuilder::new().api_key("FOO").build().unwrap();
     ///

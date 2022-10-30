@@ -218,7 +218,7 @@ impl RequestBuilder {
 /// ```no_run
 /// # use atlas_api::option::Options;
 /// # use atlas_api::request::add_opts;
-/// # use atlas_rs::option::Options;
+/// # use atlas_api::option::Options;
 ///
 /// let url = "https://example.com/";
 /// let opts = Options::from([("foo", "bar")]);
