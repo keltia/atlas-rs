@@ -7,7 +7,7 @@ use std::path::PathBuf;
 
 // External crates
 //
-use clap::{crate_authors, crate_name, Parser};
+use clap::{crate_authors, crate_description, crate_name, crate_version, Parser};
 
 // Import our various data structures & enums
 use crate::cmds::credits::CredOpts;
@@ -20,13 +20,13 @@ use crate::proto::{DnsOpts, HttpOpts, NtpOpts, PingOpts, TlsOpts, TrrOpts};
 /// Binary name
 pub(crate) const NAME: &str = crate_name!();
 /// Binary version, different from the API itself represented the crate.
-pub(crate) const VERSION: &str = "0.4.0";
+pub(crate) const VERSION: &str = crate_version!();
 
 /// Help message
 #[derive(Parser)]
 #[command(disable_version_flag = true)]
-#[clap(name = NAME, about = "Rust CLI for RIPE Atlas.")]
-#[clap(version = VERSION, author = crate_authors!())]
+#[clap(name = NAME, about = crate_description ! ())]
+#[clap(version = VERSION, author = crate_authors ! ())]
 pub(crate) struct Opts {
     /// configuration file
     #[clap(short = 'c', long)]
