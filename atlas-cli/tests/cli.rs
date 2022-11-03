@@ -1,6 +1,6 @@
 use assert_cmd::Command;
 
-const BIN: &str = "atlas";
+const BIN: &str = "atlas-cli";
 
 #[test]
 fn test_atlas_empty_args() {
