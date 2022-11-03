@@ -191,6 +191,19 @@ pub(crate) fn default_file() -> Result<PathBuf> {
     Ok(def)
 }
 
+/// Simple macro to generate PathBuf from a series of entries
+///
+#[macro_export]
+macro_rules! makepath {
+    ($($item:expr),+) => {
+        [
+        $(PathBuf::from($item),)+
+        ]
+        .iter()
+        .collect()
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -205,7 +218,8 @@ mod tests {
 
     #[test]
     fn test_load_ok() {
-        let c = Config::load(&PathBuf::from("config.toml")).unwrap();
+        let h: PathBuf = makepath!("src", CONFIG);
+        let c = Config::load(&h).unwrap();
 
         assert_eq!("no-way-i-tell-you", c.api_key);
         assert_eq!(Some(666), c.default_probe);
@@ -222,8 +236,7 @@ mod tests {
     #[cfg(unix)]
     fn test_default_file() -> Result<()> {
         let h = env::var("HOME")?;
-        let h = h + "/.config/atlas-rs/config.toml";
-        let h = PathBuf::from(h);
+        let h: PathBuf = makepath!(h, BASEDIR, crate_name!(), CONFIG);
 
         assert_eq!(h, default_file().unwrap());
         Ok(())
@@ -233,13 +246,7 @@ mod tests {
     #[cfg(windows)]
     fn test_default_file() -> Result<()> {
         let h = env::var("LOCALAPPDATA")?;
-        let h: PathBuf = [
-            PathBuf::from(h),
-            PathBuf::from(crate_name!()),
-            PathBuf::from(CONFIG),
-        ]
-        .iter()
-        .collect();
+        let h: PathBuf = makepath!(h, crate_name!(), CONFIG);
 
         assert_eq!(h, default_file().unwrap());
         Ok(())
