@@ -93,6 +93,8 @@ fn main() -> Result<()> {
     // create the context of every operation
     let ctx = Context { c, cfg };
 
+    // At this stage, we should have a command even though it is marked as optional.
+    //
     let subcmd = opts.subcmd.unwrap();
     match subcmd {
         // data related commands
