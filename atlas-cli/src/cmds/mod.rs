@@ -1,5 +1,7 @@
 use clap::Parser;
 
+use crate::cli::{NAME, VERSION};
+
 pub(crate) mod credits;
 pub(crate) mod ip;
 pub(crate) mod keys;
@@ -32,3 +34,8 @@ pub(crate) struct ListOpts {
     pub(crate) q: Vec<String>,
 }
 
+/// Display version
+///
+pub(crate) fn cmd_version() -> String {
+    format!("Running API {} CLI {}/{}", atlas_api::version(), NAME, VERSION)
+}
