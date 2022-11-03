@@ -193,7 +193,9 @@ Metadata API (probes, keys, credits) and Measurement Results API.
 
 ## Contributing
 
-I use the [Git Flow] system to manage development & release branches, hotfix, etc.  Most of the development is done on the `develop` branch, merged in `main` for each release. At the moment, there are no feature branches, all dev is on `develop`, merged from time to time with a tag on `main`.
+I use the [Git Flow] system to manage development & release branches, hotfix, etc. Most of the development is done on
+the `develop` branch, merged in `main` for each release. At the moment, there are no feature branches, all dev is
+on `develop`, merged from time to time with a tag on `main`.
 
 If you want to contribute, please fork the project, fetch/sync the `develop` branch and submit pull requests based on
 it. Or open a ticket with a patch from the `develop` branch.
