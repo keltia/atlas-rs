@@ -48,16 +48,16 @@ pub(crate) struct Opts {
 #[derive(Parser)]
 pub(crate) enum SubCommand {
     // Data-specific commands (see data.rs)
-    /// Dislays informations about credits
+    /// Display information about credits
     #[clap(visible_alias = "c")]
     Credits(CredOpts),
     /// Key management
     #[clap(visible_alias = "keys", visible_alias = "k")]
     Key(KeyOpts),
-    /// Create, starts, displays measurements
+    /// Create, starts, display measurements
     #[clap(visible_alias = "m")]
     Measurement(MeasurementOpts),
-    /// Get informations about probes
+    /// Get information about probes
     #[clap(visible_alias = "probes", visible_alias = "p")]
     Probe(ProbeOpts),
 
