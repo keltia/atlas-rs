@@ -1,15 +1,12 @@
-//! # atlas-rs
+//! # atlas-api
 //!
-//! The `atlas-rs` carte provides with a high-level [Rust] API to the RIPE Atlas probes and
+//! The `atlas-api` crate provides with a high-level [Rust] API to the RIPE Atlas probes and
 //! measurement network.
 //!
-//! `atlas-rs` is a blocking HTTP client for now, it may evolve into a more proper
+//! `atlas-api` is a blocking HTTP client for now, it may evolve into a more proper
 //! async client later although I am not sure it is worth the complexity.  It uses the
 //! [reqwest] HTTP library for the API calls, supporting all the `reqwest` features
 //! including proxy support, etc.
-//!
-//! It includes the `atlas` binary, used both as a showcase of many calls of the API and
-//! a test utility for me.
 //!
 //! ## Proxy features
 //!
@@ -56,9 +53,9 @@ pub mod request;
 ///
 /// Examples:
 /// ```rs
-/// use atlas_rs::version;
+/// use atlas_api::version;
 ///
-/// println!("{}", atlas_rs::version());
+/// println!("{}", atlas_api::version());
 /// ```
 ///
 pub fn version() -> String {
