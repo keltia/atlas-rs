@@ -28,7 +28,7 @@ There is a companion crate called `atlas-cli`  which is an easy-to-use CLI utili
 
 ## Features
 
-I am trying to implement the full REST API in Rust. The API itself is not particularly complex but the settings and
+I am trying to implement the full [REST API] in [Rust]. The API itself is not particularly complex but the settings and
 parameters are.
 
 The following topic are available:
