@@ -1,6 +1,7 @@
 use assert_cmd::Command;
+use clap::crate_name;
 
-const BIN: &str = "atlas-cli";
+const BIN: &str = crate_name!();
 
 #[test]
 fn test_atlas_empty_args() {
