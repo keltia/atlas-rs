@@ -96,15 +96,15 @@ The `atlas-cli` command is a command-line client for the Rust API.
 It can be used to exercise various aspects of the API (I use it to test my implementation).
 
 ```text
-Rust CLI for RIPE Atlas.
+Rust library to access RIPE Atlas probes API.
 
-Usage: atlas-cli [OPTIONS] <COMMAND>
+Usage: atlas-cli.exe [OPTIONS] [COMMAND]
 
 Commands:
-  credits      Dislays informations about credits [aliases: c]
+  credits      Display information about credits [aliases: c]
   key          Key management [aliases: keys, k]
-  measurement  Create, starts, displays measurements [aliases: m]
-  probe        Get informations about probes [aliases: probes, p]
+  measurement  Create, starts, display measurements [aliases: m]
+  probe        Get information about probes [aliases: probes, p]
   dns          DNS-related measurements
   http         HTTP-related measurements
   ntp          NTP-related measurements
@@ -119,8 +119,8 @@ Options:
   -c, --config <CONFIG>  configuration file
   -D, --debug            debug mode
   -v, --verbose          Verbose mode
+  -V, --version          Display our versions
   -h, --help             Print help information
-  -V, --version          Print version information
 ```
 
 ### Configuration
