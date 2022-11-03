@@ -2,8 +2,8 @@
 
 # Atlas-api
 
-[![CircleCI](https://circleci.com/gh/keltia/atlas-api/tree/main.svg?style=shield)](https://circleci.com/gh/keltia/atlas-api/tree/main)
-[![dependency status](https://deps.rs/repo/github/keltia/atlas-api/status.svg)](https://deps.rs/repo/github/keltia/atlas-api)
+[![CircleCI](https://circleci.com/gh/keltia/atlas-api/tree/main.svg?style=shield)](https://circleci.com/gh/keltia/atlas-rs/atlas-api/tree/main)
+[![dependency status](https://deps.rs/repo/github/keltia/atlas-api/status.svg)](https://deps.rs/repo/github/keltia/atlas-rs)
 [![](https://img.shields.io/crates/v/atlas-api.svg)](https://crates.io/crates/atlas-api)
 [![Docs](https://docs.rs/atlas-api/badge.svg)](https://docs.rs/atlas-api)
 
