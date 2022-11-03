@@ -19,6 +19,8 @@ use cli::{Opts, SubCommand, NAME, VERSION};
 use config::{default_file, Config};
 
 // Import all subcommands
+//
+use crate::cmds::cmd_version;
 use crate::cmds::credits::cmd_credits;
 use crate::cmds::ip::cmd_ip;
 use crate::cmds::keys::cmd_keys;
@@ -74,6 +76,12 @@ fn main() -> Result<()> {
         warn!("DEBUG MODE");
     }
 
+    // Shortcut
+    if opts.version {
+        println!("{}", cmd_version());
+        std::process::exit(0);
+    }
+
     // Handle configuration loading & defaults
     let cfg = load_config(&opts);
 
@@ -85,7 +93,8 @@ fn main() -> Result<()> {
     // create the context of every operation
     let ctx = Context { c, cfg };
 
-    match opts.subcmd {
+    let subcmd = opts.subcmd.unwrap();
+    match subcmd {
         // data related commands
         SubCommand::Probe(opts) => cmd_probes(&ctx, opts),
         SubCommand::Key(opts) => cmd_keys(&ctx, opts),
