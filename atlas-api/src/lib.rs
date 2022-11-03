@@ -41,6 +41,7 @@
 //!
 
 use clap::{crate_name, crate_version};
+use log::info;
 
 pub mod client;
 pub mod core;
@@ -59,6 +60,7 @@ pub mod request;
 /// ```
 ///
 pub fn version() -> String {
+    info!("in version");
     format!("{}/{}", crate_name!(), crate_version!())
 }
 
