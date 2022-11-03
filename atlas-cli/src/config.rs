@@ -193,8 +193,7 @@ mod tests {
 
     #[test]
     fn test_load_ok() {
-        let h: PathBuf = makepath!("src", CONFIG);
-        let c = Config::load(&h).unwrap();
+        let c = Config::load(&PathBuf::from("src/config.toml")).unwrap();
 
         assert_eq!("no-way-i-tell-you", c.api_key);
         assert_eq!(Some(666), c.default_probe);
@@ -211,7 +210,8 @@ mod tests {
     #[cfg(unix)]
     fn test_default_file() -> Result<()> {
         let h = env::var("HOME")?;
-        let h: PathBuf = makepath!(h, BASEDIR, crate_name!(), CONFIG);
+        let h = h + "/.config/atlas-cli/config.toml";
+        let h = PathBuf::from(h);
 
         assert_eq!(h, default_file().unwrap());
         Ok(())
