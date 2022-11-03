@@ -24,7 +24,7 @@
 //!
 //! Examples:
 //! ```
-//! use crate::config::Config;
+//! use atlas_api::config::Config;
 //!
 //! let cfg = Config::new();  // will contain the defaults values from here.
 //!
@@ -34,7 +34,7 @@
 //! or
 //!
 //! ```
-//! use crate::config::Config;
+//! use atlas_api::config::Config;
 //!
 //! let cfg = Config::load("./atlas.toml").unwrap();
 //!
@@ -131,7 +131,7 @@ impl Config {
     ///
     /// Example:
     /// ```
-    /// # use atlas_rs::config::Config;
+    /// # use atlas_api::config::Config;
     ///
     /// let cfg = Config::new();
     /// ```
