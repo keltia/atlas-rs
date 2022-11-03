@@ -1,7 +1,7 @@
 <!-- omit in TOC -->
 # Atlas-cli
 
-[![CircleCI](https://circleci.com/gh/keltia/atlas-rs/tree/main.svg?style=shield)](https://circleci.com/gh/keltia/atlas-rs/tree/main)
+[![CircleCI](https://circleci.com/gh/keltia/atlas-rs/tree/main.svg?style=shield)](https://circleci.com/gh/keltia/atlas-rs/atlas-cli/tree/main)
 [![dependency status](https://deps.rs/repo/github/keltia/atlas-rs/status.svg)](https://deps.rs/repo/github/keltia/atlas-rs)
 [![](https://img.shields.io/crates/v/atlas-cli.svg)](https://crates.io/crates/atlas-cli)
 [![Docs](https://docs.rs/atlas-cli/badge.svg)](https://docs.rs/atlas-cli)
