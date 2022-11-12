@@ -53,6 +53,8 @@ use anyhow::Result;
 use clap::crate_name;
 use serde::Deserialize;
 
+use atlas_api::makepath;
+
 #[cfg(unix)]
 use home::home_dir;
 
@@ -161,17 +163,9 @@ impl Config {
 ///
 #[cfg(unix)]
 pub(crate) fn default_file() -> Result<PathBuf> {
-    let homedir = home_dir().unwrap();
+    let homedir = home_dir()?;
 
-    let def: PathBuf = [
-        homedir,
-        PathBuf::from(BASEDIR),
-        PathBuf::from(crate_name!()),
-        PathBuf::from(CONFIG),
-    ]
-        .iter()
-        .collect();
-    Ok(def)
+    Ok(makepath!(homedir,, BASEDIR, crate_name!(), CONFIG))
 }
 
 /// Returns the path of the default config file.  Here we use the standard %LOCALAPPDATA%
@@ -181,32 +175,13 @@ pub(crate) fn default_file() -> Result<PathBuf> {
 pub(crate) fn default_file() -> Result<PathBuf> {
     let basedir = env::var("LOCALAPPDATA")?;
 
-    let def: PathBuf = [
-        PathBuf::from(basedir),
-        PathBuf::from(crate_name!()),
-        PathBuf::from(CONFIG),
-    ]
-        .iter()
-        .collect();
-    Ok(def)
-}
-
-/// Simple macro to generate PathBuf from a series of entries
-///
-#[macro_export]
-macro_rules! makepath {
-    ($($item:expr),+) => {
-        [
-        $(PathBuf::from($item),)+
-        ]
-        .iter()
-        .collect()
-    };
+    Ok(makepath!(basedir, crate_name!(), CONFIG))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use atlas_api::makepath;
 
     #[test]
     fn test_new() {
