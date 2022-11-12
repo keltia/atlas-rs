@@ -96,7 +96,7 @@ impl<const N: usize> From<[(&str, &str); N]> for Options {
     ///
     /// Example:
     /// ```
-    /// # use atlas_rs::option::Options;
+    /// # use atlas_api::option::Options;
     /// let o = Options::from([("foo", "bar"), ("baz", "nope")]);
     ///
     /// assert_eq!(2, o.len());
@@ -145,7 +145,7 @@ impl Index<&str> for Options {
 
     /// Example:
     /// ```
-    /// # use atlas_rs::option::Options;
+    /// # use atlas_api::option::Options;
     /// let mut o = Options::from([("foo", "bar")]);
     ///
     /// println!("{}", o["foo"]);
@@ -167,7 +167,7 @@ impl IndexMut<&str> for Options {
     ///
     /// Example:
     /// ```
-    /// # use atlas_rs::option::Options;
+    /// # use atlas_api::option::Options;
     /// let mut o = Options::new();
     ///
     /// o["foo"] = "blah".to_string();
