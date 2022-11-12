@@ -59,22 +59,23 @@ impl Single {
     /// let query = vec!["country_code=fr"];
     ///
     /// let res: Vec<Probe> = c.probe()
-    ///                        .with([("opt1", "foo"), ("opt2", "bar")])
     ///                        .list(query)
-    ///                        .unwrap();
+    ///                        .with([("opt1", "foo"), ("opt2", "bar")])?
+    /// # ;
     /// ```
     /// This can be used to have subcommands like this:
     /// ```no_run
     /// # use atlas_api::client::Client;
     /// # use atlas_api::core::credits::Transaction;
+    /// use atlas_api::errors::APIError;
+    /// use atlas_api::request::Return;
     ///
     /// let c = Client::new();
     /// let query = vec!["country_code=fr"];
     ///
-    /// let res: Vec<Transaction> = c.credits()
-    ///                              .with(("type", "transaction"))
+    /// let res: Result<Return<Vec<Transaction>, APIError>> = c.credits()
     ///                              .list(query)
-    ///                              .unwrap();
+    ///                              .with([("type", "transaction")])?;
     /// ```
     ///
     pub fn with(mut self, opts: impl Into<Options>) -> Self {

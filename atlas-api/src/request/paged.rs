@@ -102,8 +102,8 @@ impl Paged {
     /// let query = vec!["country_code=fr"];
     ///
     /// let res: Vec<Probe> = c.probe()
-    ///                        .with([("opt1", "foo"), ("opt2", "bar")])
     ///                        .list(query)
+    ///                        .with([("opt1", "foo"), ("opt2", "bar")])
     ///                        .unwrap();
     /// ```
     /// This can be used to have subcommands like this:
@@ -115,8 +115,8 @@ impl Paged {
     /// let query = vec!["country_code=fr"];
     ///
     /// let res: Vec<Transaction> = c.credits()
-    ///                              .with(("type", "transaction"))
     ///                              .list(query)
+    ///                              .with(("type", "transaction"))
     ///                              .unwrap();
     /// ```
     ///
