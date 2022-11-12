@@ -62,6 +62,29 @@ pub fn version() -> String {
     format!("{}/{}", crate_name!(), crate_version!())
 }
 
+/// Simple macro to generate PathBuf from a series of entries
+///
+/// Example:
+/// ```rust
+/// # use std::path::PathBuf;
+/// use atlas_api::makepath;
+///
+/// let p = makepath!("testdata", "config.toml");
+///
+/// assert_eq!(PathBuf::from("testdata/config.toml"), p);
+/// ```
+///
+#[macro_export]
+macro_rules! makepath {
+    ($($item:expr),+) => {
+        [
+        $(PathBuf::from($item),)+
+        ]
+        .iter()
+        .collect()
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
