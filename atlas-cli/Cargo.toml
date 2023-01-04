@@ -35,5 +35,5 @@ stderrlog = "0.5.4"
 toml = "0.5.9"
 
 [dev-dependencies]
-rstest = "0.15.0"
+rstest = "0.16.0"
 assert_cmd = "2.0.6"
