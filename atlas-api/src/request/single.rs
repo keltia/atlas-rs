@@ -89,7 +89,7 @@ impl From<RequestBuilder> for Single {
     ///
     fn from(rb: RequestBuilder) -> Self {
         Single {
-            ctx: rb.ctx.clone(),
+            ctx: rb.ctx,
             c: rb.c.clone(),
             opts: rb.c.opts.clone(),
             url: rb.url.clone(),

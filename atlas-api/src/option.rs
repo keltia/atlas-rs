@@ -120,7 +120,7 @@ impl<'a> From<(&'a str, &'a str)> for Options {
 }
 
 impl<'a> FromIterator<(&'a str, &'a str)> for Options {
-    fn from_iter<T: IntoIterator<Item=(&'a str, &'a str)>>(iter: T) -> Self {
+    fn from_iter<T: IntoIterator<Item = (&'a str, &'a str)>>(iter: T) -> Self {
         let mut h = HashMap::new();
         for (k, v) in iter {
             h.insert(k.to_string(), v.to_string());
@@ -176,7 +176,7 @@ impl IndexMut<&str> for Options {
     #[inline]
     fn index_mut(&mut self, index: &str) -> &mut Self::Output {
         let me = self.0.get_mut(index);
-        if me == None {
+        if me.is_none() {
             self.0.insert(index.to_string(), "".to_string());
         }
         self.0.get_mut(index).unwrap()

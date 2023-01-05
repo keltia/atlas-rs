@@ -157,8 +157,8 @@ impl Paged {
     /// ```
     ///
     pub fn fetch_one_page<T>(&self, url: Url) -> Result<List<T>, APIError>
-        where
-            T: DeserializeOwned + Debug + Clone,
+    where
+        T: DeserializeOwned + Debug + Clone,
     {
         // Call the service
         //
@@ -206,7 +206,7 @@ impl From<RequestBuilder> for Paged {
     fn from(rb: RequestBuilder) -> Self {
         dbg!(&rb);
         Paged {
-            ctx: rb.ctx.clone(),
+            ctx: rb.ctx,
             c: rb.c.clone(),
             opts: rb.c.opts.clone(),
             query: rb.query.clone(),
@@ -218,8 +218,8 @@ impl From<RequestBuilder> for Paged {
 }
 
 impl<T> Callable<T> for Paged
-    where
-        T: DeserializeOwned + Debug + Clone,
+where
+    T: DeserializeOwned + Debug + Clone,
 {
     /// Single most important call for the whole structure
     ///
@@ -273,18 +273,15 @@ impl<T> Callable<T> for Paged
 
         // Exit early with error if nothing
         //
-        match rawlist.count {
-            Some(count) => {
-                if count == 0 {
-                    return Err(APIError::new(
-                        400,
-                        "Bad Call",
-                        "no data returned on pagination",
-                        "fetch_one_page",
-                    ));
-                }
+        if let Some(count) = rawlist.count {
+            if count == 0 {
+                return Err(APIError::new(
+                    400,
+                    "Bad Call",
+                    "no data returned on pagination",
+                    "fetch_one_page",
+                ));
             }
-            _ => (),
         }
 
         // We will append all results here.
