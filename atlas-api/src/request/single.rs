@@ -10,7 +10,7 @@ use crate::client::{Client, Ctx, ENDPOINT};
 use crate::errors::APIError;
 use crate::option::Options;
 use crate::param::Param;
-use crate::request::{Callable, get_ops_url, Op, RequestBuilder, Return};
+use crate::request::{get_ops_url, Callable, Op, RequestBuilder, Return};
 
 /// Derivative of `RequestBuilder` with a flatter structure
 ///
@@ -101,7 +101,8 @@ impl From<RequestBuilder> for Single {
 }
 
 impl<T> Callable<T> for Single
-    where T: DeserializeOwned + Debug,
+where
+    T: DeserializeOwned + Debug,
 {
     /// Single most important call for the whole structure
     ///
@@ -114,9 +115,8 @@ impl<T> Callable<T> for Single
 
         // Setup URL with potential parameters like `key`.
         //
-        let url =
-            Url::parse_with_params(format!("{}{}", &self.url.as_str(), add).as_str(), opts)
-                .unwrap();
+        let url = Url::parse_with_params(format!("{}{}", &self.url.as_str(), add).as_str(), opts)
+            .unwrap();
 
         let r = reqwest::blocking::Request::new(self.m.clone(), url);
         let resp = self

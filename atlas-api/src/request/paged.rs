@@ -34,8 +34,8 @@ pub struct List<T> {
 }
 
 impl<T> List<T>
-    where
-        T: DeserializeOwned + Debug + Clone,
+where
+    T: DeserializeOwned + Debug + Clone,
 {
     /// Gets an iterator over the values of the map.
     #[inline]
