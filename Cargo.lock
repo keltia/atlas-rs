@@ -580,15 +580,9 @@ checksum = "c4a1e36c821dbe04574f602848a19f742f4fb3c98d40449f11bcad18d6b17421"
 
 [[package]]
 name = "hyper"
-<<<<<<< HEAD
 version = "0.14.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "034711faac9d2166cb1baf1a2fb0b60b1f277f8492fd72176c17f3515e1abd3c"
-=======
-version = "0.14.22"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "abfba89e19b959ca163c7752ba59d737c1ceea53a5d31a149c805446fc958064"
->>>>>>> 0b9e471 (Sync.)
 dependencies = [
  "bytes",
  "futures-channel",
@@ -757,15 +751,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-<<<<<<< HEAD
 version = "0.2.139"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "201de327520df007757c1f0adce6e827fe8562fbc28bfd9c15571c66ca1f5f79"
-=======
-version = "0.2.137"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc7fcc620a3bff7cdd7a365be3376c97191aeaccc2a603e600951e452615bf89"
->>>>>>> 0b9e471 (Sync.)
 
 [[package]]
 name = "link-cplusplus"
@@ -821,11 +809,7 @@ checksum = "e5d732bc30207a6423068df043e3d02e0735b155ad7ce1a6f76fe2baa5b158de"
 dependencies = [
  "libc",
  "log",
-<<<<<<< HEAD
  "wasi",
-=======
- "wasi 0.11.0+wasi-snapshot-preview1",
->>>>>>> 0b9e471 (Sync.)
  "windows-sys 0.42.0",
 ]
 
@@ -868,15 +852,9 @@ dependencies = [
 
 [[package]]
 name = "num_cpus"
-<<<<<<< HEAD
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0fac9e2da13b5eb447a6ce3d392f23a29d8694bff781bf03a16cd9ac8697593b"
-=======
-version = "1.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f6058e64324c71e02bc2b150e4f3bc8286db6c83092132ffa3f6b1eab0f9def5"
->>>>>>> 0b9e471 (Sync.)
 dependencies = [
  "hermit-abi 0.2.6",
  "libc",
@@ -884,15 +862,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-<<<<<<< HEAD
 version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6f61fba1741ea2b3d6a1e3178721804bb716a68a6aeba1149b5d52e3d464ea66"
-=======
-version = "1.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86f0b0d4bf799edbc74508c1e8bf170ff5f41238e5f8225603ca7caaae2b7860"
->>>>>>> 0b9e471 (Sync.)
 
 [[package]]
 name = "openssl"
@@ -941,19 +913,9 @@ dependencies = [
 
 [[package]]
 name = "os_str_bytes"
-<<<<<<< HEAD
 version = "6.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-<<<<<<< HEAD
 checksum = "9b7820b9daea5457c9f21c69448905d723fbd21136ccf521748f23fd49e723ee"
-=======
-checksum = "9ff7415e9ae3fff1225851df9e0d9e4e5479f947619774677a63572e55e80eff"
->>>>>>> c3fdda8 (Sync.)
-=======
-version = "6.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3baf96e39c5359d2eb0dd6ccb42c62b91d9678aa68160d261b9e0ccbf9e9dea9"
->>>>>>> 0b9e471 (Sync.)
 
 [[package]]
 name = "percent-encoding"
@@ -977,15 +939,7 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 name = "pkg-config"
 version = "0.3.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-<<<<<<< HEAD
-<<<<<<< HEAD
 checksum = "6ac9a59f73473f1b8d852421e59e64809f025994837ef743615c6d0c5b305160"
-=======
-checksum = "1df8c4ec4b0627e53bdf214615ad287367e482558cf84b109250b37464dc03ae"
->>>>>>> c3fdda8 (Sync.)
-=======
-checksum = "6ac9a59f73473f1b8d852421e59e64809f025994837ef743615c6d0c5b305160"
->>>>>>> 0b9e471 (Sync.)
 
 [[package]]
 name = "predicates"
@@ -1139,15 +1093,9 @@ dependencies = [
 
 [[package]]
 name = "rstest"
-<<<<<<< HEAD
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b07f2d176c472198ec1e6551dc7da28f1c089652f66a7b722676c2238ebc0edf"
-=======
-version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9c9dc66cc29792b663ffb5269be669f1613664e69ad56441fdb895c2347b930"
->>>>>>> c3fdda8 (Sync.)
 dependencies = [
  "futures",
  "futures-timer",
@@ -1157,15 +1105,9 @@ dependencies = [
 
 [[package]]
 name = "rstest_macros"
-<<<<<<< HEAD
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7229b505ae0706e64f37ffc54a9c163e11022a6636d58fe1f3f52018257ff9f7"
-=======
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5015e68a0685a95ade3eee617ff7101ab6a3fc689203101ca16ebc16f2b89c66"
->>>>>>> c3fdda8 (Sync.)
 dependencies = [
  "cfg-if",
  "proc-macro2",
