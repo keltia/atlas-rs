@@ -173,9 +173,9 @@ pub(crate) fn default_file() -> Result<PathBuf> {
 ///
 #[cfg(windows)]
 pub(crate) fn default_file() -> Result<PathBuf> {
-    let basedir = env::var("LOCALAPPDATA")?;
+    let basedir = env!("LOCALAPPDATA");
 
-    Ok(makepath!(basedir, crate_name!(), CONFIG))
+    Ok(makepath!(basedir, "ripe-atlas", CONFIG))
 }
 
 #[cfg(test)]
