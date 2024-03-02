@@ -6,9 +6,9 @@ authors = ["Ollivier Robert <roberto@keltia.net>"]
 repository = "https://github.com/keltia/atlas-rs"
 license = "MIT"
 readme = "README.md"
-keywords = ["atlas", "ripe-atlas", "REST-API", "CLI app"]
+keywords = ["atlas", "ripe-atlas", "REST-API", "CLI"]
 description = "Rust library to access RIPE Atlas probes API."
-categories = ["command-line-utilities" ]
+categories = ["command-line-utilities"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -20,20 +20,20 @@ maintenance = { status = "actively-developed" }
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.66"
 atlas-api = { path = "../atlas-api", version = "0.3.0" }
-clap = { version = "4.0.19", features = ["cargo", "derive"] }
-home = "0.5.4"
-itertools = "0.10.5"
-lazy-regex = "2.3.1"
-log = { version = "0.4.17", features = ["std", "serde"] }
-regex = "1.7.0"
-reqwest = { version = "0.11.12", features = ["socks", "blocking", "gzip", "json"] }
-serde = { version = "1.0.147", features = ["derive"] }
-serde_json = "1.0.87"
-stderrlog = "0.5.4"
-toml = "0.5.9"
+anyhow.workspace = true
+clap.workspace = true
+home.workspace = true
+itertools.workspace = true
+lazy-regex.workspace = true
+log.workspace = true
+regex.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+stderrlog.workspace = true
+toml.workspace = true
 
 [dev-dependencies]
-rstest = "0.16.0"
-assert_cmd = "2.0.6"
+rstest.workspace = true
+assert_cmd = "2.0"

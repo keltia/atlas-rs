@@ -20,18 +20,17 @@ maintenance = { status = "actively-developed" }
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.66"
-clap = { version = "4.0.19", features = ["cargo"] }
-home = "0.5.4"
-itertools = "0.10.5"
-lazy-regex = "2.3.1"
-log = { version = "0.4.17", features = ["std", "serde"] }
-regex = "1.7.0"
-reqwest = { version = "0.11.12", features = ["socks", "blocking", "gzip", "json"] }
-serde = { version = "1.0.147", features = ["derive"] }
-serde_json = "1.0.87"
-stderrlog = "0.5.4"
+anyhow.workspace = true
+clap.workspace = true
+home.workspace = true
+itertools.workspace = true
+lazy-regex.workspace = true
+log.workspace = true
+regex.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+stderrlog.workspace = true
 
 [dev-dependencies]
-rstest = "0.16.0"
-assert_cmd = "2.0.6"
+rstest.workspace = true
