@@ -94,7 +94,7 @@ fn main() -> Result<()> {
 
     // At this stage, we should have a command even though it is marked as optional.
     //
-    let subcmd = opts.subcmd.unwrap();
+    let subcmd = opts.subcmd;
     match subcmd {
         // data related commands
         SubCommand::Probe(opts) => cmd_probes(&ctx, opts),

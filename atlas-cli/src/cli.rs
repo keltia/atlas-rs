@@ -42,7 +42,7 @@ pub(crate) struct Opts {
     pub(crate) version: bool,
     /// Subcommands
     #[clap(subcommand)]
-    pub(crate) subcmd: Option<SubCommand>,
+    pub(crate) subcmd: SubCommand,
 }
 
 #[derive(Parser)]
