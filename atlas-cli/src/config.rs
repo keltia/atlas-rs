@@ -46,20 +46,20 @@
 // Standard library
 use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 // External crates
 use anyhow::Result;
-use clap::crate_name;
 use serde::Deserialize;
-
-use atlas_api::makepath;
 
 #[cfg(unix)]
 use home::home_dir;
 
 /// Default configuration filename
 const CONFIG: &str = "config.toml";
+
+/// Package name for the configuration
+const CONF_NAME: &str = "ripe-atlas";
 
 /// Use the standard location `$HOME/.config`
 #[cfg(unix)]
@@ -93,6 +93,7 @@ pub(crate) struct Measurements {
 ///
 /// Most API calls need an API key.
 ///
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 pub(crate) struct Config {
     /// API key
@@ -153,7 +154,6 @@ impl Config {
     ///
     pub(crate) fn load(fname: &PathBuf) -> Result<Self> {
         let content = fs::read_to_string(fname)?;
-        dbg!(&content);
         Ok(toml::from_str(&content)?)
     }
 }
@@ -164,8 +164,8 @@ impl Config {
 #[cfg(unix)]
 pub(crate) fn default_file() -> Result<PathBuf> {
     let homedir = home_dir()?;
-
-    Ok(makepath!(homedir,, BASEDIR, crate_name!(), CONFIG))
+    let fname = Path::new(&homedir).join(BASEDIR).join(CONF_NAME).join(CONFIG);
+    Ok(fname)
 }
 
 /// Returns the path of the default config file.  Here we use the standard %LOCALAPPDATA%
@@ -173,15 +173,16 @@ pub(crate) fn default_file() -> Result<PathBuf> {
 ///
 #[cfg(windows)]
 pub(crate) fn default_file() -> Result<PathBuf> {
-    let basedir = env!("LOCALAPPDATA");
-
-    Ok(makepath!(basedir, "ripe-atlas", CONFIG))
+    let basedir = env::var("LOCALAPPDATA")?;
+    let fname = Path::new(&basedir).join(CONF_NAME).join(CONFIG);
+    Ok(fname)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use atlas_api::makepath;
+    #[cfg(unix)]
+    use super::BASEDIR;
 
     #[test]
     fn test_new() {
@@ -210,8 +211,7 @@ mod tests {
     #[cfg(unix)]
     fn test_default_file() -> Result<()> {
         let h = env::var("HOME")?;
-        let h = h + "/.config/atlas-cli/config.toml";
-        let h = PathBuf::from(h);
+        let h = Path::new(h).join(BASEDIR).join(CONF_NAME).join(CONFIG);
 
         assert_eq!(h, default_file().unwrap());
         Ok(())
@@ -221,7 +221,7 @@ mod tests {
     #[cfg(windows)]
     fn test_default_file() -> Result<()> {
         let h = env::var("LOCALAPPDATA")?;
-        let h: PathBuf = makepath!(h, crate_name!(), CONFIG);
+        let h: PathBuf = Path::new(&h).join(CONF_NAME).join(CONFIG);
 
         assert_eq!(h, default_file().unwrap());
         Ok(())
