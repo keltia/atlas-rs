@@ -3,8 +3,6 @@
 //! It is a way to both demonstrate the use of the API and a testing tool.
 //!
 
-extern crate core;
-
 // External crates
 //
 use anyhow::Result;
@@ -20,15 +18,16 @@ use config::{default_file, Config};
 
 // Import all subcommands
 //
-use crate::cmds::cmd_version;
-use crate::cmds::credits::cmd_credits;
-use crate::cmds::ip::cmd_ip;
-use crate::cmds::keys::cmd_keys;
-use crate::cmds::probes::cmd_probes;
+use probes::cmd_probes;
+use credits::cmd_credits;
+use ip::cmd_ip;
+use keys::cmd_keys;
+
+pub(crate) use cmds::*;
 
 // Link with other modules.
+pub mod cmds;
 mod cli;
-mod cmds;
 mod config;
 mod proto;
 
@@ -38,7 +37,7 @@ fn load_config(opts: &Opts) -> Config {
     // Handle configuration loading & defaults
     match &opts.config {
         Some(fname) => Config::load(fname).unwrap_or_else(|e| {
-            println!("No config file, using defaults: {}", e);
+            eprintln!("No config file, using defaults: {}", e);
             Config::new()
         }),
         None => {
@@ -78,7 +77,7 @@ fn main() -> Result<()> {
 
     // Shortcut
     if opts.version {
-        println!("{}", cmd_version());
+        eprintln!("{}", cmd_version());
         std::process::exit(0);
     }
 
@@ -114,7 +113,7 @@ fn main() -> Result<()> {
         SubCommand::Version => {
             let v = atlas_api::version();
 
-            println!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
+            eprintln!("Running API {} CLI {}/{}\n", v, NAME, VERSION);
             std::process::exit(0);
         }
     }
