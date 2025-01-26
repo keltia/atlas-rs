@@ -20,7 +20,7 @@
 //!
 //! On Unix systems (FreeBSD, macOS, Linux, etc.) the default configuration
 //! directory is `$HOME/.config/atlas-rs/` whereas on Windows, it is located
-//! in `%LOCALAPPDATA%\atlas-rs\`.
+//! in `%LOCALAPPDATA%\ripe-atlas\`.
 //!
 //! Examples:
 //! ```
@@ -65,7 +65,33 @@ const CONF_NAME: &str = "ripe-atlas";
 #[cfg(unix)]
 const BASEDIR: &str = ".config";
 
-/// Default set of probes to be used for queries
+/// Represents the configuration for a set of probes used in the `atlas` client.
+///
+/// ### Fields:
+///
+/// - `pool_size`: An optional `usize` specifying how many probes to include.
+/// - `ptype`: An optional `String` representing the type of the probe (e.g., "area").
+/// - `value`: An optional `String` specifying the value for the probe type (e.g., "WW").
+/// - `tags`: An optional `String` containing tags to include or exclude specific probe features.
+///
+/// ### Example:
+///
+/// ```toml
+/// [probe_set]
+///
+/// pool_size = 42
+/// type = "area"
+/// value = "WW"
+/// tags = "+ipv4"
+/// ```
+///
+/// This struct is part of the [`Config`] and can be used to customize the probe configuration
+/// for the `atlas` client.
+///
+/// ### See also:
+/// - [`Config`] for the main configuration structure.
+/// - [RIPE Atlas API Documentation](https://atlas.ripe.net/) for more details on probe configurations.
+///
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub(crate) struct ProbeSet {
     /// How many probes do we want
@@ -81,7 +107,7 @@ pub(crate) struct ProbeSet {
 /// If we want to bill the queries to a specific account (i.e. different from the
 /// one behind the API key).
 ///
-/// NOTE: I never used it but it is part of the API.
+/// NOTE: I never used it, but it is part of the API.
 ///
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub(crate) struct Measurements {
@@ -89,9 +115,48 @@ pub(crate) struct Measurements {
     pub(crate) bill_to: String,
 }
 
-/// `Config` struct with one mandatory argument and optional ones.
+/// The `Config` struct contains configuration options for the `atlas` client,
+/// which includes options like API keys, default probes, and billing settings.
 ///
-/// Most API calls need an API key.
+/// ### Fields:
+///
+/// - `api_key`: A `String` containing the API key required for most API calls.
+/// - `default_probe`: An optional `u32` representing the default probe ID.
+/// - `probe_set`: An optional `ProbeSet` struct containing details about the probe configuration.
+/// - `measurements`: An optional `Measurements` struct for specifying billing-related settings.
+///
+/// ### Example:
+///
+/// ```no_run
+/// use atlas_api::config::Config;
+///
+/// let cfg = Config::new();  // Initializes with default values.
+/// println!("Default API key is {}", cfg.api_key);
+///
+/// let loaded_cfg = Config::load(&PathBuf::from("./config.toml")).unwrap();
+/// println!("Loaded API key is {}", loaded_cfg.api_key);
+/// ```
+///
+/// This struct also provides default values via the `Default` trait and utility methods
+/// such as `new()` and `load()` for creating and loading configuration.
+///
+/// It supports the following TOML format for configurations:
+///
+/// ```toml
+/// api_key = "your_api_key"
+/// default_probe = 123
+///
+/// [probe_set]
+///
+/// pool_size = 10
+/// type = "area"
+/// value = "WW"
+/// tags = "+ipv4"
+/// ```
+///
+/// ### See also:
+/// - [`ProbeSet`] for details on configuring probe pools.
+/// - [`Measurements`] for billing-related options.
 ///
 #[allow(dead_code)]
 #[derive(Debug, Deserialize)]
@@ -164,7 +229,10 @@ impl Config {
 #[cfg(unix)]
 pub(crate) fn default_file() -> Result<PathBuf> {
     let homedir = home_dir()?;
-    let fname = Path::new(&homedir).join(BASEDIR).join(CONF_NAME).join(CONFIG);
+    let fname = Path::new(&homedir)
+        .join(BASEDIR)
+        .join(CONF_NAME)
+        .join(CONFIG);
     Ok(fname)
 }
 
@@ -180,9 +248,9 @@ pub(crate) fn default_file() -> Result<PathBuf> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     #[cfg(unix)]
     use super::BASEDIR;
+    use super::*;
 
     #[test]
     fn test_new() {

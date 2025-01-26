@@ -116,17 +116,81 @@ pub fn get_ops_url(ctx: &Ctx, op: Op, p: Param) -> String {
 
 // -----------------
 
+/// Represents different types of results that can be returned from API calls.
+///
+/// This enum is designed to encapsulate all possible return types from the API,
+/// which may include a single result, multiple results (paged), or no result.
+///
+/// # Variants
+///
+/// - `Single(T)`
+///     - Used for API calls that return a single entity of type `T`.
+/// - `Paged(Vec<T>)`
+///     - Used for API calls that return a paginated list of entities of type `T`.
+/// - `Null`
+///     - Represents the absence of a result, which usually occurs in operations
+///       that do not return a meaningful response.
+///
+/// # Example Usage
+///
+/// ```rust
+/// use atlas_api::request::Return;
+///
+/// let single_result: Return<String> = Return::Single("Example Data".to_string());
+/// let paged_result: Return<String> = Return::Paged(vec!["Page1".to_string(), "Page2".to_string()]);
+/// let no_result: Return<()> = Return::Null;
+/// ```
+///
 #[derive(Debug)]
 pub enum Return<T> {
     /// This gets deserialize as a single struct T
     Single(T),
-    /// This generate a `Vec` of struct T
+    /// This generates a `Vec` of struct T
     Paged(Vec<T>),
     /// This is no result
     Null,
 }
 
-/// This is the trait we need to use for the call() stuff.
+/// This trait represents a callable API request that encapsulates
+/// the logic for performing operations and returning results from an API endpoint.
+///
+/// # Associated Type
+///
+/// - `T`: The type of the entity returned by the API call.
+///
+/// # Required Method
+///
+/// - `call(self) -> Result<Return<T>, APIError>`
+///     - Executes the API call and returns a result wrapped in the [`Return`] enum.
+///
+/// # Examples
+///
+/// ```rust
+/// use atlas_api::request::{Callable, RequestBuilder, Return};
+/// use atlas_api::errors::APIError;
+///
+/// struct MyApiRequest {
+///     // API request details here
+/// }
+///
+/// impl Callable<String> for MyApiRequest {
+///     fn call(self) -> Result<Return<String>, APIError> {
+///         // Logic to execute API call and return result.
+///         Ok(Return::Single("Result from API".to_string()))
+///     }
+/// }
+///
+/// let request = MyApiRequest { /* initialize your request */ };
+/// match request.call() {
+///     Ok(Return::Single(result)) => println!("Single result: {}", result),
+///     Ok(Return::Paged(results)) => println!("Paged results: {:?}", results),
+///     Ok(Return::Null) => println!("No result"),
+///     Err(e) => eprintln!("API error: {:?}", e),
+/// }
+/// ```
+///
+/// [`Return`]: crate::request::Return
+/// [`APIError`]: crate::error::APIError
 ///
 pub trait Callable<T> {
     fn call(self) -> Result<Return<T>, APIError>;
@@ -134,7 +198,7 @@ pub trait Callable<T> {
 
 // RequestBuilder itself
 
-/// This is the chaining struct, containing all the state we are interesting in passing around.
+/// This is the chaining struct, containing all the state we are interested in passing around.
 /// We do not need a special `Request` singleton (like for `Client` as most of what we need to
 /// pass around will be stored in either `cl` (the `Client`) or `r` (the `reqwest::Request` struct).
 ///

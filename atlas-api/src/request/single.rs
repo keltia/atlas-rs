@@ -12,7 +12,54 @@ use crate::option::Options;
 use crate::param::Param;
 use crate::request::{get_ops_url, Callable, Op, RequestBuilder, Return};
 
-/// Derivative of `RequestBuilder` with a flatter structure
+/// A structure for making single-request calls to the API.
+///
+/// `Single` is a simplified version of `RequestBuilder`, providing a flatter
+/// structure for managing API calls. It encapsulates multiple components like
+/// context, options, query parameters, HTTP method, URL, and client details.
+///
+/// ### Fields
+///
+/// - `ctx`: Represents the API context being targeted (e.g., `/probe/`, etc.).
+/// - `opts`: A set of available options, which are a combination of CLI input
+///   and default configuration.
+/// - `query`: The parameter(s) provided to the API (e.g., `Param::None` for
+///   default calls like `infop()`).
+/// - `m`: Represents the HTTP method for the request (e.g., GET, PUT, etc.).
+/// - `url`: The URL used to make the API call.
+/// - `c`: The HTTP client instance for handling requests.
+/// - `op`: Specifies the type of API operation being performed.
+///
+/// ### Usage
+///
+/// The `Single` structure can be used to construct and execute API calls. Use
+/// its methods to configure and chain operations conveniently.
+///
+/// #### Example: Adding Options
+///
+/// ```no_run
+/// use atlas_api::client::Client;
+///
+/// let c = Client::new();
+/// let query = vec!["country_code=fr"];
+///
+/// let res = c.probe()
+///            .list(query)
+///            .with([("opt1", "foo"), ("opt2", "bar")]);
+/// ```
+///
+/// #### Example: Subcommand Style
+///
+/// ```no_run
+/// use atlas_api::client::Client;
+/// use atlas_api::errors::APIError;
+/// use atlas_api::request::Return;
+///
+/// let c = Client::new();
+/// let query = vec!["country_code=fr"];
+///
+/// let res = c.credits().list(query).with([("type", "transaction")]);
+/// ```
 ///
 #[derive(Debug)]
 pub struct Single {
@@ -58,11 +105,9 @@ impl Single {
     /// let c = Client::new();
     /// let query = vec!["country_code=fr"];
     ///
-    /// let res: Vec<Probe> = c.probe()
-    ///                        .list(query)
-    ///                        .with([("opt1", "foo"), ("opt2", "bar")])?
-    /// # ;
+    /// let res = c.probe().list(query).with([("opt1", "foo"), ("opt2", "bar")]);
     /// ```
+    ///
     /// This can be used to have subcommands like this:
     /// ```no_run
     /// # use atlas_api::client::Client;
@@ -73,9 +118,7 @@ impl Single {
     /// let c = Client::new();
     /// let query = vec!["country_code=fr"];
     ///
-    /// let res: Result<Return<Vec<Transaction>, APIError>> = c.credits()
-    ///                              .list(query)
-    ///                              .with([("type", "transaction")])?;
+    /// let res = c.credits().list(query).with([("type", "transaction")]);
     /// ```
     ///
     pub fn with(mut self, opts: impl Into<Options>) -> Self {
@@ -100,6 +143,54 @@ impl From<RequestBuilder> for Single {
     }
 }
 
+/// Calls the API endpoint using the `Single` structure.
+///
+/// This function prepares the API request, including constructing the URL,
+/// attaching query parameters, and sending the HTTP request using the
+/// `reqwest` library. It handles the response, parses it into the
+/// specified type, and returns it wrapped in a `Return` type.
+///
+/// ### Usage
+///
+/// ```no_run
+/// use atlas_api::client::Client;
+/// use atlas_api::core::credits::Transaction;
+/// use atlas_api::errors::APIError;
+/// use atlas_api::request::Callable;
+/// use atlas_api::request::Return;
+///
+/// fn main() -> Result<(), APIError> {
+/// let c = Client::new();
+///     let query = vec!["country_code=fr"];
+///
+///     let res: Return<Transaction> = c
+///         .credits()
+///         .list(query)
+///         .with([("type", "transaction")])
+///         .call()?;
+///
+///     println!("{:?}", res);
+///     Ok(())
+/// }
+/// ```
+///
+/// ### Errors
+///
+/// Returns an `APIError` if the request fails for reasons such as:
+///
+/// - Invalid URL construction.
+/// - HTTP client issues such as a timeout or request failure.
+/// - Parsing the response body fails due to unexpected or invalid data.
+///
+/// ### Notes
+///
+/// - The `ctx` is used to determine the specific API context for the call.
+/// - The `opts` and `query` are merged together to form the full request
+///   query parameters.
+/// - This function is synchronous and uses the `reqwest::blocking` API for
+///   simplicity. Consider using asynchronous versions for high-performance
+///   or latency-sensitive applications.
+///
 impl<T> Callable<T> for Single
 where
     T: DeserializeOwned + Debug,

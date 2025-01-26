@@ -29,7 +29,7 @@
 //! So every `get/info/list()` returns a `Result<something, APIError>`.
 //!
 //! We use [reqwest] as HTTP client.  It has support for everything we need incl. proxy.  We choose
-//! to use the blocking client as most of the time this ought to be enough and it is easier.
+//! to use the blocking client as most of the time this ought to be enough, and it is easier.
 //!
 //! [reqwest]: https://crates.io/reqwest/
 //! [builder]: https://en.wikipedia.org/wiki/Builder_pattern
@@ -54,7 +54,30 @@ pub(crate) const ENDPOINT: &str = "https://atlas.ripe.net/api/v2";
 
 // ---------------------------------------------------------------------------
 
-/// Represents all possible INET Address Family values
+/// Address Family (AF) Enum.
+///
+/// Represents options for target address families when making
+/// network API calls. These options specify whether to use IPv4,
+/// IPv6, or both.
+///
+/// ### Variants:
+///
+/// - `V4`: Target IPv4 only.
+/// - `V6`: Target IPv6 only.
+/// - `V46`: Target both IPv4 and IPv6.
+///
+/// This enum is used internally within the API client to control
+/// the behavior of API calls concerning address family selection.
+///
+/// ### Example:
+///
+/// ```rust
+/// # use atlas_api::client::AF;
+///
+/// let af = AF::V4;
+/// println!("{:?}", af); // Outputs: V4
+/// ```
+///
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum AF {
     /// Only IPv4 target
@@ -65,9 +88,27 @@ pub enum AF {
     V46,
 }
 
-/// Represents the different categories aka first level of requests (probes, credits, etc.
-#[derive(Clone, Copy, Debug)]
+/// Represents the different categories aka first level of requests (probes, credits, etc.)
+///
+/// These categories are used to determine the type of request being made
+/// to the API. For example, requesting information about probes or credits, etc.
+/// It can be used to route API calls appropriately.
+///
+/// This enum is primarily utilized internally for determining routing context.
+///
+/// Variants:
+/// - `None`: No specific context or category defined.
+/// - `Anchors`: Corresponds to API actions related to anchors.
+/// - `AnchorMeasurements`: Actions related to anchor measurements.
+/// - `Credits`: Actions involving API credits management.
+/// - `Keys`: Related to API keys.
+/// - `Measurements`: Covers API measurement-related operations.
+/// - `ParticipationRequests`: Operations involving participation requests.
+/// - `Probes`: Actions related to probes, such as fetching probe information.
+///
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum Ctx {
+    #[default]
     None = 0,
     Anchors,
     AnchorMeasurements,
@@ -78,41 +119,51 @@ pub enum Ctx {
     Probes,
 }
 
-impl Default for Ctx {
-    fn default() -> Self {
-        Ctx::None
-    }
-}
-
 // ---------------------------------------------------------------------------
 
-/// This is the main `Client` struct.  It holds all the parameters and the HTTP client handle.
-/// When using `Client::new()`, you get all the defaults values, if you want to configure it,
-/// please use `ClientBuilder` instead.
+/// Represents the main HTTP client for interacting with the RIPE Atlas API.
 ///
-/// Examples:
+/// This struct provides a high-level interface for making API calls to the
+/// RIPE Atlas measurement network. It includes various fields for configuration
+/// and internal state management and is designed to work with blocking HTTP calls.
+///
+/// ### Key Features:
+///
+/// - Support for multiple API actions (`probes`, `credits`, etc.).
+/// - Configurable parameters for API usage (e.g., API keys, endpoint, timeouts).
+/// - Default values for easy initialization.
+/// - Can leverage builder pattern for advanced configurations.
+///
+/// ## Examples
+///
+/// ### Creating a new `Client` with defaults:
 /// ```no_run
-/// # fn main() -> Result<(), atlas_api::errors::APIError> {
-/// use atlas_api::client::Client;
-/// use atlas_api::core::probes::Probe;
-///
+/// # use atlas_api::client::Client;
 /// let c = Client::new();
-///
-/// let p: Probe = c.probe().get(666)?;
-/// # Ok(())
-/// # }
 /// ```
-/// or
+///
+/// ### Using a preconfigured `ClientBuilder`:
 /// ```no_run
-/// # fn main() -> Result<(), atlas_api::errors::APIError> {
-/// use atlas_api::client::Client;
-/// use atlas_api::core::credits::Credits;
+/// # use atlas_api::client::Client;
+/// let c_builder = Client::builder();
+/// ```
 ///
-/// let c = Client::new();
+/// ### Fetching probe information:
 ///
-/// let r: Credits = c.credits().info()?;
-/// # Ok(())
-/// # }
+/// ```no_run
+/// # use atlas_api::client::Client;
+/// # use atlas_api::core::probes::Probe;
+/// let client = Client::new();
+/// let probe: Probe = client.probe().get(12345).into();
+/// ```
+///
+/// ### Fetching credits information:
+///
+/// ```no_run
+/// # use atlas_api::client::Client;
+/// # use atlas_api::core::credits::Credits;
+/// let client = Client::new();
+/// let credits: Credits = client.credits().info().into();
 /// ```
 ///
 #[derive(Clone, Debug)]
@@ -161,15 +212,35 @@ impl Client {
     // ---------------------------------------------------------------------
     // Public API
 
-    /// Creates a bare client with defaults
+    /// Initializes a new `Client` instance with default values.
     ///
-    /// Example:
+    /// The `Client` struct is used to interact with the RIPE Atlas API. It is pre-configured
+    /// with default values for essential settings, enabling simple and straightforward usage
+    /// for common API interactions. This method creates a "bare" client and can be customized
+    /// further using the `builder` method.
+    ///
+    /// ### Default Values:
+    /// - `api_key`: None
+    /// - `endpoint`: The default RIPE Atlas API URL
+    /// - `area_type`: `"area"`
+    /// - `area_value`: `"WW"` (World-Wide)
+    /// - `is_oneoff`: `true`
+    /// - `pool_size`: `10`
+    /// - `want_af`: Dual-stack IPv4 and IPv6
+    /// - `verbose`: `false`
+    /// - `tags`: Empty string
+    ///
+    /// ### Example:
     ///
     /// ```no_run
     /// # use atlas_api::client::Client;
     ///
-    /// let c = Client::new();
+    /// // Create a new `Client` with default configuration
+    /// let client = Client::new();
     /// ```
+    ///
+    /// You can also attach an API key after creating the client or directly
+    /// use the `builder` pattern for more custom configurations.
     ///
     pub fn new() -> Self {
         let endp = reqwest::Url::parse(ENDPOINT).unwrap();
@@ -189,15 +260,25 @@ impl Client {
         .httpclient()
     }
 
-    /// Create a ClientBuilder struct and returns it for chained calls
+    /// Generates a new instance of the `ClientBuilder` struct.
     ///
-    /// Example:
+    /// This method allows for customized client creation through a builder pattern.
+    /// By using the `builder` method, you can configure the `Client` by chaining
+    /// various options before finally constructing it.
+    ///
+    /// ### Example
     ///
     /// ```no_run
     /// # use atlas_api::client::Client;
     ///
-    /// let c = Client::builder();
+    /// let c = Client::builder()
+    ///     .api_key("your_api_key")
+    ///     .endpoint("https://example.com/api")
+    ///     .build();
     /// ```
+    ///
+    /// Use this method to create a tailored `Client` configuration to meet
+    /// specific requirements that differ from the default settings.
     ///
     pub fn builder() -> ClientBuilder {
         ClientBuilder::new()
@@ -286,11 +367,30 @@ impl Client {
         self
     }
 
-    /// Private routing function
+    /// Handles routing to the appropriate request context (`Ctx`) and
+    /// prepares a `RequestBuilder` instance for subsequent API calls.
     ///
-    /// It is called with Ctx which represent the first level (`probe()`, `keys()`, etc.), generate
-    /// the RequestBuilder object which will get fed by subsequent calls.  It will also ensure
-    /// the API Key is filled in prior to everything.
+    /// This method ensures that the required API key is included in the request
+    /// and that any necessary configuration is cloned into the request before it executes.
+    ///
+    /// The method generates a base URL and sets the HTTP method to `GET` by default.
+    /// Adjustments to the HTTP method (e.g., POST/DELETE) can be performed further
+    /// in the request chain.
+    ///
+    /// ### Panics
+    ///
+    /// This method will panic if the API key is not set with the `ClientBuilder::api_key` method
+    /// before constructing the client. The usage of the API key is mandatory for authorization
+    /// purposes in this client library.
+    ///
+    /// ### Parameters
+    ///
+    /// * `ctx` - A `Ctx` enum that represents the resource-specific context to route to
+    ///   (e.g., `Ctx::Probes`, `Ctx::Keys`, etc.).
+    ///
+    /// ### Returns
+    ///
+    /// Returns a `RequestBuilder` instance, which can be further enriched and executed later.
     ///
     fn route_to(&self, ctx: Ctx) -> RequestBuilder {
         let url = self.endpoint.to_owned();
@@ -317,28 +417,28 @@ impl Client {
 
 // ---------------------------------------------------------------------------
 
-/// `ClientBuilder` is the main struct to create and configure a `Client`. You have to close
-/// the chain by calling `build()`.
+/// `ClientBuilder` is a builder pattern for configuring and creating a `Client`.
 ///
-/// Examples:
+/// The `ClientBuilder` provides a chainable API for setting various options
+/// like `api_key`, `endpoint`, `area_type`, and `area_value`. It ensures that
+/// all mandatory configurations (such as the `api_key`) are set before
+/// building a `Client` instance.
+///
+/// ### Example
+///
 /// ```no_run
-/// # fn main() -> Result<(), atlas_api::errors::APIError> {
-/// use atlas_api::param::Param;
-/// use atlas_api::core::probes::Probe;
-/// use atlas_api::client::{AF, ClientBuilder};
+/// # use atlas_api::client::ClientBuilder;
 ///
-/// let c = ClientBuilder::new()
-///             .api_key("FOO")
-///             .onoff(true)
-///             .want_af(AF::V4)
-///             .build()?;
-///
-/// let p: Probe = c.probe().get(666)?;
-/// # Ok(())
-/// # }
+/// let client = ClientBuilder::new()
+///     .api_key("your_api_key")
+///     .endpoint("https://example.com/v1")
+///     .area_type("area")
+///     .area_value("WW")
+///     .onoff(true)
+///     .build()
+///     .unwrap();
 /// ```
 ///
-
 pub struct ClientBuilder {
     cl: Client,
 }
@@ -371,7 +471,25 @@ impl ClientBuilder {
         ClientBuilder { cl: Client::new() }
     }
 
-    /// Create the final Client after checking the API key has been changed
+    /// Builds and returns a configured `Client` instance.
+    ///
+    /// This method checks that the mandatory configurations, such as the `api_key`,
+    /// have been set. If the `api_key` is missing, the method will return an error.
+    ///
+    /// ### Errors
+    ///
+    /// Returns an `anyhow::Error` if the `api_key` is not set.
+    ///
+    /// ### Example
+    ///
+    /// ```no_run
+    /// # use atlas_api::client::ClientBuilder;
+    ///
+    /// let client = ClientBuilder::new()
+    ///     .api_key("your_api_key")
+    ///     .build()
+    ///     .unwrap();
+    /// ```
     ///
     pub fn build(self) -> Result<Client> {
         match &self.cl.api_key {

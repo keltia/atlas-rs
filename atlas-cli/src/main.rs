@@ -18,16 +18,16 @@ use config::{default_file, Config};
 
 // Import all subcommands
 //
-use probes::cmd_probes;
 use credits::cmd_credits;
 use ip::cmd_ip;
 use keys::cmd_keys;
+use probes::cmd_probes;
 
 pub(crate) use cmds::*;
 
 // Link with other modules.
-pub mod cmds;
 mod cli;
+pub mod cmds;
 mod config;
 mod proto;
 
@@ -42,7 +42,10 @@ fn load_config(opts: &Opts) -> Config {
         }),
         None => {
             let cnf = default_file().unwrap();
-            Config::load(&cnf).unwrap_or_default()
+            Config::load(&cnf).unwrap_or_else(|e| {
+                eprintln!("No config file {}", e);
+                Config::new()
+            })
         }
     }
 }
@@ -83,6 +86,7 @@ fn main() -> Result<()> {
 
     // Handle configuration loading & defaults
     let cfg = load_config(&opts);
+    eprintln!("{cfg:?}");
 
     let c = ClientBuilder::new()
         .api_key(&*cfg.api_key)

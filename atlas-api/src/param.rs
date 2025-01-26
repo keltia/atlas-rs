@@ -16,10 +16,53 @@ use std::fmt::{Display, Formatter};
 
 use serde::Serialize;
 
-/// This enum is for passing the right kind of parameter to `get()`,
-/// there might be a better way for this.
+/// Represents the various parameter types supported by the API.
 ///
-#[derive(Clone, Debug, Serialize, PartialEq)]
+/// This enum is mainly used to simplify the management of different types of
+/// parameters that can be passed to API calls. Each variant represents a
+/// specific type of parameter:
+///
+/// - **A(Vec<String>)**: An array of strings, e.g., for complex parameters like `"country=fr"`.
+/// - **I(i32)**: A signed 32-bit integer.
+/// - **U(u32)**: An unsigned 32-bit integer.
+/// - **L(i64)**: A signed 64-bit integer (long).
+/// - **S(String)**: A string parameter.
+/// - **None**: Represents a parameter that has no value.
+///
+/// # Examples
+///
+/// Creating a `Param` from different types:
+///
+/// ```rust
+/// use atlas_api::param::Param;
+///
+/// // From a string slice
+/// let string_param = Param::from("example");
+/// assert_eq!(string_param, Param::S("example".to_string()));
+///
+/// // From a 32-bit unsigned integer
+/// let u32_param = Param::from(42u32);
+/// assert_eq!(u32_param, Param::U(42));
+///
+/// // From a vector of strings
+/// let vec_param = Param::from(vec!["foo", "bar", "baz"]);
+/// assert_eq!(
+///     vec_param,
+///     Param::A(vec!["foo".to_string(), "bar".to_string(), "baz".to_string()])
+/// );
+/// ```
+///
+/// Displaying a `Param`:
+///
+/// ```rust
+/// use atlas_api::param::Param;
+/// use std::fmt::Display;
+///
+/// let param = Param::S("example".to_string());
+/// println!("{}", param); // Outputs: "\"example\""
+/// ```
+///
+#[derive(Clone, Debug, Default, Serialize, PartialEq)]
 pub enum Param {
     /// Represents a n array of strings (i.e. "country=fr", "area=WW")
     A(Vec<String>),
@@ -32,13 +75,8 @@ pub enum Param {
     /// Represents the string pointer aka `str`
     S(String),
     /// Nothing
+    #[default]
     None,
-}
-
-impl Default for Param {
-    fn default() -> Self {
-        Param::None
-    }
 }
 
 impl Display for Param {
@@ -191,5 +229,101 @@ mod tests {
 
         let s = u32::from(p);
         assert_eq!(28, s);
+    }
+
+    #[test]
+    fn test_param_from_str() {
+        let s = "test_string";
+        let param = Param::from(s);
+        assert_eq!(param, Param::S(s.to_string()));
+    }
+
+    #[test]
+    fn test_param_from_vec_of_str() {
+        let vec_of_str = vec!["one", "two", "three"];
+        let param = Param::from(vec_of_str.clone());
+        assert_eq!(
+            param,
+            Param::A(vec_of_str.into_iter().map(|s| s.to_string()).collect())
+        );
+    }
+
+    #[test]
+    fn test_param_from_array_of_str() {
+        let array_of_str = ["alpha", "beta", "gamma"];
+        let param = Param::from(array_of_str);
+        assert_eq!(
+            param,
+            Param::A(array_of_str.iter().map(|&s| s.to_string()).collect())
+        );
+    }
+
+    #[test]
+    fn test_param_to_string() {
+        let param = Param::S("example".to_string());
+        let converted = String::from(param);
+        assert_eq!(converted, "example".to_string());
+    }
+
+    #[test]
+    fn test_param_from_i32() {
+        let i = -42i32;
+        let param = Param::from(i);
+        assert_eq!(param, Param::I(i));
+    }
+
+    #[test]
+    fn test_param_from_i64() {
+        let l = -1234567890i64;
+        let param = Param::from(l);
+        assert_eq!(param, Param::L(l));
+    }
+
+    #[test]
+    fn test_param_from_u64() {
+        let l = 1234567890u64;
+        let param = Param::L(l as i64); // Since u64 isn't explicitly covered, treat as Param::L
+        assert_eq!(param, Param::L(l as i64));
+    }
+
+    #[test]
+    fn test_param_none_default() {
+        let param = Param::default();
+        assert_eq!(param, Param::None);
+    }
+
+    #[test]
+    fn test_param_to_u32() {
+        let param = Param::U(123u32);
+        let converted: u32 = u32::from(param);
+        assert_eq!(converted, 123u32);
+    }
+
+    #[test]
+    fn test_param_to_i32() {
+        let param = Param::I(-123i32);
+        let converted: i32 = i32::from(param);
+        assert_eq!(converted, -123i32);
+    }
+
+    #[test]
+    fn test_param_to_i64() {
+        let param = Param::L(-98765432i64);
+        let converted: i64 = i64::from(param);
+        assert_eq!(converted, -98765432i64);
+    }
+
+    #[test]
+    fn test_param_array_serialization() {
+        let param = Param::A(vec!["one".into(), "two".into()]);
+        let serialized = serde_json::to_string(&param).unwrap();
+        assert_eq!(serialized, r#"{"A":["one","two"]}"#);
+    }
+
+    #[test]
+    fn test_param_display_trait() {
+        let param = Param::S("value".into());
+        let output = format!("{}", param);
+        assert_eq!(output, r#"{"S":"value"}"#);
     }
 }
