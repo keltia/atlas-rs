@@ -60,7 +60,6 @@ pub mod request;
 /// ```
 ///
 pub fn version() -> String {
-    info!("in version");
     format!("{}/{}", crate_name!(), crate_version!())
 }
 
