@@ -5,7 +5,7 @@
 
 // External crates
 //
-use anyhow::Result;
+use eyre::Result;
 use clap::Parser;
 use log::warn;
 use stderrlog::LogLevelNum::Trace;

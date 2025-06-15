@@ -6,7 +6,7 @@ use std::fmt;
 use std::io;
 
 /// External crates
-use anyhow::anyhow;
+use eyre::eyre;
 use serde::{Deserialize, Serialize};
 
 /// Represents an API error returned from the RIPE Atlas API.
@@ -175,11 +175,11 @@ impl From<serde_json::Error> for APIError {
     }
 }
 
-/// Convert a deserialize error from `anyhow`
-impl From<anyhow::Error> for APIError {
+/// Convert a deserialize error from `eyre`
+impl From<eyre::Error> for APIError {
     #[inline]
-    fn from(error: anyhow::Error) -> Self {
-        APIError::new(500, "json/decode", &error.to_string(), "anyhow")
+    fn from(error: eyre::Error) -> Self {
+        APIError::new(500, "json/decode", &error.to_string(), "eyre")
     }
 }
 
@@ -191,11 +191,11 @@ impl From<reqwest::Error> for APIError {
     }
 }
 
-/// Convert our APIError into an anyhow one
-impl From<APIError> for anyhow::Error {
+/// Convert our APIError into an eyre one
+impl From<APIError> for eyre::Error {
     #[inline]
     fn from(aerr: APIError) -> Self {
-        anyhow!(aerr)
+        eyre!(aerr)
     }
 }
 

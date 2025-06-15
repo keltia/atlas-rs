@@ -24,7 +24,7 @@ use std::fmt::Debug;
 
 // External crates
 //
-use anyhow::Result;
+use eyre::Result;
 use itertools::Itertools;
 use reqwest::{Method, Url};
 

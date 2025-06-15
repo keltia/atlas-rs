@@ -22,7 +22,6 @@ maintenance = { status = "actively-developed" }
 [dependencies]
 clap.workspace = true
 eyre.workspace = true
-home.workspace = true
 itertools.workspace = true
 lazy-regex.workspace = true
 log.workspace = true

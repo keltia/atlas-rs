@@ -39,7 +39,7 @@
 use std::time::Duration;
 
 // External crates
-use anyhow::{anyhow, Result};
+use eyre::{eyre, Result};
 use clap::{crate_name, crate_version};
 use reqwest::Url;
 
@@ -478,7 +478,7 @@ impl ClientBuilder {
     ///
     /// ### Errors
     ///
-    /// Returns an `anyhow::Error` if the `api_key` is not set.
+    /// Returns an `eyre::Error` if the `api_key` is not set.
     ///
     /// ### Example
     ///
@@ -494,7 +494,7 @@ impl ClientBuilder {
     pub fn build(self) -> Result<Client> {
         match &self.cl.api_key {
             Some(_k) => Ok(self.cl.clone()),
-            None => Err(anyhow!("You must change the default key")),
+            None => Err(eyre!("You must change the default key")),
         }
     }
 
