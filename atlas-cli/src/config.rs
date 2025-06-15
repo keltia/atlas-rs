@@ -44,16 +44,14 @@
 //! [TOML]: https://crates.io/crates/toml
 
 // Standard library
-use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 
 // External crates
-use anyhow::Result;
+use directories::BaseDirs;
+use eyre::Result;
+use log::{debug, error};
 use serde::Deserialize;
-
-#[cfg(unix)]
-use home::home_dir;
 
 /// Default configuration filename
 const CONFIG: &str = "config.toml";
@@ -226,34 +224,55 @@ impl Config {
 /// Returns the path of the default config file. On Unix systems we use the standard `$HOME/.config`
 /// base directory.
 ///
-#[cfg(unix)]
 pub(crate) fn default_file() -> Result<PathBuf> {
-    let homedir = home_dir()?;
-    let fname = Path::new(&homedir)
-        .join(BASEDIR)
-        .join(CONF_NAME)
-        .join(CONFIG);
-    Ok(fname)
-}
+    let base = BaseDirs::new();
+    let basedir = match base {
+        Some(base) => {
+            #[cfg(unix)]
+            let base = base.home_dir().join(".config");
 
-/// Returns the path of the default config file.  Here we use the standard %LOCALAPPDATA%
-/// variable to base our directory into.
-///
-#[cfg(windows)]
-pub(crate) fn default_file() -> Result<PathBuf> {
-    let basedir = env::var("LOCALAPPDATA")?;
-    let fname = Path::new(&basedir).join(CONF_NAME).join(CONFIG);
+            #[cfg(windows)]
+            let base = base.data_local_dir();
+
+            debug!("base = {base:?}");
+            base.join(Path::new(CONF_NAME))
+        }
+        None => {
+            #[cfg(unix)]
+            let homedir = std::env::var("HOME")
+                .map_err(|_| error!("No HOME variable defined, can not continue"))
+                .unwrap();
+
+            #[cfg(windows)]
+            let homedir = std::env::var("LOCALAPPDATA")
+                .map_err(|_| error!("No LOCALAPPDATA variable defined, can't continue"))
+                .unwrap();
+
+            debug!("base = {homedir}");
+
+            #[cfg(unix)]
+            let base = Path::new(&homedir)
+                .join(Path::new(".config"))
+                .join(Path::new(CONF_NAME));
+
+            #[cfg(windows)]
+            let base = PathBuf::from(homedir).join(CONF_NAME);
+
+            base
+        }
+    };
+
+    let fname = basedir.join(CONFIG);
     Ok(fname)
 }
 
 #[cfg(test)]
 mod tests {
-    #[cfg(unix)]
-    use super::BASEDIR;
     use super::*;
+    use std::env;
 
     #[test]
-    fn test_new() {
+    fn test_config_new() {
         let c = Config::new();
 
         assert_eq!("<CHANGEME>", c.api_key);
@@ -261,7 +280,7 @@ mod tests {
     }
 
     #[test]
-    fn test_load_ok() {
+    fn test_config_load_ok() {
         let c = Config::load(&PathBuf::from("src/config.toml")).unwrap();
 
         assert_eq!("no-way-i-tell-you", c.api_key);
@@ -269,7 +288,7 @@ mod tests {
     }
 
     #[test]
-    fn test_load_nok() {
+    fn test_config_load_nok() {
         let c = Config::load(&PathBuf::from("/nonexistent"));
 
         assert!(c.is_err());
@@ -277,11 +296,11 @@ mod tests {
 
     #[test]
     #[cfg(unix)]
-    fn test_default_file() -> Result<()> {
+    fn test_config_default_file() -> Result<()> {
         let h = env::var("HOME")?;
-        let h = Path::new(h).join(BASEDIR).join(CONF_NAME).join(CONFIG);
+        let h = Path::new(&h).join(".config").join(CONF_NAME).join(CONFIG);
 
-        assert_eq!(h, default_file().unwrap());
+        assert_eq!(h, default_file()?);
         Ok(())
     }
 
