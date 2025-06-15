@@ -1,6 +1,6 @@
 //! This is the module to handle configuration for the `atlas` client.  Upon calling
-//! `Config::new()` the struct contain reasonable defaults (and a bad API key that
-//! you must change).
+//! `Config::new()` the struct contains reasonable defaults (and a bad API key that
+//! you *must* change).
 //!
 //! It takes a [TOML] configuration file of the following format:
 //!
@@ -19,8 +19,9 @@
 //! ```
 //!
 //! On Unix systems (FreeBSD, macOS, Linux, etc.) the default configuration
-//! directory is `$HOME/.config/atlas-rs/` whereas on Windows, it is located
-//! in `%LOCALAPPDATA%\ripe-atlas\`.
+//! directory is `$HOME/.config/ripe-atlas/` whereas on Windows, it is located
+//! in `%LOCALAPPDATA%\ripe-atlas\`.  We share the directory with the [Go version]
+//! of this API.
 //!
 //! Examples:
 //! ```
@@ -42,6 +43,7 @@
 //! ```
 //!
 //! [TOML]: https://crates.io/crates/toml
+//! [Go Version]: https://github.com/keltia/ripe-atlas/
 
 // Standard library
 use std::fs;
