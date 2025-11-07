@@ -41,7 +41,6 @@
 //!
 
 use clap::{crate_name, crate_version};
-use log::info;
 
 pub mod client;
 pub mod core;
