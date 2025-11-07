@@ -92,6 +92,38 @@ const BASEDIR: &str = ".config";
 /// - [`Config`] for the main configuration structure.
 /// - [RIPE Atlas API Documentation](https://atlas.ripe.net/) for more details on probe configurations.
 ///
+ /// Use the standard location `$HOME/.config`
+#[cfg(unix)]
+const BASEDIR: &str = ".config";
+ 
+/// Represents the configuration for a set of probes used in the `atlas` client.
+///
+/// ### Fields:
+///
+/// - `pool_size`: An optional `usize` specifying how many probes to include.
+/// - `ptype`: An optional `String` representing the type of the probe (e.g., "area").
+/// - `value`: An optional `String` specifying the value for the probe type (e.g., "WW").
+/// - `tags`: An optional `String` containing tags to include or exclude specific probe features.
+///
+/// ### Example:
+///
+/// ```toml
+/// [probe_set]
+///
+/// pool_size = 42
+/// type = "area"
+/// value = "WW"
+/// tags = "+ipv4"
+/// ```
+///
+/// This struct is part of the [`Config`] and can be used to customize the probe configuration
+/// for the `atlas` client.
+///
+/// ### See also:
+/// - [`Config`] for the main configuration structure.
+/// - [RIPE Atlas API Documentation](https://atlas.ripe.net/) for more details on probe configurations.
+///
+/// Default set of probes to be used for queries
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub(crate) struct ProbeSet {
     /// How many probes do we want
@@ -107,7 +139,7 @@ pub(crate) struct ProbeSet {
 /// If we want to bill the queries to a specific account (i.e. different from the
 /// one behind the API key).
 ///
-/// NOTE: I never used it, but it is part of the API.
+/// NOTE: I never used it but it is part of the API.
 ///
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub(crate) struct Measurements {
@@ -226,17 +258,16 @@ impl Config {
 /// Returns the path of the default config file. On Unix systems we use the standard `$HOME/.config`
 /// base directory.
 ///
-pub(crate) fn default_file() -> Result<PathBuf> {
-    let base = BaseDirs::new();
-    let basedir = match base {
-        Some(base) => {
-            #[cfg(unix)]
-            let base = base.home_dir().join(".config");
-
-            #[cfg(windows)]
-            let base = base.data_local_dir();
-
-            debug!("base = {base:?}");
+ pub(crate) fn default_file() -> Result<PathBuf> {
+     let base = BaseDirs::new();
+     let basedir = match base {
+         Some(base) => {
+             #[cfg(unix)]
+             let base = base.home_dir().join(".config");
+ 
+             #[cfg(windows)]
+             let base = base.data_local_dir();
+             debug!("base = {base:?}");
             base.join(Path::new(CONF_NAME))
         }
         None => {
@@ -244,22 +275,17 @@ pub(crate) fn default_file() -> Result<PathBuf> {
             let homedir = std::env::var("HOME")
                 .map_err(|_| error!("No HOME variable defined, can not continue"))
                 .unwrap();
-
-            #[cfg(windows)]
+             #[cfg(windows)]
             let homedir = std::env::var("LOCALAPPDATA")
                 .map_err(|_| error!("No LOCALAPPDATA variable defined, can't continue"))
                 .unwrap();
-
-            debug!("base = {homedir}");
-
-            #[cfg(unix)]
+             debug!("base = {homedir}");
+             #[cfg(unix)]
             let base = Path::new(&homedir)
                 .join(Path::new(".config"))
                 .join(Path::new(CONF_NAME));
-
-            #[cfg(windows)]
+             #[cfg(windows)]
             let base = PathBuf::from(homedir).join(CONF_NAME);
-
             base
         }
     };
@@ -271,7 +297,6 @@ pub(crate) fn default_file() -> Result<PathBuf> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::env;
 
     #[test]
     fn test_config_new() {
@@ -309,7 +334,7 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn test_default_file() -> Result<()> {
-        let h = env::var("LOCALAPPDATA")?;
+        let h = std::env::var("LOCALAPPDATA")?;
         let h: PathBuf = Path::new(&h).join(CONF_NAME).join(CONFIG);
 
         assert_eq!(h, default_file().unwrap());
